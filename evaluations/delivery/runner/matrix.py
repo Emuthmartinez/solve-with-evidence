@@ -25,13 +25,14 @@ def main():
     order=[(case,arm,repeat) for repeat in (1,2) for case in case_names for arm in
            (('candidate','baseline') if repeat==1 else ('baseline','candidate'))]
     env=dict(os.environ, SOLVE_EVAL_CALCULATOR=str(repo/'evaluations/hard/runner/calculate.py'))
+    candidate = repo/'evaluations/delivery/snapshots/candidate'
     def run(task):
         case,arm,repeat=task
         trial=out/f'{case}-{arm}-r{repeat}'
-        skill=repo/('solve-with-evidence' if arm=='candidate' else 'evaluations/hard/snapshots/shipped')
+        skill = candidate if arm == 'candidate' else repo/'evaluations/hard/snapshots/shipped'
         command=[sys.executable,'-B',str(HERE/'run.py'),'--core',str(repo/'evaluations/hard/runner'),
                  '--case',str(cases/'inputs'/f'{case}.json'),'--consumer',str(cases/'consumer.py'),
-                 '--gate',str(repo/'solve-with-evidence/scripts/json_handoff.py'),'--skill',str(skill),
+                 '--gate',str(candidate/'scripts/json_handoff.py'),'--skill',str(skill),
                  '--arm',arm,'--repeat',str(repeat),'--out',str(trial)]
         result=subprocess.run(command,env=env,capture_output=True,text=True)
         print(trial.name,'exit',result.returncode,result.stdout.strip()[:160],flush=True)

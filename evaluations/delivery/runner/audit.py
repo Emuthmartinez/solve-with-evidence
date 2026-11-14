@@ -220,7 +220,7 @@ def main():
     for name in ['trials','cases','repo','out']:p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--candidate', type=Path, help='frozen candidate package; also provides the shared checker')
     a=p.parse_args()
-    candidate = a.candidate or a.repo/'solve-with-evidence'
+    candidate = a.candidate or a.repo/'evaluations/delivery/snapshots/candidate'
     case_names = {f.stem for f in (a.cases/'inputs').glob('*.json')}
     freeze = load(a.cases/'freeze.json')['files']
     need(case_names and case_names == {Path(f).stem for f in freeze if f.startswith('inputs/')}, 'frozen case list')

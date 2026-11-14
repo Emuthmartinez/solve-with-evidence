@@ -169,7 +169,7 @@ def audit(trial, evaluation):
     need(digest(consumer.read_bytes())==req['consumer_sha256'], 'consumer digest differs')
     original=read(suite/'inputs'/f'{case}.json')['messages']
     need(len(original)==1 and req['message'].endswith(original[0]), 'input differs from frozen task')
-    pkg=evaluation.parents[1]/('solve-with-evidence' if arm=='candidate' else 'evaluations/hard/snapshots/shipped')
+    pkg = evaluation/'snapshots/candidate' if arm == 'candidate' else evaluation.parent/'hard/snapshots/shipped'
     actual_files={p.relative_to(pkg).as_posix():digest(p.read_bytes()) for p in pkg.rglob('*') if p.is_file()}
     need(actual_files==req['skill_sha256'], 'supplied package differs from selected version')
     workspace=PurePosixPath(req['workspace'])
