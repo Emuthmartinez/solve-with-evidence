@@ -1,0 +1,586 @@
+{
+  "kind": "targeted post-hoc harness replay; no solver reruns",
+  "original_five_arms": {
+    "totals": {
+      "historical_scored_trials": 146,
+      "historical_full_passes": 142,
+      "replayed_transfers": 10,
+      "unchanged_answers_accepted": 16,
+      "original_answers_rejected": 4,
+      "reconstructions_accepted": 4
+    },
+    "trials": [
+      {
+        "trial": "artifact-h3-baseline-r1",
+        "trace_sha256": "08461dbf5fb0491163f78263c7b26c51359b0378e0da2ceba7f7e6d0850aaaa8",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "71f888e8f8e181bc150f93dad069f84587f7aa43baa43cfa82961e8b2c16a04c",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "5cddede0dab39b824bd96d3b4fd0aa556fa5bade2a5bb7fd979d1378bb1a01ab",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "artifact-h3-baseline-r2",
+        "trace_sha256": "574048629cd5d615756e5abe56364f2ef287955967d80a9b9bedab9041826ee7",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "4963fd685e28b972257699e9336d420d72dc3277faa985b03951ffe82b6d9498",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "d38327f90be0efbda3bb7af5429ec11d8b95164c738fba1e6997b9ffe6ec652b",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "artifact-h3-published-r1",
+        "trace_sha256": "2d06dea62821e82a51fc3dadeb55a3aedcd98505aaa1b0613a1ce5c6857f5aa2",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "ae15e426b8474ddfe9a80041ce437de41124d7687cafd9f0cbe57ee8b6c70a75",
+            "received": "rejected",
+            "reason": "edge.job must be a named job object",
+            "replacement": "accepted",
+            "replacement_sha256": "c51e6c885152e6babca35541feb324de80b00996753eeca495c62580df7ab5e2",
+            "provenance": {
+              "call_id": "exec-e76a4347-3b93-4f76-8a2c-0ad4fcdbe882",
+              "call_seq": 9,
+              "result_seq": 10,
+              "operation": "Wrap only the same producer-tested rows under the required job.rows name."
+            }
+          },
+          {
+            "stage": 2,
+            "received_sha256": "bedc562a9ad777596bd2163d352441614d378b059e3594a8f57f7affc2365bfa",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 16,
+          "max_points": 17,
+          "critical_failures": [
+            "stage1_counterexample"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "artifact-h3-published-r2",
+        "trace_sha256": "19ee28b6807bb20a9fa1960aae2775162574301fc8bcacf0540a23a139c0ae01",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "e035ad12cfc09c4227d7f94351339a875c13e55bf2b510ef4bdc52e38513fc98",
+            "received": "rejected",
+            "reason": "edge.job must be a named job object",
+            "replacement": "accepted",
+            "replacement_sha256": "aac7e48b5339078662404d4efe87c16b36225d15579697bdcaa5e09c7798ff24",
+            "provenance": {
+              "call_id": "exec-0020c613-32de-447b-a10d-ffbc63fe83a5",
+              "call_seq": 9,
+              "result_seq": 10,
+              "operation": "Wrap only the same producer-tested rows under the required job.rows name."
+            }
+          },
+          {
+            "stage": 2,
+            "received_sha256": "078fff2546a37d0fc24fd1c144d804fc002ea301d42863a46de67614370884e4",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 16,
+          "max_points": 17,
+          "critical_failures": [
+            "stage1_counterexample"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-baseline-r1",
+        "trace_sha256": "e195cb04782b2ed39658a1c230ac56f023cf36fcdc9849817d6c7ac62e265646",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "df480f86dc31a0a802d7abb5b80cd59f2cfc786b90a957f5fd7a8b3c73ffe811",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "29d878f207b48e8471ea6fe2207a55915af08b3014d3dd7de7b25942f0874cac",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-baseline-r2",
+        "trace_sha256": "4ba16436ae773ff0a19e8c5b4f1be24a8a869c8bb89d7faf1aac88859a28f237",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "f6fc1a623c723afae1287bf60f56c71ac810e12ac64ed76c4923671f34dc2586",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "65d34e2f09ca4167bd8d5c40160737761d697ed412a7a06051570df9b2cacd0b",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-final-r1",
+        "trace_sha256": "55db5f1da51d70938f7d886bfa1ef4a81538ac2ea7f85866d251ed035b67f0a3",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "e4092a5df48164fc2692e88e3bcd35bd90da32a37a4a1f1ccc56aa3877de30b2",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "8e3b6c5ca1f2ea33ab8d74421cbe2af3356b4e17bc681b0ac2209afcdb52c44d",
+            "received": "rejected",
+            "reason": "correct and faulty allocators agree on the proposed edge",
+            "replacement": "accepted",
+            "replacement_sha256": "5fb19e8de6555660f9905239e6d6a28f2c88089b7b306a7c81b972e774e7f8b1",
+            "provenance": {
+              "call_id": "exec-ad63fd45-bcac-42a7-8b35-54f652f7ac10",
+              "call_seq": 26,
+              "result_seq": 27,
+              "operation": "Replace the false witness with the five-identifier supplied input and return value executed by the original producer in the same stage."
+            },
+            "received_witness": {
+              "input": {
+                "charges": {
+                  "a": {
+                    "weight": 1,
+                    "cap": 0
+                  },
+                  "b": 1
+                },
+                "slots": 2
+              },
+              "correct": {
+                "a": 0,
+                "b": 2
+              },
+              "faulty": {
+                "a": 0,
+                "b": 2
+              }
+            },
+            "replacement_witness": {
+              "input": {
+                "charges": {
+                  "zebra": {
+                    "weight": 7,
+                    "cap": 1
+                  },
+                  "gale": 5,
+                  "fern": {
+                    "weight": 5,
+                    "cap": 2
+                  },
+                  "iris": {
+                    "weight": 0,
+                    "cap": 9
+                  },
+                  "alder": {
+                    "weight": 5,
+                    "cap": 4
+                  }
+                },
+                "slots": 11
+              },
+              "correct": {
+                "zebra": 1,
+                "gale": 4,
+                "fern": 2,
+                "iris": 0,
+                "alder": 4
+              },
+              "faulty": {
+                "zebra": 1,
+                "gale": 2,
+                "fern": 2,
+                "iris": 0,
+                "alder": 3
+              }
+            }
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 17,
+          "max_points": 18,
+          "critical_failures": [
+            "stage2_counterexample"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-final-r2",
+        "trace_sha256": "f9c9c4dd1f16fae7a7bc96afcf24f46ec68c50b9ce7eb5e5125c57582b4e3cec",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "ddddee2c0dd56b435a2ef88cbd104ce32dc38eb6455645c4a8c0ca151c628b15",
+            "received": "rejected",
+            "reason": "invalid UTF-8 JSON object: Invalid \\escape: line 2 column 41 (char 42)",
+            "replacement": "accepted",
+            "replacement_sha256": "de62645fd3898657b64b3356bf908e0c23b8edd71076dcdc1a79e950feb26c13",
+            "provenance": {
+              "call_id": "exec-823e7470-5f7c-467a-8baa-c307454b3a52",
+              "call_seq": 8,
+              "result_seq": 9,
+              "operation": "Restore one missing n in the JSON newline escape; source matches the successful original tool call, other bytes unchanged."
+            },
+            "replacement_witness": {
+              "input": {
+                "charges": {
+                  "z": 1,
+                  "a": 1
+                },
+                "slots": 1
+              },
+              "correct": {
+                "z": 0,
+                "a": 1
+              },
+              "faulty": {
+                "z": 1,
+                "a": 0
+              }
+            }
+          },
+          {
+            "stage": 2,
+            "received_sha256": "458474b0836e6cf01cb55f58a2dc3928a3fcfe9d84e4bfe7b12e3da14df83e1a",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 10,
+          "max_points": 18,
+          "critical_failures": [
+            "stage1_instance",
+            "stage1_exact_and_edge",
+            "stage1_seeded",
+            "stage1_metamorphic",
+            "stage1_pure",
+            "stage1_reported_result",
+            "stage1_counterexample"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-published-r1",
+        "trace_sha256": "dd44437f4e0d2b2f5c8146d1298144a767792a297c657895fc444718d8500b19",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "77eee9606affe77c73bbd1990787cdf8fe6c3e8f8fef0b30de0c599f23f6bb15",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "f6d6fcb1a77397cbe1656f1d5fa3ea1196ab54b3bfbcc1d31a8e1ffcadc3986c",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-published-r2",
+        "trace_sha256": "d1dca8602f8fa887a871ae95b8aa3f9a1d38a94ddfbafcc38eea759ec139eeee",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "639a86b552e6a858fd73f9e9657338a8d1f3e47812e01e30562a075e688cefb1",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "a3f0ee1bb3d960836bb7800f0993f473485ec102ea09c5a1dfaf3f35afce91f1",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      }
+    ]
+  },
+  "shipped_two_transfer_cases": {
+    "totals": {
+      "historical_scored_trials": 4,
+      "historical_full_passes": 2,
+      "replayed_transfers": 4,
+      "unchanged_answers_accepted": 5,
+      "original_answers_rejected": 3,
+      "reconstructions_accepted": 3
+    },
+    "trials": [
+      {
+        "trial": "artifact-h3-shipped-r1",
+        "trace_sha256": "1b865260130d3108a3552cc874d2bbe10ad752b1ee53e7706687d72a7f1b4ebc",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "65eb34b2a76ab898f1944dfe4bc8dc40c9f0e3fca1e351c2124e57fafafdc516",
+            "received": "rejected",
+            "reason": "edge.job must be a named job object",
+            "replacement": "accepted",
+            "replacement_sha256": "590b02d178de5303385de6c12a0f2707ef831139998aff3c138b2f22cb8ed1e1",
+            "provenance": {
+              "call_id": "exec-d3a4812a-a444-47c4-a1a1-82e43ea0f4b8",
+              "call_seq": 9,
+              "result_seq": 10,
+              "operation": "Wrap only the same producer-tested rows under the required job.rows name."
+            }
+          },
+          {
+            "stage": 2,
+            "received_sha256": "198f634c70fbfe5c56fd85f7d881d74827eb98ed8f05070b01f2932a7300cef5",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 16,
+          "max_points": 17,
+          "critical_failures": [
+            "stage1_counterexample"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "artifact-h3-shipped-r2",
+        "trace_sha256": "79b265e6e0da1c6929c1e9d340515a0be8ac7068da57e112074d41037bae43eb",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "c9923516171a70934e8c0ae658d03821a29d2de56a19191eb92bd570a4e79f5f",
+            "received": "rejected",
+            "reason": "edge.job must be a named job object",
+            "replacement": "accepted",
+            "replacement_sha256": "f7a5e2ab6bb23a8ac10484ab6fe03ef0c174439afcd2365227ded865450429a7",
+            "provenance": {
+              "call_id": "exec-2f78ea9f-118e-4b1f-b450-183e2bde5baf",
+              "call_seq": 9,
+              "result_seq": 10,
+              "operation": "Restore exact source from the successful producer-serialized payload. Wrap only the same producer-tested rows under the required job.rows name."
+            }
+          },
+          {
+            "stage": 2,
+            "received_sha256": "7f04bd6a768ecdc0d3b5451a45b2092b2dc4877fe282befd9c2fb7e9fdd5a1ff",
+            "received": "rejected",
+            "reason": "delivered source failed on the exact proposed edge",
+            "replacement": "accepted",
+            "replacement_sha256": "d965d7421ae7a0d4aac345454d78d838791bc59ab394c214277054fe496612a2",
+            "provenance": {
+              "call_id": "exec-74d970fd-2712-4386-9ec5-cf6ca7f5a0f7",
+              "call_seq": 22,
+              "result_seq": 23,
+              "operation": "Restore exact source from the successful producer-serialized payload."
+            }
+          }
+        ],
+        "historical_grade": {
+          "pass": false,
+          "points": 5,
+          "max_points": 17,
+          "critical_failures": [
+            "stage1_supplied",
+            "stage1_edges",
+            "stage1_generated",
+            "stage1_row_composition",
+            "stage1_counterexample",
+            "stage1_pure",
+            "stage2_supplied",
+            "stage2_edges",
+            "stage2_block",
+            "stage2_generated",
+            "stage2_row_composition",
+            "stage2_pure"
+          ]
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 17,
+          "max_points": 17,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-shipped-r1",
+        "trace_sha256": "956fdef0a0750c3c876b8f02802452dcc4a28166b80241ca4c4bb9cc3687af92",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "d808b22e48b104414b8227407a4e34ca05237f6653e0e0520912017f6a480ef2",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "a43196f3e71b0221099de48e1d986fd0b3c8cfdf82bcad491a9cefab959d8fe5",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      },
+      {
+        "trial": "ledger-h2-shipped-r2",
+        "trace_sha256": "aff3a26ff496beda7f6ac99775304479e04589c796c544d2b1ca8163c0cb89f6",
+        "stages": [
+          {
+            "stage": 1,
+            "received_sha256": "cd800f30d349b18dfffca97287d683b2b70e2112c23526624d30704b63e16dac",
+            "received": "accepted_unchanged"
+          },
+          {
+            "stage": 2,
+            "received_sha256": "5fcf734b4d2091b01a6b0ba414e8644eef3cc59d81e50f10ca45fc0fe16305ca",
+            "received": "accepted_unchanged"
+          }
+        ],
+        "historical_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        },
+        "after_replay_grade": {
+          "pass": true,
+          "points": 18,
+          "max_points": 18,
+          "critical_failures": []
+        }
+      }
+    ]
+  }
+}

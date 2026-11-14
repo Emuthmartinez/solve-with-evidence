@@ -1,0 +1,268 @@
+{
+  "linkage-d1": {
+    "people": "KLMNPQR",
+    "west": "KQR",
+    "rows": [
+      [
+        {
+          "possible": "KNR",
+          "days": [
+            2,
+            6
+          ]
+        },
+        {
+          "possible": "MNP",
+          "days": [
+            1,
+            4,
+            7
+          ]
+        },
+        {
+          "possible": "LMQ",
+          "days": [
+            6,
+            7
+          ]
+        },
+        {
+          "possible": "LNR",
+          "days": [
+            3,
+            5
+          ]
+        },
+        {
+          "possible": "MNR",
+          "days": [
+            1,
+            6
+          ]
+        }
+      ],
+      [
+        {
+          "possible": "KLN",
+          "days": [
+            4,
+            7
+          ]
+        },
+        {
+          "possible": "NPR",
+          "days": [
+            2
+          ]
+        },
+        {
+          "possible": "PQR",
+          "days": [
+            3,
+            7
+          ]
+        },
+        {
+          "possible": "KMP",
+          "days": [
+            4,
+            5
+          ]
+        },
+        {
+          "possible": "LPQ",
+          "days": [
+            3,
+            5,
+            8
+          ]
+        }
+      ]
+    ],
+    "overlap": 3,
+    "west_overlap": 1,
+    "threshold": 3,
+    "recovered": {
+      "fixed_row": 0,
+      "person": "K",
+      "left": 1,
+      "right": 3
+    }
+  },
+  "linkage-d2": {
+    "people": "KLMNPQR",
+    "west": "KPR",
+    "rows": [
+      [
+        {
+          "possible": "KMP",
+          "days": [
+            2,
+            7
+          ]
+        },
+        {
+          "possible": "LNP",
+          "days": [
+            1,
+            6,
+            7
+          ]
+        },
+        {
+          "possible": "KLN",
+          "days": [
+            7
+          ]
+        },
+        {
+          "possible": "MQR",
+          "days": [
+            8
+          ]
+        },
+        {
+          "possible": "LMQ",
+          "days": [
+            2,
+            7
+          ]
+        }
+      ],
+      [
+        {
+          "possible": "LPQ",
+          "days": [
+            4,
+            6
+          ]
+        },
+        {
+          "possible": "NPR",
+          "days": [
+            3
+          ]
+        },
+        {
+          "possible": "LMP",
+          "days": [
+            2,
+            8
+          ]
+        },
+        {
+          "possible": "MNR",
+          "days": [
+            3
+          ]
+        },
+        {
+          "possible": "KNP",
+          "days": [
+            6,
+            7,
+            8
+          ]
+        }
+      ]
+    ],
+    "overlap": 3,
+    "west_overlap": 1,
+    "threshold": 4,
+    "recovered": {
+      "fixed_row": 0,
+      "person": "M",
+      "left": 1,
+      "right": 3
+    }
+  },
+  "linkage-h1": {
+    "people": "KLMNPQR",
+    "west": "KLQ",
+    "rows": [
+      [
+        {
+          "possible": "MQR",
+          "days": [
+            1
+          ]
+        },
+        {
+          "possible": "PQR",
+          "days": [
+            1,
+            7
+          ]
+        },
+        {
+          "possible": "KNR",
+          "days": [
+            3,
+            6
+          ]
+        },
+        {
+          "possible": "LNP",
+          "days": [
+            3
+          ]
+        },
+        {
+          "possible": "NPR",
+          "days": [
+            1,
+            5,
+            7
+          ]
+        }
+      ],
+      [
+        {
+          "possible": "KMQ",
+          "days": [
+            6,
+            8
+          ]
+        },
+        {
+          "possible": "KPR",
+          "days": [
+            2,
+            7
+          ]
+        },
+        {
+          "possible": "LPR",
+          "days": [
+            3,
+            7,
+            8
+          ]
+        },
+        {
+          "possible": "KNQ",
+          "days": [
+            1,
+            2,
+            4
+          ]
+        },
+        {
+          "possible": "KPQ",
+          "days": [
+            4
+          ]
+        }
+      ]
+    ],
+    "overlap": 3,
+    "west_overlap": 1,
+    "threshold": 5,
+    "recovered": {
+      "fixed_row": 0,
+      "person": "M",
+      "left": 4,
+      "right": 3
+    }
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "trial": "contract-h4-baseline-r1",
+    "points": 16,
+    "maximum": 16,
+    "pass": true,
+    "elapsed_seconds": 12.787,
+    "provider_total_tokens": 16957,
+    "stages": [
+      {
+        "stage": 1,
+        "calls": 0,
+        "successful_python_with_delivered_payload": false,
+        "receipts": []
+      },
+      {
+        "stage": 2,
+        "calls": 0,
+        "successful_python_with_delivered_payload": false,
+        "receipts": []
+      }
+    ]
+  },
+  {
+    "trial": "contract-h4-baseline-r2",
+    "points": 16,
+    "maximum": 16,
+    "pass": true,
+    "elapsed_seconds": 11.829,
+    "provider_total_tokens": 16974,
+    "stages": [
+      {
+        "stage": 1,
+        "calls": 0,
+        "successful_python_with_delivered_payload": false,
+        "receipts": []
+      },
+      {
+        "stage": 2,
+        "calls": 0,
+        "successful_python_with_delivered_payload": false,
+        "receipts": []
+      }
+    ]
+  },
+  {
+    "trial": "contract-h4-shipped-r1",
+    "points": 16,
+    "maximum": 16,
+    "pass": true,
+    "elapsed_seconds": 42.494,
+    "provider_total_tokens": 39278,
+    "stages": [
+      {
+        "stage": 1,
+        "calls": 1,
+        "successful_python_with_delivered_payload": true,
+        "receipts": [
+          {
+            "id": "exec-86a8f3c4-5ab8-4e31-8117-d0bb61b118ab",
+            "exit": 0,
+            "matches_final_json": true
+          }
+        ]
+      },
+      {
+        "stage": 2,
+        "calls": 1,
+        "successful_python_with_delivered_payload": true,
+        "receipts": [
+          {
+            "id": "exec-ce9ce6dc-5513-46ba-aa8f-e401b9b122af",
+            "exit": 0,
+            "matches_final_json": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "trial": "contract-h4-shipped-r2",
+    "points": 16,
+    "maximum": 16,
+    "pass": true,
+    "elapsed_seconds": 45.945,
+    "provider_total_tokens": 48223,
+    "stages": [
+      {
+        "stage": 1,
+        "calls": 1,
+        "successful_python_with_delivered_payload": true,
+        "receipts": [
+          {
+            "id": "exec-b755af84-81d1-40f9-a4eb-86368c507a32",
+            "exit": 0,
+            "matches_final_json": true
+          }
+        ]
+      },
+      {
+        "stage": 2,
+        "calls": 1,
+        "successful_python_with_delivered_payload": true,
+        "receipts": [
+          {
+            "id": "exec-1e4e3e69-bcb8-4edc-841f-62dffb127a49",
+            "exit": 0,
+            "matches_final_json": true
+          }
+        ]
+      }
+    ]
+  }
+]

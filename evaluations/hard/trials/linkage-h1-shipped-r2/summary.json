@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "linkage-h1",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:59:52.091+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\"feasible_linkages\":389,\"bounds\":[2,6],\"low_witness\":{\"A\":\"QPKLN\",\"B\":\"MRPNQ\"},\"high_witness\":{\"A\":\"MPKLN\",\"B\":\"MKRQP\"},\"decision\":\"undetermined\"}",
+      "usage": {
+        "total": {
+          "totalTokens": 26948,
+          "inputTokens": 26196,
+          "cachedInputTokens": 21376,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 752,
+          "reasoningOutputTokens": 0
+        },
+        "last": {
+          "totalTokens": 9369,
+          "inputTokens": 9312,
+          "cachedInputTokens": 8960,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 57,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:59:53.407+00:00",
+      "completed_at": "2026-11-14T20:00:14.803+00:00",
+      "elapsed_s": 21.397
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\"feasible_linkages\":53,\"bounds\":[3,4],\"low_witness\":{\"A\":\"MPKLN\",\"B\":\"KRPNQ\"},\"high_witness\":{\"A\":\"MRKPN\",\"B\":\"QRLNK\"},\"decision\":\"excluded\"}",
+      "usage": {
+        "total": {
+          "totalTokens": 47716,
+          "inputTokens": 46216,
+          "cachedInputTokens": 40704,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 1500,
+          "reasoningOutputTokens": 0
+        },
+        "last": {
+          "totalTokens": 10481,
+          "inputTokens": 10425,
+          "cachedInputTokens": 10112,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 56,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T20:00:14.806+00:00",
+      "completed_at": "2026-11-14T20:00:34.695+00:00",
+      "elapsed_s": 19.892
+    }
+  ],
+  "tool_calls": 2,
+  "skill_files_sha256": {
+    "SKILL.md": "c1185f1d215446221cebdbc0974f4e943984eb87ba437c288aa6946fc860460d",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "dfb915b997d9d6c4a4e869e90f33c51409cfb13af44b93ed5f5e14272d0f1429",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "342bac2ccac467f20542d50b4a293ed83072febff63846570df70f23b93aaea9"
+  },
+  "case_messages_sha256": "dfe2de877fc67bfdf609b000f11aa0da0bafc4b1ad2d66fcbd2e553496e796d9",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 42.644,
+  "provider": "openai",
+  "thread_id": "01a1dba5-1af0-7473-85ef-36186bd99cb5",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T20:00:34.735+00:00",
+  "app_server_exit_code": 0
+}

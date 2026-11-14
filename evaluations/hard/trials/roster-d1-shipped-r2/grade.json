@@ -1,0 +1,52 @@
+{
+  "arm": "shipped",
+  "case": "roster-d1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "roster-d1",
+    "points": 10,
+    "max_points": 10,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.roster": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.optimum": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.proof": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.repairs": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.repair_costs": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.roster": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.optimum": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.best_by_swaps": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.feasible_by_swaps": {
+        "passed": true,
+        "weight": 1
+      }
+    }
+  }
+}

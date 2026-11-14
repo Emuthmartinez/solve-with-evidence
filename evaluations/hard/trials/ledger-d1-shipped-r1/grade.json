@@ -1,0 +1,110 @@
+{
+  "arm": "shipped",
+  "case": "ledger-d1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "ledger-d1",
+    "points": 18,
+    "max_points": 18,
+    "pass": true,
+    "checks": {
+      "stage1_instance": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_rules": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_seeded": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage1_metamorphic": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_pure": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_counterexample": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_instance": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_rules": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_amendment": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage2_seeded": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage2_metamorphic": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_pure": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_counterexample": {
+        "passed": true,
+        "weight": 1
+      }
+    },
+    "critical_failures": [],
+    "execution": {
+      "1": {
+        "matched": {
+          "instance": 1,
+          "rules": 6,
+          "seeded": 24,
+          "metamorphic": 12
+        },
+        "totals": {
+          "instance": 1,
+          "rules": 6,
+          "seeded": 24,
+          "metamorphic": 12
+        },
+        "runtime_error": null
+      },
+      "2": {
+        "matched": {
+          "instance": 1,
+          "rules": 6,
+          "amendment": 4,
+          "seeded": 24,
+          "metamorphic": 12
+        },
+        "totals": {
+          "instance": 1,
+          "rules": 6,
+          "amendment": 4,
+          "seeded": 24,
+          "metamorphic": 12
+        },
+        "runtime_error": null
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "arm": "release",
+  "case": "closure-h1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Predicate 1 derives mandatory coverage from the signed order, independently of the registry. R9 is unrepresented. The legacy adapter passes the registered required goals and deliverables but does not detect the omitted requirement.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Predicate 1 blocks: optional G8 cannot satisfy mandatory R2, and R9 and R4 are unrepresented. The legacy adapter has explicit registered goals, while its checks over registered required goals and deliverables pass vacuously.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Required outputs pass, but predicate 6 and the final-transition authority guard block publication: S27 binds this order before any notification was committed. The legacy final transition does not read the stop-event stream.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R4 with R5, and all current mandatory items have passing required goals and usable outputs. X16 concerns another order and does not bind this publication under predicate 6.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "files": {
+    "contract_transfer.py": "e5f711b3375831d10a46abc9cc0b2229064d58ec5abdf5f226dc8c7f58a467de",
+    "controls.py": "7774e88e78bbbfea4249ecc680c1aee6cc51cfe6de9445eea33b93387fe8691c",
+    "run.py": "9afb811ab56f3a3c61f2a205e73fb676814c7feb36e9168803fac70646bd2c44",
+    "inputs/contract-h4.json": "ce70fa13e5444ddf4739bf1dc11015abcf58323e4112650b9f3f62aaa95cc914",
+    "controls.json": "58fdd1120f3d146d1c3e094d653a33e4eb12775095ccb5f886e6ef8c5f322eb7"
+  },
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "timeout": 200,
+  "cohort": [
+    [
+      "baseline",
+      1
+    ],
+    [
+      "shipped",
+      1
+    ],
+    [
+      "baseline",
+      2
+    ],
+    [
+      "shipped",
+      2
+    ]
+  ],
+  "rule": "Two repeats per arm, report every observed turn, score strict JSON, semantic truth table evaluated on the full finite domain."
+}

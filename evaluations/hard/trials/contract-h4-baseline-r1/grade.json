@@ -1,0 +1,90 @@
+{
+  "arm": "baseline",
+  "case": "contract-h4",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "contract-h4",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "checks": {
+      "stage1_deliverable_shape": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_table_syntax": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_all_original_inputs": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_supplied_outputs": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_witness_shape": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_witness_expected": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_witness_distinguishes": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_deliverable_shape": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_table_syntax": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_all_original_inputs": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_supplied_outputs": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_witness_shape": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_witness_expected": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_witness_distinguishes": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_explicit_campaign_false": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_explicit_campaign_true": {
+        "passed": true,
+        "weight": 1
+      }
+    },
+    "critical_failures": [],
+    "execution": {
+      "1": {
+        "matched": 12,
+        "valid_inputs": 12
+      },
+      "2": {
+        "matched": 36,
+        "valid_inputs": 36
+      }
+    }
+  }
+}

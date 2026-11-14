@@ -1,0 +1,88 @@
+{
+  "arm": "shipped",
+  "case": "closure-h2",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h2",
+    "points": 24,
+    "max_points": 24,
+    "pass": true,
+    "checks": {
+      "1.Cobalt.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Cobalt.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Cobalt.disposition": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.Reed.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Reed.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Reed.disposition": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.Mica.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Mica.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.Mica.disposition": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.Cobalt.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Cobalt.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Cobalt.disposition": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.Reed.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Reed.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Reed.disposition": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.Mica.obligations": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Mica.evidence": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.Mica.disposition": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "critical_failures": []
+  }
+}

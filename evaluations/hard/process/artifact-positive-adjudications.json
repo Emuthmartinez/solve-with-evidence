@@ -1,0 +1,38 @@
+{
+  "artifact-h3-published-r1/1": {
+    "verdict": "verified",
+    "call_id": "exec-e76a4347-3b93-4f76-8a2c-0ad4fcdbe882",
+    "reviewer": "Independent release reviewer",
+    "reason": "The call serialized the artifact, decoded its source, invoked render with delimiter, newline and backslash inputs, and asserted the exact expected wire string. A counterexample distinguished a literal backslash+n from an embedded line break. The serialized payload in stdout matches the delivered JSON. The probe used its edge rows as a positional argument, and the delivered edge.job was a list; the specified job object requires a rows field. The edge outcome failed.",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13
+  },
+  "artifact-h3-published-r1/2": {
+    "verdict": "verified",
+    "call_id": "exec-4a8b8844-ccd2-48fa-8062-4f9ecccf6c3b",
+    "reviewer": "Independent release reviewer",
+    "reason": "The solver decoded the serialized source and called render in block mode. Assertions covered the mixed dataset, the edge that distinguishes field-level quoting, and default/false-mode compatibility. The successful call printed the delivered serialization.",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26
+  },
+  "artifact-h3-published-r2/1": {
+    "verdict": "verified",
+    "call_id": "exec-0020c613-32de-447b-a10d-ffbc63fe83a5",
+    "reviewer": "Independent release reviewer",
+    "reason": "The solver assembled the expected wire string independently from component literals, decoded its serialized source, exercised render with the job and distinguishing edge, and asserted the expected values. The emitted serialization matches the final answer. The probe used its edge rows as a positional argument, and the delivered edge.job was a list; the specified job object requires a rows field. The edge outcome failed.",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13
+  },
+  "artifact-h3-published-r2/2": {
+    "verdict": "verified",
+    "call_id": "exec-fbf79e91-3243-4a47-a221-980a31426997",
+    "reviewer": "Independent release reviewer",
+    "reason": "The solver assembled the expected block-mode string from independently specified escapes, decoded the serialized answer, called render with the job and the distinguishing edge, and checked unchanged behavior on default/false mode. The emitted serialization matches the final answer.",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26
+  }
+}

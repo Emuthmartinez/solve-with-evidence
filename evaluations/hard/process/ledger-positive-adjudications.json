@@ -1,0 +1,232 @@
+{
+  "ledger-d1-final-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-fc6759c8-4fe4-4960-b1b6-93c124774bdf",
+    "verdict": "verified",
+    "reason": "The tested audit function matches the delivered function. The JSON import only decodes test data. Successful assertions compare the as-of output, reverse order, freshness boundary and a tied revision against explicit expected dictionaries.",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "09a7bb01110fb43d9f0052cd02089fb558e06f454255b4b4906801b6b1cf578a"
+  },
+  "ledger-d1-final-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-9868c781-29d6-42a3-8a3e-00b6d4cf7342",
+    "verdict": "verified",
+    "reason": "The tested audit function matches the delivered function. Explicit comparisons cover the amended batch, observation-only regression, a fix that changes the result and a fix without an observation. The final print follows those assertions.",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "09a7bb01110fb43d9f0052cd02089fb558e06f454255b4b4906801b6b1cf578a"
+  },
+  "ledger-d1-final-r2/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-3ef755c3-5cd1-4400-95b6-f6aa6c3d3fb6",
+    "verdict": "verified",
+    "reason": "The attempted copy import failed on the previous call. The selected retry uses the delivered function and checks the instance, tied observations, reversed order and freshness transition against independent expectations.",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "ee40e359248c0f64328ba48b93b1225325e61cbfada1d6ecf379a1d9d2ecf943"
+  },
+  "ledger-d1-final-r2/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-784a9842-4382-490e-8b58-6187cf737a84",
+    "verdict": "verified",
+    "reason": "The delivered audit function ran on the amended batch and was asserted against the expected conflict/arrived states. A followup checks that an unrelated revision cannot replace the current observation.",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "ee40e359248c0f64328ba48b93b1225325e61cbfada1d6ecf379a1d9d2ecf943"
+  },
+  "ledger-d1-published-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-438da22b-9405-464d-ada2-b95dc3997a0b",
+    "verdict": "verified",
+    "reason": "The test serializes one object, decodes that payload, and calls its recovered audit function. It asserts the full instance and a conflict witness, and checks a freshness boundary. The validated payload printed by this successful call matches the returned JSON text.",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "386a774d369769940898a8b042f157f217661a98c299dc622e9172e5c749c1ec"
+  },
+  "ledger-d1-published-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-94696f7a-1ddc-454a-97ca-f137ee5d0f3f",
+    "verdict": "verified",
+    "reason": "The test decodes the serialized package and calls its recovered audit function on the amended instance, checks the prior rules and a fix-dependent counterexample. The payload printed after these assertions matches the returned JSON text.",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "386a774d369769940898a8b042f157f217661a98c299dc622e9172e5c749c1ec"
+  },
+  "ledger-h1-candidate-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-ff3fcc19-f186-465b-a766-6750c1a25ef3",
+    "verdict": "verified",
+    "reason": "The delivered audit function ran on the eleven acknowledgements. Four expected key outcomes were asserted, including unequal epochs with a shared digest. Printing the expected dictionary occurred after the successful assertions.",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "bf4c9b1f7869d6b6452861efc3dcdb78bdbd6eac24493206459d7c2f20520a2b"
+  },
+  "ledger-h1-candidate-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-b8afb6fd-cc87-4240-b8bb-8b3cae74c578",
+    "verdict": "verified",
+    "reason": "The ack and fence lambdas build ordinary input records. The delivered audit function ran on those inputs, asserted the five expected statuses, and checked before/after eligibility of a fence-only withdrawal. The stdout print of expected values followed assertions.",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "bf4c9b1f7869d6b6452861efc3dcdb78bdbd6eac24493206459d7c2f20520a2b"
+  },
+  "ledger-h1-final-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-f37ba681-d4fb-4020-95f5-99a171db656b",
+    "verdict": "verified",
+    "reason": "The source string executed by the tool contains the delivered audit definition. The solver asserted four expected replica outcomes and a separate unequal-epoch counterexample, then printed the actual results.",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "02d9e8be819c5f82fad5e6214c97936f94d6df5e40d5f5fb8fc3a4b76f47f83e"
+  },
+  "ledger-h1-final-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-47ac9d5a-4deb-4117-9f90-6226e19ce65b",
+    "verdict": "verified",
+    "reason": "The source string executed by the tool contains the delivered audit definition. The solver asserted all five expected statuses on the fenced instance, checked regression on acknowledgements alone, and checked fence-only withdrawal.",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "02d9e8be819c5f82fad5e6214c97936f94d6df5e40d5f5fb8fc3a4b76f47f83e"
+  },
+  "ledger-h1-final-r2/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-71edc548-73d6-4f8e-b63e-7fc5e3d78e27",
+    "verdict": "verified",
+    "reason": "The failed copy import on the previous call earned no credit. The successful retry executed the delivered audit function and asserted the four replica outcomes, the equal-digest unequal-epoch counterexample and an earlier as-of boundary.",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "2193c6b9092b3993472ec600d4688c062b4cced5c33fbcf41a936e459bd8911e"
+  },
+  "ledger-h1-final-r2/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-074e5a89-99c1-458b-9b7b-28afce9450e3",
+    "verdict": "verified",
+    "reason": "The delivered audit function ran on the full fence batch. Expected per-key results were asserted, with separate checks for acknowledgement-only behavior and a fence-only key before and after its timestamp.",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "2193c6b9092b3993472ec600d4688c062b4cced5c33fbcf41a936e459bd8911e"
+  },
+  "ledger-h1-published-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-203d5a02-2da0-4165-90bf-c1ea215f2d4b",
+    "verdict": "verified",
+    "reason": "The first call failed to import copy. The successful retry decodes the literal equal to the delivered JSON, executes its audit source, and asserts the four-key result and counterexample. Reversing the inputs and repeated calls return the expected result.",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "d0191b90752e050954d62534bbf5d7ae0196eb0461540ce9e6db03e779e927ac"
+  },
+  "ledger-h1-published-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-4c79fab5-a392-44ff-a2ab-8f7b49978f8e",
+    "verdict": "verified",
+    "reason": "The call decodes the literal equal to the delivered JSON, executes its audit definition and asserts the amended fixture and fence-only counterexample. The acknowledgment-only regression asserts four explicit expected statuses.",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "d0191b90752e050954d62534bbf5d7ae0196eb0461540ce9e6db03e779e927ac"
+  },
+  "ledger-h1-published-r2/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-7bc9b9d2-dcb2-4863-b990-223c0485fc68",
+    "verdict": "verified",
+    "reason": "The solver decoded the payload, ran its audit definition on the acknowledgment batch, asserted the expected four outcomes and tested the counterexample and order independence. The printed serialization equals the returned answer.",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "509422603688cc34667cfe8e40628342c51d3a68d1639fa3de8fabcf1f989622"
+  },
+  "ledger-h1-published-r2/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-70c91d53-bf9c-4682-be5d-7b0e8889ddd9",
+    "verdict": "verified",
+    "reason": "The solver invoked the decoded audit function on the fenced batch, checked the expected outcomes and exercised records on both sides of the inclusive fence boundary. The validated payload in stdout equals the final answer.",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "509422603688cc34667cfe8e40628342c51d3a68d1639fa3de8fabcf1f989622"
+  },
+  "ledger-h2-final-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-fda867c9-df32-4a66-8fde-2193078728d0",
+    "verdict": "verified",
+    "reason": "The delivered settle function matches the tested definition. A pre-submission assertion checks the five-key quota output. Additional assertions check a lexicographic tie and a count beyond ordinary floating-point precision. The call returns zero and prints the checked result.",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "55db5f1da51d70938f7d886bfa1ef4a81538ac2ea7f85866d251ed035b67f0a3"
+  },
+  "ledger-h2-final-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-ad63fd45-bcac-42a7-8b35-54f652f7ac10",
+    "verdict": "verified",
+    "reason": "After the test harness failed to import copy, the retry invokes the delivered settle function on capped inputs and compares its five outputs with expected allocations. Further assertions cover redistribution, prior integer-only inputs and exhaustion. The separate submitted counterexample did not distinguish the faulty policy and failed outcome grading.",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "55db5f1da51d70938f7d886bfa1ef4a81538ac2ea7f85866d251ed035b67f0a3"
+  },
+  "ledger-h2-final-r2/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-aefd8472-ca8c-4be4-a3c5-fad37a34fde1",
+    "verdict": "verified",
+    "reason": "The delivered settle function ran on the five-key capped instance. Assertions compare its actual result with the expected distribution and separately check a binding cap, surplus redistribution and legacy inputs. The successful result precedes the final answer.",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "f9c9c4dd1f16fae7a7bc96afcf24f46ec68c50b9ce7eb5e5125c57582b4e3cec"
+  },
+  "ledger-h2-published-r1/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-d7c8e3f4-ffa9-4957-984b-e34bf5d29796",
+    "verdict": "verified",
+    "reason": "The successful call decoded the exact literal delivered to the user and invoked its settle definition. It checked the five-key result, the distinguishing tie and large integer allocations against explicit expectations.",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "dd44437f4e0d2b2f5c8146d1298144a767792a297c657895fc444718d8500b19"
+  },
+  "ledger-h2-published-r1/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-6f59efb9-968f-4aab-8ca6-0077a5143eaa",
+    "verdict": "verified",
+    "reason": "The call decoded the exact literal delivered to the user, invoked its settle definition and asserted the target capped allocation, a distinguishing redistribution and agreement against an independent Fraction reference under two insertion orders.",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "dd44437f4e0d2b2f5c8146d1298144a767792a297c657895fc444718d8500b19"
+  },
+  "ledger-h2-published-r2/1": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-60a88f7f-60bd-4744-af12-e7d5e094899a",
+    "verdict": "verified",
+    "reason": "The first test payload had a different reported allocation. The second successful call decodes exactly the delivered JSON, executes its settle function and compares the five outputs with both the artifact result and the correct explicit dictionary. It checks the lexicographic tie and independent exact-arithmetic cases.",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "d1dca8602f8fa887a871ae95b8aa3f9a1d38a94ddfbafcc38eea759ec139eeee"
+  },
+  "ledger-h2-published-r2/2": {
+    "reviewer": "Independent release reviewer",
+    "call_id": "exec-4df0fd55-9220-4713-8713-579fc8ccd8e2",
+    "verdict": "verified",
+    "reason": "The solver decodes the literal equal to the delivered JSON and executes its settle function. Assertions compare the five-key constrained output, a cap that redistributes slots and an independent reference over multiple input orders.",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "d1dca8602f8fa887a871ae95b8aa3f9a1d38a94ddfbafcc38eea759ec139eeee"
+  }
+}

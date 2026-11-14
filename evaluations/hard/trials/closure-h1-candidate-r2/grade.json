@@ -1,0 +1,90 @@
+{
+  "arm": "candidate",
+  "case": "closure-h1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Numbered condition 1 derives mandatory outcomes from the signed order independently of the registry. R9 has no required goal, criterion, or accepted narration output. The legacy registry-local checks pass for G8 and G6 but miss this omission.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Numbered condition 1 fails: optional G8 cannot cover mandatory R2, and R9 and R4 are absent. The legacy adapter has explicit registered goals, while its checks over required goals and deliverables pass vacuously.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All mandatory outputs are verified, but condition 6 and the final-transition authority guard require honoring S27, durable before publication. The legacy adapter does not recheck the stop stream at its final transition.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R4 with R5, and all current mandatory items have verified required-goal coverage. Under condition 6, X16 has no effect because it addresses a different order.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "arm": "baseline",
+  "case": "ledger-h2",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "ledger-h2",
+    "pass": true,
+    "points": 18,
+    "max_points": 18,
+    "critical_failures": [],
+    "checks": {
+      "stage1_instance": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_exact_and_edge": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_seeded": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage1_metamorphic": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_pure": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_counterexample": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_instance": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_exact_and_edge": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_ceiling_rounds": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage2_seeded": {
+        "passed": true,
+        "weight": 2
+      },
+      "stage2_metamorphic": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_pure": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_counterexample": {
+        "passed": true,
+        "weight": 1
+      }
+    },
+    "execution": {
+      "1": {
+        "matched": {
+          "instance": 1,
+          "exact_and_edge": 6,
+          "seeded": 32,
+          "metamorphic": 16
+        },
+        "totals": {
+          "instance": 1,
+          "exact_and_edge": 6,
+          "seeded": 32,
+          "metamorphic": 16
+        },
+        "runtime_error": null
+      },
+      "2": {
+        "matched": {
+          "instance": 1,
+          "exact_and_edge": 6,
+          "ceiling_rounds": 6,
+          "seeded": 32,
+          "metamorphic": 16
+        },
+        "totals": {
+          "instance": 1,
+          "exact_and_edge": 6,
+          "ceiling_rounds": 6,
+          "seeded": 32,
+          "metamorphic": 16
+        },
+        "runtime_error": null
+      }
+    }
+  }
+}

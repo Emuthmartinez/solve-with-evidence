@@ -1,0 +1,7 @@
+[
+  {
+    "stage": "ledger-h2-final-r2/1",
+    "call_id": "exec-823e7470-5f7c-467a-8baa-c307454b3a52",
+    "reason": "Tool sequence 8/9 ran a draft successfully, but the delivered JSON has an invalid escape and no parseable source at this stage."
+  }
+]

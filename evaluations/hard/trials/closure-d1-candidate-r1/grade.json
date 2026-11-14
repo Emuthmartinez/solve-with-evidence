@@ -1,0 +1,90 @@
+{
+  "arm": "candidate",
+  "case": "closure-d1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "quartz": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The legacy adapter has explicit registered goals and no registered required goals or deliverables to fail. Numbered condition 1 instead derives obligations from the signed order: optional G4 cannot satisfy mandatory R8, and R3 and R5 are unrepresented.",
+        "legacy_false_positive": true
+      },
+      "maple": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The registered required goals have current passing receipts and usable outputs, so the legacy adapter passes. Numbered condition 1 uses the signed-order domain, not merely the registry: mandatory R3 lacks a required goal, criterion, and accepted usable checklist.",
+        "legacy_false_positive": true
+      },
+      "orchid": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R5 with R6, and all current mandatory items have accepted usable outputs and passing required criteria. X16 addresses another order and does not bar publication.",
+        "legacy_false_positive": false
+      },
+      "linen": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All required outputs and criteria pass, so the registry-local legacy adapter passes. However, S81 became durable before publication. Numbered condition 6 and the final-transition authority guard suppress a new success notification despite the earlier passing assessment.",
+        "legacy_false_positive": true
+      }
+    }
+  }
+}

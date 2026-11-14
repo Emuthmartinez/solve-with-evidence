@@ -1,0 +1,80 @@
+{
+  "arm": "baseline",
+  "case": "closure-d1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 20,
+    "max_points": 20,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.adapter": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.adapter": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.adapter": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.adapter": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    }
+  }
+}

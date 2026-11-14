@@ -1,0 +1,206 @@
+{
+  "scope": "Three source-derived reference adapters for synthetic states. No provider or scheduler runs.",
+  "cases": {
+    "closure-d1": {
+      "snapshots": [
+        {
+          "id": "quartz",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        },
+        {
+          "id": "maple",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        },
+        {
+          "id": "orchid",
+          "expected_release": true,
+          "legacy": true,
+          "candidate_one": true,
+          "final_candidate": true
+        },
+        {
+          "id": "linen",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        }
+      ],
+      "counts": {
+        "legacy": {
+          "false_release": 3,
+          "false_withholding": 0
+        },
+        "candidate_one": {
+          "false_release": 0,
+          "false_withholding": 0
+        },
+        "final_candidate": {
+          "false_release": 0,
+          "false_withholding": 0
+        }
+      }
+    },
+    "closure-h1": {
+      "snapshots": [
+        {
+          "id": "silver",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        },
+        {
+          "id": "coral",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        },
+        {
+          "id": "cedar",
+          "expected_release": true,
+          "legacy": true,
+          "candidate_one": true,
+          "final_candidate": true
+        },
+        {
+          "id": "opal",
+          "expected_release": false,
+          "legacy": true,
+          "candidate_one": false,
+          "final_candidate": false
+        }
+      ],
+      "counts": {
+        "legacy": {
+          "false_release": 3,
+          "false_withholding": 0
+        },
+        "candidate_one": {
+          "false_release": 0,
+          "false_withholding": 0
+        },
+        "final_candidate": {
+          "false_release": 0,
+          "false_withholding": 0
+        }
+      }
+    }
+  },
+  "independent_controls": {
+    "snapshots": [
+      {
+        "id": "clean_success",
+        "expected_release": true,
+        "legacy": true,
+        "candidate_one": true,
+        "final_candidate": true
+      },
+      {
+        "id": "withhold_stale_evidence",
+        "expected_release": false,
+        "legacy": false,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_unresolved_common_check",
+        "expected_release": false,
+        "legacy": false,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_demoted_required_goal",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_unrepresented_second_deliverable",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "release_different_job_stopped_at_notice",
+        "expected_release": true,
+        "legacy": true,
+        "candidate_one": true,
+        "final_candidate": true
+      },
+      {
+        "id": "withhold_this_job_stopped_after_acceptance_before_notice",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_expired_notice_authority",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_amended_scope_after_acceptance",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_zero_obligations_after_signed_removal",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": false,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_initially_empty_order_and_register",
+        "expected_release": false,
+        "legacy": false,
+        "candidate_one": true,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_initially_empty_order_with_optional_registry",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": true,
+        "final_candidate": false
+      },
+      {
+        "id": "withhold_unresolved_obligation_with_guessed_receipt",
+        "expected_release": false,
+        "legacy": true,
+        "candidate_one": true,
+        "final_candidate": false
+      }
+    ],
+    "counts": {
+      "legacy": {
+        "false_release": 8,
+        "false_withholding": 0
+      },
+      "candidate_one": {
+        "false_release": 3,
+        "false_withholding": 0
+      },
+      "final_candidate": {
+        "false_release": 0,
+        "false_withholding": 0
+      }
+    }
+  }
+}

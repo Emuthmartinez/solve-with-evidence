@@ -1,0 +1,90 @@
+{
+  "arm": "candidate",
+  "case": "closure-h1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The signed current passes and usable readbacks cover R2 and R4. R9 is absent. Numbered condition 1 derives mandatory coverage from the signed order independently of the registry and therefore fails. The legacy adapter passes its registered required goals but does not detect the omitted narration requirement.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "G8 is optional, so its passing placement-map receipt cannot satisfy mandatory R2; R9 and R4 are absent. Numbered condition 1 fails under the original-order coverage domain. The legacy adapter has explicit registered goals, while its checks over registered required goals and deliverables pass vacuously.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All mandatory outputs have passing criteria and usable readbacks. However, binding stop S27 became durable before publication. Numbered condition 6 and the final transition's authority guard prohibit a new success notification. The legacy adapter does not read the stop stream at its final transition and passes.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R4 with R5, and all current mandatory items have required goals with passing criteria and usable readbacks. X16 concerns a different order and does not restrict this publication. Original-order coverage as amended and the current-order authority guard both pass.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

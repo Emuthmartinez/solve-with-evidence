@@ -1,0 +1,35 @@
+{
+  "positive_controls": 2,
+  "negative_controls": {
+    "precedence": [
+      "stage1_all_original_inputs"
+    ],
+    "broadened exhibit": [
+      "stage2_explicit_campaign_true"
+    ],
+    "lost absent-field rows": [
+      "stage2_all_original_inputs",
+      "stage2_explicit_campaign_false"
+    ],
+    "flattened input": [
+      "stage1_witness_shape"
+    ],
+    "valid but non-distinguishing": [
+      "stage2_witness_distinguishes"
+    ],
+    "wrong oracle result": [
+      "stage1_witness_expected"
+    ],
+    "boolean confused with number": [
+      "stage1_table_syntax"
+    ],
+    "wrong reported order": [
+      "stage2_supplied_outputs"
+    ]
+  },
+  "parser_controls": 4,
+  "domain_counts": [
+    12,
+    36
+  ]
+}

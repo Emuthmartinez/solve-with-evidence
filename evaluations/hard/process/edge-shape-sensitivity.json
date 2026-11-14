@@ -1,0 +1,155 @@
+{
+  "case": "artifact-h3",
+  "analysis": "Post-hoc alternate interpretation of one-argument edge.job",
+  "independent_outcome": false,
+  "normalization": "Wrap a valid direct stage-1 rows argument in a rows object. All other fields, invalid answers, and stage 2 remain as delivered.",
+  "frozen_grader_sha256": "0de8515122a127e2b415a1e7b5595eb5c9d279e46bb45bbd2b096dcaac3eccb7",
+  "trials": [
+    {
+      "trial": "artifact-h3-baseline-r1",
+      "trace_sha256": "08461dbf5fb0491163f78263c7b26c51359b0378e0da2ceba7f7e6d0850aaaa8",
+      "final_answer_sha256": [
+        "71f888e8f8e181bc150f93dad069f84587f7aa43baa43cfa82961e8b2c16a04c",
+        "5cddede0dab39b824bd96d3b4fd0aa556fa5bade2a5bb7fd979d1378bb1a01ab"
+      ],
+      "final_parsed_as_object": [
+        true,
+        true
+      ],
+      "stage1_job_wrapped": false,
+      "strict_replay_matches_original_grade": true,
+      "strict": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "alternate_interpretation": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "changed_checks": []
+    },
+    {
+      "trial": "artifact-h3-baseline-r2",
+      "trace_sha256": "574048629cd5d615756e5abe56364f2ef287955967d80a9b9bedab9041826ee7",
+      "final_answer_sha256": [
+        "4963fd685e28b972257699e9336d420d72dc3277faa985b03951ffe82b6d9498",
+        "d38327f90be0efbda3bb7af5429ec11d8b95164c738fba1e6997b9ffe6ec652b"
+      ],
+      "final_parsed_as_object": [
+        true,
+        true
+      ],
+      "stage1_job_wrapped": false,
+      "strict_replay_matches_original_grade": true,
+      "strict": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "alternate_interpretation": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "changed_checks": []
+    },
+    {
+      "trial": "artifact-h3-published-r1",
+      "trace_sha256": "2d06dea62821e82a51fc3dadeb55a3aedcd98505aaa1b0613a1ce5c6857f5aa2",
+      "final_answer_sha256": [
+        "ae15e426b8474ddfe9a80041ce437de41124d7687cafd9f0cbe57ee8b6c70a75",
+        "bedc562a9ad777596bd2163d352441614d378b059e3594a8f57f7affc2365bfa"
+      ],
+      "final_parsed_as_object": [
+        true,
+        true
+      ],
+      "stage1_job_wrapped": true,
+      "strict_replay_matches_original_grade": true,
+      "strict": {
+        "points": 16,
+        "max_points": 17,
+        "pass": false,
+        "critical_failures": [
+          "stage1_counterexample"
+        ]
+      },
+      "alternate_interpretation": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "changed_checks": [
+        "stage1_counterexample"
+      ]
+    },
+    {
+      "trial": "artifact-h3-published-r2",
+      "trace_sha256": "19ee28b6807bb20a9fa1960aae2775162574301fc8bcacf0540a23a139c0ae01",
+      "final_answer_sha256": [
+        "e035ad12cfc09c4227d7f94351339a875c13e55bf2b510ef4bdc52e38513fc98",
+        "078fff2546a37d0fc24fd1c144d804fc002ea301d42863a46de67614370884e4"
+      ],
+      "final_parsed_as_object": [
+        true,
+        true
+      ],
+      "stage1_job_wrapped": true,
+      "strict_replay_matches_original_grade": true,
+      "strict": {
+        "points": 16,
+        "max_points": 17,
+        "pass": false,
+        "critical_failures": [
+          "stage1_counterexample"
+        ]
+      },
+      "alternate_interpretation": {
+        "points": 17,
+        "max_points": 17,
+        "pass": true,
+        "critical_failures": []
+      },
+      "changed_checks": [
+        "stage1_counterexample"
+      ]
+    }
+  ],
+  "totals": {
+    "baseline": {
+      "strict": {
+        "passes": 2,
+        "trials": 2,
+        "points": 34,
+        "maximum": 34
+      },
+      "alternate_interpretation": {
+        "passes": 2,
+        "trials": 2,
+        "points": 34,
+        "maximum": 34
+      }
+    },
+    "published": {
+      "strict": {
+        "passes": 0,
+        "trials": 2,
+        "points": 32,
+        "maximum": 34
+      },
+      "alternate_interpretation": {
+        "passes": 2,
+        "trials": 2,
+        "points": 34,
+        "maximum": 34
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "arm": "final",
+  "case": "linkage-h1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "linkage-h1",
+    "points": 10,
+    "max_points": 10,
+    "pass": true,
+    "checks": {
+      "1.feasible_linkages": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.bounds": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.low_witness": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.high_witness": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.decision": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.feasible_linkages": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.bounds": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.low_witness": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.high_witness": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.decision": {
+        "passed": true,
+        "weight": 1
+      }
+    },
+    "critical_failures": []
+  }
+}

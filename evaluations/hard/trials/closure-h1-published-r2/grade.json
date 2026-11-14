@@ -1,0 +1,90 @@
+{
+  "arm": "published",
+  "case": "closure-h1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Numbered condition 1 derives mandatory outcomes from the signed order independently of the registry. R9 is unrepresented, so coverage fails despite passing registered required goals.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The legacy adapter has explicit registered goals and vacuously passes its required-goal checks. Numbered condition 1 instead uses the signed-order domain: optional G8 cannot satisfy mandatory R2, and R9 and R4 are unrepresented.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All mandatory outputs pass, but condition 6 and the final-transition authority guard prohibit publication: binding stop S27 became durable before any notification was committed. The legacy adapter does not read that stop stream at its final transition.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R4 with R5, and all current mandatory outcomes have passing required goals and usable outputs. Under condition 6, X16 does not bind this order.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

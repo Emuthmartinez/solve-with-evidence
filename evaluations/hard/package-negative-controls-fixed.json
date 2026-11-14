@@ -1,0 +1,182 @@
+[
+  {
+    "case": "original package control",
+    "optimized": false,
+    "exit": 0,
+    "output": "Package matches the selected manifest.\nTwo historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "original package control",
+    "optimized": true,
+    "exit": 0,
+    "output": "Package matches the selected manifest.\nTwo historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "changed skill",
+    "optimized": false,
+    "exit": 1,
+    "output": "Digest differs: SKILL.md"
+  },
+  {
+    "case": "changed skill",
+    "optimized": true,
+    "exit": 1,
+    "output": "Digest differs: SKILL.md"
+  },
+  {
+    "case": "extra nested file",
+    "optimized": false,
+    "exit": 1,
+    "output": "Unexpected file: references/new"
+  },
+  {
+    "case": "extra nested file",
+    "optimized": true,
+    "exit": 1,
+    "output": "Unexpected file: references/new"
+  },
+  {
+    "case": "missing file",
+    "optimized": false,
+    "exit": 1,
+    "output": "Missing files: SKILL.md"
+  },
+  {
+    "case": "missing file",
+    "optimized": true,
+    "exit": 1,
+    "output": "Missing files: SKILL.md"
+  },
+  {
+    "case": "same bytes via symlink",
+    "optimized": false,
+    "exit": 1,
+    "output": "Unexpected symlink: SKILL.md"
+  },
+  {
+    "case": "same bytes via symlink",
+    "optimized": true,
+    "exit": 1,
+    "output": "Unexpected symlink: SKILL.md"
+  },
+  {
+    "case": "symlink to directory",
+    "optimized": false,
+    "exit": 1,
+    "output": "Unexpected symlink: linked"
+  },
+  {
+    "case": "symlink to directory",
+    "optimized": true,
+    "exit": 1,
+    "output": "Unexpected symlink: linked"
+  },
+  {
+    "case": "dangling symlink",
+    "optimized": false,
+    "exit": 1,
+    "output": "Unexpected symlink: linked"
+  },
+  {
+    "case": "dangling symlink",
+    "optimized": true,
+    "exit": 1,
+    "output": "Unexpected symlink: linked"
+  },
+  {
+    "case": "extra empty directory",
+    "optimized": false,
+    "exit": 1,
+    "output": "Unexpected directory: empty"
+  },
+  {
+    "case": "extra empty directory",
+    "optimized": true,
+    "exit": 1,
+    "output": "Unexpected directory: empty"
+  },
+  {
+    "case": "package root symlink",
+    "optimized": false,
+    "exit": 1,
+    "output": "Package must be a directory, not a symlink."
+  },
+  {
+    "case": "package root symlink",
+    "optimized": true,
+    "exit": 1,
+    "output": "Package must be a directory, not a symlink."
+  },
+  {
+    "case": "unchanged bytes against other historical manifest",
+    "optimized": false,
+    "exit": 1,
+    "output": "Digest differs: SKILL.md"
+  },
+  {
+    "case": "unchanged bytes against other historical manifest",
+    "optimized": true,
+    "exit": 1,
+    "output": "Digest differs: SKILL.md"
+  },
+  {
+    "case": "new package and explicit new manifest",
+    "optimized": false,
+    "exit": 0,
+    "output": "Package matches the selected manifest.\nTwo historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "new package and explicit new manifest",
+    "optimized": true,
+    "exit": 0,
+    "output": "Package matches the selected manifest.\nTwo historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "historical replay after package advances",
+    "optimized": false,
+    "exit": 0,
+    "output": "Two historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "historical replay after package advances",
+    "optimized": true,
+    "exit": 0,
+    "output": "Two historical D1 replays and fixture probes passed."
+  },
+  {
+    "case": "historical replay distinguishes corrupt state",
+    "optimized": false,
+    "exit": 1,
+    "output": "Trace differs: candidate"
+  },
+  {
+    "case": "historical replay distinguishes corrupt state",
+    "optimized": true,
+    "exit": 1,
+    "output": "Trace differs: candidate"
+  },
+  {
+    "case": "probe distinguishes wrong acknowledgement code",
+    "optimized": false,
+    "exit": 1,
+    "output": "Expected acknowledgement timeout."
+  },
+  {
+    "case": "probe distinguishes wrong acknowledgement code",
+    "optimized": true,
+    "exit": 1,
+    "output": "Expected acknowledgement timeout."
+  },
+  {
+    "case": "explicit package requires identity manifest",
+    "optimized": false,
+    "exit": 2,
+    "output": "usage: verify_evidence.py [-h] [--manifest MANIFEST] [--package PACKAGE]\nverify_evidence.py: error: --package requires --manifest"
+  },
+  {
+    "case": "explicit package requires identity manifest",
+    "optimized": true,
+    "exit": 2,
+    "output": "usage: verify_evidence.py [-h] [--manifest MANIFEST] [--package PACKAGE]\nverify_evidence.py: error: --package requires --manifest"
+  }
+]

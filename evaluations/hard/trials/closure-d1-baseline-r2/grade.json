@@ -1,0 +1,90 @@
+{
+  "arm": "baseline",
+  "case": "closure-d1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "quartz": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Use the current signed order as the domain of required goals and deliverables in conditions 1\u20133, not merely the imported registry. G4 is optional, so its passing receipt cannot satisfy mandatory R8; R3 and R5 are absent. The legacy registry-local checks pass vacuously for required goals and deliverables because explicit optional goals exist.",
+        "legacy_false_positive": true
+      },
+      "maple": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Use the current signed order as the domain of required goals and deliverables in conditions 1\u20133. G4 and G2 have current passing receipts and usable readbacks, but mandatory R3 is unrepresented and has no authorized scope amendment. A registry-only reading permits completion, as the legacy adapter does; the signed-scope reading blocks it.",
+        "legacy_false_positive": true
+      },
+      "orchid": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment supersedes R5 with R6. All current mandatory items have required goals with passing reviews and usable readbacks. X16 concerns another order and does not withdraw authorization.",
+        "legacy_false_positive": false
+      },
+      "linen": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "ambiguous",
+        "rationale": "The printed final transition checks the six conditions and quiescence without an explicit cancellation guard; a registry-local implementation permits. Treating the binding suppression instruction as a hard constraint under condition 4 blocks. Regardless of that implementation ambiguity, S81 became durable before publication and explicitly withdraws authorization for this order's success notification.",
+        "legacy_false_positive": true
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "arm": "baseline",
+  "case": "probe-d2",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "probe-d2",
+    "points": 10,
+    "max_points": 10,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.first": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.first_losses": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.contingency": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.posterior": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.remaining_losses": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.action": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.repair_after": {
+        "passed": true,
+        "weight": 1
+      }
+    }
+  }
+}

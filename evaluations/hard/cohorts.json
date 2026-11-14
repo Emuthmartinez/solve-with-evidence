@@ -1,0 +1,130 @@
+[
+  {
+    "name": "development",
+    "trials": "trials",
+    "cases": [
+      "probe-d1",
+      "probe-d2",
+      "roster-d1",
+      "roster-d2",
+      "linkage-d1",
+      "linkage-d2",
+      "closure-d1",
+      "ledger-d1"
+    ],
+    "arms": [
+      "baseline",
+      "candidate",
+      "release",
+      "final",
+      "published",
+      "shipped"
+    ],
+    "reps": [
+      1,
+      2
+    ],
+    "exclusions": [
+      {
+        "path": "preflight/probe-d1-preflight",
+        "reason": "Calculator resource limit unavailable during this run; replaced and repeated on both arms with final calculator."
+      },
+      {
+        "path": "preflight/closure-superseded/closure-d1-baseline-r1",
+        "reason": "Earlier closure task wording and rubric superseded before official trials; both arms used the same frozen rubric in the comparison."
+      },
+      {
+        "path": "preflight/closure-superseded/closure-d1-baseline-r2",
+        "reason": "Earlier closure task wording and rubric superseded before official trials; both arms used the same frozen rubric in the comparison."
+      },
+      {
+        "path": "preflight/rate-limited/artifact-h3-shipped-r1",
+        "reason": "Provider quota blocked inference in the initial release attempt. No solver score."
+      },
+      {
+        "path": "preflight/rate-limited/artifact-h3-shipped-r2",
+        "reason": "Provider quota blocked inference in the initial release attempt. No solver score."
+      },
+      {
+        "path": "preflight/rate-limited/ledger-h2-shipped-r1",
+        "reason": "Provider quota blocked inference in the initial release attempt. No solver score."
+      },
+      {
+        "path": "preflight/rate-limited/ledger-h2-shipped-r2",
+        "reason": "Provider quota blocked inference in the initial release attempt. No solver score."
+      }
+    ]
+  },
+  {
+    "name": "reserved",
+    "trials": "trials",
+    "cases": [
+      "probe-h1",
+      "roster-h1",
+      "linkage-h1",
+      "ledger-h1",
+      "closure-h1"
+    ],
+    "arms": [
+      "baseline",
+      "candidate",
+      "release",
+      "final",
+      "published",
+      "shipped"
+    ],
+    "reps": [
+      1,
+      2
+    ]
+  },
+  {
+    "name": "fresh-confirmation",
+    "trials": "trials",
+    "cases": [
+      "closure-h2",
+      "ledger-h2"
+    ],
+    "arms": [
+      "baseline",
+      "final",
+      "published",
+      "shipped"
+    ],
+    "reps": [
+      1,
+      2
+    ]
+  },
+  {
+    "name": "serialization-transfer",
+    "trials": "trials",
+    "cases": [
+      "artifact-h3"
+    ],
+    "arms": [
+      "baseline",
+      "published",
+      "shipped"
+    ],
+    "reps": [
+      1,
+      2
+    ]
+  },
+  {
+    "name": "fresh-consumer-contract",
+    "trials": "trials",
+    "cases": [
+      "contract-h4"
+    ],
+    "arms": [
+      "baseline",
+      "shipped"
+    ],
+    "reps": [
+      1,
+      2
+    ]
+  }
+]

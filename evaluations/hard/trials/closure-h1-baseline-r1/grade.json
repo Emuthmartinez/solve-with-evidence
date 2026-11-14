@@ -1,0 +1,90 @@
+{
+  "arm": "baseline",
+  "case": "closure-h1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Apply conditions 1\u20133 over the current signed scope, not merely the imported registry. R9 remains mandatory but has no registered required criterion or accepted output. The registry-local legacy checks pass.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Apply conditions 1\u20133 over the current signed scope, not merely the imported registry. Optional G8 cannot supply mandatory coverage for R2; R9 and R4 are absent. The legacy gate passes because explicit goals exist and its registered-required checks are vacuously satisfied.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "Using the literal numbered predicate and printed final-transition guard: all required outcomes pass and producers are quiescent; that guard contains no explicit cancellation check. Publication nevertheless lacks authorization: binding stop S27 became durable before any notification was committed.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R4 with R5. All currently mandatory items have required passing criteria and accepted usable outputs. X16 addresses another order and does not bar this notification.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

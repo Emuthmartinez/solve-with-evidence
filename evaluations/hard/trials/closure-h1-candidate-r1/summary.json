@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "closure-h1",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:27:44.168+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\n  \"coral\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [],\n      \"R4\": [\"G6\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"The signed current passes and usable readbacks cover R2 and R4. R9 is absent. Numbered condition 1 derives mandatory coverage from the signed order independently of the registry and therefore fails. The legacy adapter passes its registered required goals but does not detect the omitted narration requirement.\"\n  },\n  \"silver\": {\n    \"required_coverage\": {\n      \"R2\": [],\n      \"R9\": [],\n      \"R4\": []\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"G8 is optional, so its passing placement-map receipt cannot satisfy mandatory R2; R9 and R4 are absent. Numbered condition 1 fails under the original-order coverage domain. The legacy adapter has explicit registered goals, while its checks over registered required goals and deliverables pass vacuously.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 21125,
+          "inputTokens": 20783,
+          "cachedInputTokens": 12672,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 342,
+          "reasoningOutputTokens": 42
+        },
+        "last": {
+          "totalTokens": 12557,
+          "inputTokens": 12238,
+          "cachedInputTokens": 8448,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 319,
+          "reasoningOutputTokens": 42
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:27:44.960+00:00",
+      "completed_at": "2026-11-14T19:27:55.171+00:00",
+      "elapsed_s": 10.212
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\n  \"opal\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [\"G3\"],\n      \"R4\": [\"G6\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": \"S27\",\n    \"disposition\": \"withhold\",\n    \"rationale\": \"All mandatory outputs have passing criteria and usable readbacks. However, binding stop S27 became durable before publication. Numbered condition 6 and the final transition's authority guard prohibit a new success notification. The legacy adapter does not read the stop stream at its final transition and passes.\"\n  },\n  \"cedar\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [\"G3\"],\n      \"R5\": [\"G4\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"permits\",\n    \"stop_receipt\": null,\n    \"disposition\": \"release\",\n    \"rationale\": \"The signed amendment replaces R4 with R5, and all current mandatory items have required goals with passing criteria and usable readbacks. X16 concerns a different order and does not restrict this publication. Original-order coverage as amended and the current-order authority guard both pass.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 34348,
+          "inputTokens": 33726,
+          "cachedInputTokens": 12672,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 622,
+          "reasoningOutputTokens": 42
+        },
+        "last": {
+          "totalTokens": 13223,
+          "inputTokens": 12943,
+          "cachedInputTokens": 0,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 280,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 0,
+      "started_at": "2026-11-14T19:27:55.172+00:00",
+      "completed_at": "2026-11-14T19:28:02.094+00:00",
+      "elapsed_s": 6.923
+    }
+  ],
+  "tool_calls": 1,
+  "skill_files_sha256": {
+    "SKILL.md": "55386aab3c78662485406610b447f2679d80d73ad117279858c198dee9305012",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "7f4d81397ba6c3a74a595c686f0e59774b1e1d876bcbd162145af7c1565a00ee",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "342bac2ccac467f20542d50b4a293ed83072febff63846570df70f23b93aaea9"
+  },
+  "case_messages_sha256": "cfaa52cf17458ce43de4a6a7968b937dbf200284b0125e1c43d74e41504b2ced",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 17.942,
+  "provider": "openai",
+  "thread_id": "01a1db87-add0-7a81-9de7-338da02e6644",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:28:02.110+00:00",
+  "app_server_exit_code": 0
+}

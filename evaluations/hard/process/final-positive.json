@@ -1,0 +1,202 @@
+{
+  "ledger-d1-published-r2/1": {
+    "call_id": "exec-a5eef2b2-1ed7-45ca-9672-a2dfc613c3c5",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "19a83d0e373142d80954cdcdc40655efeef9a962ce1fd74fd4c9bcb0557a9968",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The call decoded the exported object, executed its audit function, checked the full fixture, conflicting observations and the inclusive freshness boundary against explicit expected dictionaries. Its printed payload exactly matches the final answer."
+  },
+  "ledger-d1-published-r2/2": {
+    "call_id": "exec-cce4555b-75b2-441e-a247-2039fc3dbc13",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "19a83d0e373142d80954cdcdc40655efeef9a962ce1fd74fd4c9bcb0557a9968",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded function ran on the amended fixture, a fix affecting an observation, a missing observation, and the original observation-only records. Each result was checked against explicit expectations. The validated object printed by the tool equals the final answer."
+  },
+  "artifact-h3-shipped-r1/1": {
+    "call_id": "exec-d3a4812a-a444-47c4-a1a1-82e43ea0f4b8",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "1b865260130d3108a3552cc874d2bbe10ad752b1ee53e7706687d72a7f1b4ebc",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The successful call decoded the actual submitted source, ran the supplied rows and checked an independently assembled string, unchanged inputs, empty input, and a literal-backslash witness against the stated faulty encoder. The payload matches the final answer. The edge job was supplied as a positional list and failed the strict external object check."
+  },
+  "artifact-h3-shipped-r1/2": {
+    "call_id": "exec-74fcfef1-e9ae-4374-916a-d89b8cec87e8",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "1b865260130d3108a3552cc874d2bbe10ad752b1ee53e7706687d72a7f1b4ebc",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The call compared the decoded render function with hand-assembled strings on the supplied job, block-mode edge and old behavior. It invoked the faulty whole-row encoder and distinguished it. The validated payload was printed verbatim and the edge used the required job object."
+  },
+  "ledger-h2-shipped-r2/1": {
+    "call_id": "exec-9f5ec71d-5412-4436-8237-998aac563df1",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "aff3a26ff496beda7f6ac99775304479e04589c796c544d2b1ca8163c0cb89f6",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The first fixture assertion caught a wrong allocation. The successful retry decoded the corrected package, exercised settle against a fixed tie outcome, permutations, zero inputs, and large integers, and checked the faulty tie rule gives the opposite allocation. The emitted package equals the final answer."
+  },
+  "ledger-h2-shipped-r2/2": {
+    "call_id": "exec-505ee64b-5300-4679-a90f-4678a9d96cdd",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "aff3a26ff496beda7f6ac99775304479e04589c796c544d2b1ca8163c0cb89f6",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered function ran on the actual capped fixture and edge. Both results matched an independently implemented reference, and the reference reproduced the faulty redistribution on the edge. The test also checked unchanged inputs and the previous allocation rules. The emitted package equals the final answer."
+  },
+  "ledger-d1-shipped-r1/1": {
+    "call_id": "exec-e660b8a0-5ccb-4148-96bd-4d7a0fcdc568",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "03ae3fa4b52e8672216e9f96d8f86f5fd3818d2e260e120d05bf4568b93dab6d",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded audit function matched explicit fixture states and a tied-observation conflict. The faulty function selected the last state instead of the conflict. Assertions also covered duplicate observations, freshness and reversed input. The emitted package equals the final answer."
+  },
+  "ledger-d1-shipped-r1/2": {
+    "call_id": "exec-e62a95fb-db57-4d11-910c-639d91f499cb",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "03ae3fa4b52e8672216e9f96d8f86f5fd3818d2e260e120d05bf4568b93dab6d",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded function matched the explicit amended fixture and original observation-only results. It exercised the recovered counterexample and contrasted its answer with the faulty function. Checks also covered fixes on absent or different revisions. The emitted package equals the final answer."
+  },
+  "ledger-d1-shipped-r2/1": {
+    "call_id": "exec-c15819aa-ad22-44ec-b536-b5210c32d4ae",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "25ddcca30cd0ad7f8ce72fdba0c3984673d24927bd6be9faba7ef344113d86ad",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded function matched the explicit fixture and the recovered counterexample. The faulty rule produced missed where the expected state was conflict. Reversal, result independence and a freshness boundary also passed. The emitted package equals the final answer."
+  },
+  "ledger-d1-shipped-r2/2": {
+    "call_id": "exec-0562bcbc-36ef-4ead-a4bb-2f344f277bad",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "25ddcca30cd0ad7f8ce72fdba0c3984673d24927bd6be9faba7ef344113d86ad",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered function matched explicit states on the amended and original records, including a fix where the faulty rule disagreed. Assertions covered result independence, empty and reordered inputs and freshness. The emitted package equals the final answer."
+  },
+  "ledger-h1-shipped-r1/1": {
+    "call_id": "exec-fcb59e2a-8509-4a5d-bf18-190665ce0156",
+    "call_seq": 13,
+    "result_seq": 14,
+    "final_start_seq": 17,
+    "trace_sha256": "f841fcc33d4059a0c304fc01c1b9a4ea63e7b223bc2011e865b9e19e2191174d",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "A missing copy import failed the first attempt. The successful retry decoded the delivered audit, compared the acknowledgment fixture against four expected states, and demonstrated that equal digests at unequal epochs fooled the faulty implementation. The emitted package equals the final answer."
+  },
+  "ledger-h1-shipped-r1/2": {
+    "call_id": "exec-7544a395-dbb7-4965-a4a6-ba45ec0f9d5b",
+    "call_seq": 26,
+    "result_seq": 27,
+    "final_start_seq": 30,
+    "trace_sha256": "f841fcc33d4059a0c304fc01c1b9a4ea63e7b223bc2011e865b9e19e2191174d",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded function matched five explicit fence-aware states, an independent expected withdrawal for a lone fence, and the original four states without fences. The faulty rule gave an empty result on the witness. The emitted package equals the final answer."
+  },
+  "contract-h4-shipped-r1/1": {
+    "call_id": "exec-86a8f3c4-5ab8-4e31-8117-d0bb61b118ab",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "b5387653bc890e83b3514154e0c53bb3885102021bbcf87c2613b40031d01e80",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded table was executed against an independent routing function on all 12 inputs. The call checked the witness object and its shape, then distinguished the faulty sorter. The emitted payload equals the final answer."
+  },
+  "contract-h4-shipped-r1/2": {
+    "call_id": "exec-ce9ce6dc-5513-46ba-aa8f-e401b9b122af",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "b5387653bc890e83b3514154e0c53bb3885102021bbcf87c2613b40031d01e80",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The call ran the decoded table against an independent rule across absent, false and true campaigns. It checked the five supplied outputs, witness fields, disagreement with the faulty rule and the request changed by the amendment. The emitted payload equals the final answer."
+  },
+  "contract-h4-shipped-r2/1": {
+    "call_id": "exec-b755af84-81d1-40f9-a4eb-86368c507a32",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "ec2339376cc6defa2e0ad65bb3b6f2b9c6ea3c8a30714e137f27e4862c1320fc",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The call decoded the actual serialized table and checked exact types, all 12 legal inputs against an independent rule and the reported supplied outputs. The nested witness was validated and produced a different answer under the faulty rule. The emitted payload equals the final answer."
+  },
+  "contract-h4-shipped-r2/2": {
+    "call_id": "exec-1e4e3e69-bcb8-4edc-841f-62dffb127a49",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "ec2339376cc6defa2e0ad65bb3b6f2b9c6ea3c8a30714e137f27e4862c1320fc",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The decoded table was run against an independent routing implementation on missing and explicit campaign settings. The call validated the witness's full outer request, its expected output and disagreement with the faulty rule. The emitted payload equals the final answer."
+  },
+  "ledger-h1-shipped-r2/1": {
+    "call_id": "exec-159e03a5-35c2-4efa-a899-b7880c358913",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "dcb270d75f828274d4815285b7f3e15034db4c2177e2643ba3160323399eaa90",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered audit handled the supplied acknowledgments and explicit pending witness. A faulty implementation gave verified for the same pair. Assertions exercised reversed and doubled inputs and unchanged state. The emitted package equals the final answer."
+  },
+  "ledger-h1-shipped-r2/2": {
+    "call_id": "exec-3417415b-f213-4bd4-b323-0a296cc37208",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "dcb270d75f828274d4815285b7f3e15034db4c2177e2643ba3160323399eaa90",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered audit matched all five explicit fence-aware states, and the recovered witness gave withdrawn after its timestamp. The faulty rule returned no entry on the witness. Duplicate, reordered and empty inputs were checked. The emitted package equals the final answer."
+  },
+  "ledger-h2-shipped-r1/1": {
+    "call_id": "exec-470ae259-82e2-4569-ab55-a261a227e796",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "956fdef0a0750c3c876b8f02802452dcc4a28166b80241ca4c4bb9cc3687af92",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered allocator matched explicit fixture and tie results, and a faulty allocator gave the opposite tie allocation. The call also checked permutations, zero slots, weights and large integer behavior. The emitted package equals the final answer."
+  },
+  "ledger-h2-shipped-r1/2": {
+    "call_id": "exec-94944731-6141-4bf8-af68-f02fe92233f7",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "956fdef0a0750c3c876b8f02802452dcc4a28166b80241ca4c4bb9cc3687af92",
+    "reviewer": "Independent final reviewer",
+    "verdict": "verified",
+    "reason": "The recovered allocator matched the capped fixture and recovered witness, with an independent allocation rule across 3,430 input combinations. The faulty rule failed to redistribute the remaining slot. The old fixture, input order and large-integer behavior passed. The emitted package equals the final answer."
+  }
+}

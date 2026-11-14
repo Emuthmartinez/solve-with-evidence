@@ -1,0 +1,90 @@
+{
+  "arm": "baseline",
+  "case": "closure-h1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-h1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.coral.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.coral.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.silver.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.silver.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.opal.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.opal.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.cedar.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.cedar.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "coral": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Uses the current signed-order scope as the predicate's required-goal domain, rather than only the imported registry. R9 has no required criterion or accepted usable output; no amendment authorizes its disappearance. The registry-local legacy checks pass.",
+        "legacy_false_positive": true
+      },
+      "silver": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Uses the current signed-order scope as the predicate's required-goal domain. Optional G8 cannot satisfy mandatory R2, and R9 and R4 are absent. The skill prohibits renaming unmet requirements as optional. The legacy adapter passes because explicit goals exist and its registered-required checks are vacuously satisfied.",
+        "legacy_false_positive": true
+      },
+      "opal": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "Uses the literal numbered predicate and final transition: verified requirements and quiescence pass, but that transition lacks an explicit cancellation guard. Publication nevertheless lacks authorization: binding S27 was acknowledged and durable before any notification commitment, overriding the earlier passing assessment.",
+        "legacy_false_positive": true
+      },
+      "cedar": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment supersedes R4 with R5; all currently mandatory items have passing required criteria and usable outputs. X16 addresses another order and does not withdraw this order's publication authority.",
+        "legacy_false_positive": false
+      }
+    }
+  }
+}

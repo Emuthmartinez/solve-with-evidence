@@ -1,0 +1,90 @@
+{
+  "arm": "candidate",
+  "case": "closure-d1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "quartz": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The legacy adapter has explicit registered goals and no registered required goals, so its required-goal checks pass vacuously. Loaded predicate 1 derives obligations from the signed order: optional G4 cannot cover mandatory R8, and R3 and R5 are absent. Passing receipts for optional outputs do not repair required coverage.",
+        "legacy_false_positive": true
+      },
+      "maple": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The registered required goals G4 and G2 have current passing criteria and usable readback receipts, satisfying the legacy adapter. Loaded predicate 1 uses the signed-order domain independently of the registry: mandatory R3 has no required goal, checklist, or required outcome criterion. No amendment removes that obligation.",
+        "legacy_false_positive": true
+      },
+      "orchid": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R5 with R6, and all current mandatory items have verified required-goal coverage. X16 addresses another order and is not binding here.",
+        "legacy_false_positive": false
+      },
+      "linen": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All required outputs are verified. The legacy final transition passes because it does not read stop events. Loaded predicate 6 and the final-transition authority guard block publication: S81 binds this order and became durable before any notification was committed.",
+        "legacy_false_positive": true
+      }
+    }
+  }
+}

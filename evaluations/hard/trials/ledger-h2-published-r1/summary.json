@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "ledger-h2",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:37:06.180+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\"source\":\"def settle(charges, slots):\\n    total = sum(charges.values())\\n    allocations = dict.fromkeys(charges, 0)\\n    if total == 0:\\n        return allocations\\n    remainders = {}\\n    for identifier, weight in charges.items():\\n        allocations[identifier], remainders[identifier] = divmod(slots * weight, total)\\n    remaining = slots - sum(allocations.values())\\n    for identifier in sorted(charges, key=lambda identifier: (-remainders[identifier], identifier))[:remaining]:\\n        allocations[identifier] += 1\\n    return allocations\\n\",\"result\":{\"zebra\":2,\"gale\":1,\"fern\":2,\"iris\":0,\"alder\":2},\"edge\":{\"charges\":{\"b\":1,\"a\":1},\"slots\":1,\"expected\":{\"b\":0,\"a\":1}}}",
+      "usage": {
+        "total": {
+          "totalTokens": 17818,
+          "inputTokens": 17089,
+          "cachedInputTokens": 12672,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 729,
+          "reasoningOutputTokens": 0
+        },
+        "last": {
+          "totalTokens": 9139,
+          "inputTokens": 8944,
+          "cachedInputTokens": 8448,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 195,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:37:06.968+00:00",
+      "completed_at": "2026-11-14T19:37:25.370+00:00",
+      "elapsed_s": 18.402
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\"source\":\"def settle(charges, slots):\\n    weights = {}\\n    caps = {}\\n    allocations = dict.fromkeys(charges, 0)\\n    for identifier, value in charges.items():\\n        if isinstance(value, int):\\n            weights[identifier] = value\\n            caps[identifier] = None\\n        else:\\n            weights[identifier] = value['weight']\\n            caps[identifier] = value['cap']\\n    remaining = slots\\n    while remaining > 0:\\n        eligible = [identifier for identifier in charges\\n                    if weights[identifier] > 0\\n                    and (caps[identifier] is None\\n                         or allocations[identifier] < caps[identifier])]\\n        if not eligible:\\n            break\\n        total = sum(weights[identifier] for identifier in eligible)\\n        proposals = {}\\n        remainders = {}\\n        for identifier in eligible:\\n            proposals[identifier], remainders[identifier] = divmod(\\n                remaining * weights[identifier], total)\\n        extras = remaining - sum(proposals.values())\\n        ranked = sorted(eligible, key=lambda identifier: (-remainders[identifier], identifier))\\n        for identifier in ranked[:extras]:\\n            proposals[identifier] += 1\\n        for identifier in eligible:\\n            grant = proposals[identifier]\\n            if caps[identifier] is not None:\\n                grant = min(grant, caps[identifier] - allocations[identifier])\\n            allocations[identifier] += grant\\n            remaining -= grant\\n    return allocations\\n\",\"result\":{\"zebra\":1,\"gale\":4,\"fern\":2,\"iris\":0,\"alder\":4},\"edge\":{\"charges\":{\"b\":{\"weight\":3,\"cap\":1},\"a\":1},\"slots\":4,\"expected\":{\"b\":1,\"a\":3}}}",
+      "usage": {
+        "total": {
+          "totalTokens": 40496,
+          "inputTokens": 37959,
+          "cachedInputTokens": 27648,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 2537,
+          "reasoningOutputTokens": 210
+        },
+        "last": {
+          "totalTokens": 11777,
+          "inputTokens": 11378,
+          "cachedInputTokens": 10752,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 399,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:37:25.371+00:00",
+      "completed_at": "2026-11-14T19:38:04.219+00:00",
+      "elapsed_s": 38.848
+    }
+  ],
+  "tool_calls": 2,
+  "skill_files_sha256": {
+    "SKILL.md": "6e0c840f13b0632b063788852621041bcf506a0598b1524f54d86dc8e4636cd6",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "dfb915b997d9d6c4a4e869e90f33c51409cfb13af44b93ed5f5e14272d0f1429",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "342bac2ccac467f20542d50b4a293ed83072febff63846570df70f23b93aaea9"
+  },
+  "case_messages_sha256": "5ea22ee1a72f677b0447a85098a9965fe368e4081e9fd9e41fba7d9ead91d73d",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 58.047,
+  "provider": "openai",
+  "thread_id": "01a1db90-4141-70d3-96f3-c794e2c11feb",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:38:04.227+00:00",
+  "app_server_exit_code": 0
+}

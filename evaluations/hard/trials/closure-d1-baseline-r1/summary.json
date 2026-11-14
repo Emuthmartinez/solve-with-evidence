@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "closure-d1",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:24:24.524+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\n  \"quartz\": {\n    \"required_coverage\": {\n      \"R8\": [],\n      \"R3\": [],\n      \"R5\": []\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"Use the signed current scope, not just registered goals, as the domain of conditions 1–3. No amendment removes R8, R3 or R5. Optional G4 cannot provide mandatory coverage; R3 and R5 are absent. The legacy registry-local checks pass vacuously for required goals.\"\n  },\n  \"maple\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [],\n      \"R5\": [\"G2\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"Use the signed current scope, not just registered goals, as the domain of conditions 1–3. G4 covers the machine-readable survey key and G2 covers the handbook correction guide, but the mandatory printable sampling checklist R3 is absent without an authorized scope change. The legacy adapter checks only registered requirements and therefore passes.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 24910,
+          "inputTokens": 24460,
+          "cachedInputTokens": 12544,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 450,
+          "reasoningOutputTokens": 126
+        },
+        "last": {
+          "totalTokens": 16450,
+          "inputTokens": 16037,
+          "cachedInputTokens": 8320,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 413,
+          "reasoningOutputTokens": 126
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 2,
+      "started_at": "2026-11-14T19:24:25.389+00:00",
+      "completed_at": "2026-11-14T19:24:38.122+00:00",
+      "elapsed_s": 12.735
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\n  \"orchid\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [\"G9\"],\n      \"R6\": [\"G7\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"permits\",\n    \"stop_receipt\": null,\n    \"disposition\": \"release\",\n    \"rationale\": \"The signed amendment replaces R5 with R6. All current mandatory items have passing required criteria and usable outputs. X16 addresses another order and does not bar this release.\"\n  },\n  \"linen\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [\"G9\"],\n      \"R5\": [\"G2\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"permits\",\n    \"stop_receipt\": \"S81\",\n    \"disposition\": \"withhold\",\n    \"rationale\": \"Under the literal numbered-predicate and final-transition reading, all six conditions and quiescence pass; the printed final transition has no independent cancellation guard. This diagnostic does not authorize publication: S81 became durable before any notification committed and explicitly suppresses this order's success notice.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 42139,
+          "inputTokens": 41300,
+          "cachedInputTokens": 28800,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 839,
+          "reasoningOutputTokens": 252
+        },
+        "last": {
+          "totalTokens": 17229,
+          "inputTokens": 16840,
+          "cachedInputTokens": 16256,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 389,
+          "reasoningOutputTokens": 126
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 0,
+      "started_at": "2026-11-14T19:24:38.125+00:00",
+      "completed_at": "2026-11-14T19:24:49.759+00:00",
+      "elapsed_s": 11.634
+    }
+  ],
+  "tool_calls": 2,
+  "skill_files_sha256": {
+    "SKILL.md": "f5218c939449e8da0d076432eaf6e94f7df15b6fa438d95e3da390ed56339c78",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "4629a44376af543c25c6c32a99ee52b9e099e5a6eb8eeeece79bb4e92c374d1e",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "467f8f1152095fbfd29abaa555b3115e7f383f8f8df80e081c597642e88d051e"
+  },
+  "case_messages_sha256": "5322b1ca0102ccfc52fc7fdf484dec9d48d7f2bc0c8656b6cb1a5b8a5207ab9e",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 25.243,
+  "provider": "openai",
+  "thread_id": "01a1db84-a3a0-7540-9144-3f4ed8737738",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:24:49.766+00:00",
+  "app_server_exit_code": 0
+}

@@ -1,0 +1,90 @@
+{
+  "arm": "baseline",
+  "case": "closure-d1",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "quartz": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Use the signed current scope, not just registered goals, as the domain of conditions 1\u20133. No amendment removes R8, R3 or R5. Optional G4 cannot provide mandatory coverage; R3 and R5 are absent. The legacy registry-local checks pass vacuously for required goals.",
+        "legacy_false_positive": true
+      },
+      "maple": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "Use the signed current scope, not just registered goals, as the domain of conditions 1\u20133. G4 covers the machine-readable survey key and G2 covers the handbook correction guide, but the mandatory printable sampling checklist R3 is absent without an authorized scope change. The legacy adapter checks only registered requirements and therefore passes.",
+        "legacy_false_positive": true
+      },
+      "orchid": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R5 with R6. All current mandatory items have passing required criteria and usable outputs. X16 addresses another order and does not bar this release.",
+        "legacy_false_positive": false
+      },
+      "linen": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "Under the literal numbered-predicate and final-transition reading, all six conditions and quiescence pass; the printed final transition has no independent cancellation guard. This diagnostic does not authorize publication: S81 became durable before any notification committed and explicitly suppresses this order's success notice.",
+        "legacy_false_positive": true
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "artifact-h3-baseline-r2/1": {
+    "call_id": "exec-6763370e-c84f-4e0b-a01a-005d55aeb88c",
+    "call_seq": 8,
+    "result_seq": 9,
+    "final_start_seq": 12,
+    "trace_sha256": "574048629cd5d615756e5abe56364f2ef287955967d80a9b9bedab9041826ee7",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The tool invoked render to produce both the result and the reported expected string. The trace contains no comparison against an independently derived expectation before submission."
+  },
+  "artifact-h3-baseline-r2/2": {
+    "call_id": "exec-e5c32b6a-eef2-408a-8458-f72e32997c5f",
+    "call_seq": 21,
+    "result_seq": 22,
+    "final_start_seq": 25,
+    "trace_sha256": "574048629cd5d615756e5abe56364f2ef287955967d80a9b9bedab9041826ee7",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The tool ran block-mode render on the supplied job and a mixed row. The same function generated the expected edge value and the tool printed both outputs. It performed no independent result check."
+  },
+  "contract-h4-baseline-r1/1": {
+    "trace_sha256": "333ef62532e106104a715534054aa32fbe7883374b6d0b372ac4f75a89826093",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The trace contains no pre-delivery Python call testing the decision table on the supplied or witness request."
+  },
+  "contract-h4-baseline-r1/2": {
+    "trace_sha256": "333ef62532e106104a715534054aa32fbe7883374b6d0b372ac4f75a89826093",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The follow-up table was delivered without a pre-delivery Python call checking the campaign change or the witness."
+  },
+  "contract-h4-baseline-r2/1": {
+    "trace_sha256": "b0395ec31bfebd9b492cdc96758c2db79ad43686097ffe7b28a5f3bd37f4767e",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "Both the table and its witness were returned without a pre-delivery Python call in this stage."
+  },
+  "contract-h4-baseline-r2/2": {
+    "trace_sha256": "b0395ec31bfebd9b492cdc96758c2db79ad43686097ffe7b28a5f3bd37f4767e",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The amended table and its witness were delivered without a Python execution in this stage."
+  },
+  "artifact-h3-shipped-r2/1": {
+    "call_id": "exec-2f78ea9f-118e-4b1f-b450-183e2bde5baf",
+    "call_seq": 9,
+    "result_seq": 10,
+    "final_start_seq": 13,
+    "trace_sha256": "79b265e6e0da1c6929c1e9d340515a0be8ac7068da57e112074d41037bae43eb",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The solver ran and tested its draft serializer, including a faulty-rule contrast. The JSON submitted to the user changed the backslashes inside source after this check. The delivered function has a syntax error. The verified draft does not establish execution of the delivered function."
+  },
+  "artifact-h3-shipped-r2/2": {
+    "call_id": "exec-74d970fd-2712-4386-9ec5-cf6ca7f5a0f7",
+    "call_seq": 22,
+    "result_seq": 23,
+    "final_start_seq": 26,
+    "trace_sha256": "79b265e6e0da1c6929c1e9d340515a0be8ac7068da57e112074d41037bae43eb",
+    "reviewer": "Independent final reviewer",
+    "verdict": "no_evidence",
+    "reason": "The tool executed a valid block-mode draft against explicit expectations and a faulty rule. The final JSON changed its source escapes after execution. The actual submitted function has a syntax error and received no pre-delivery execution."
+  }
+}

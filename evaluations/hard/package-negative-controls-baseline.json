@@ -1,0 +1,38 @@
+[
+  {
+    "mutation": "alter required skill file",
+    "args": [
+      "python3",
+      "-B",
+      "evaluations/verify_evidence.py"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "error": [
+      "AssertionError: Candidate changed: SKILL.md"
+    ]
+  },
+  {
+    "mutation": "alter required skill file",
+    "args": [
+      "python3",
+      "-B",
+      "-O",
+      "evaluations/verify_evidence.py"
+    ],
+    "returncode": 0,
+    "stdout": "Candidate identity, two recorded D1 replays, and fixture probes passed.\n",
+    "error": []
+  },
+  {
+    "mutation": "unrecorded extra package file",
+    "args": [
+      "python3",
+      "-B",
+      "evaluations/verify_evidence.py"
+    ],
+    "returncode": 0,
+    "stdout": "Candidate identity, two recorded D1 replays, and fixture probes passed.\n",
+    "error": []
+  }
+]

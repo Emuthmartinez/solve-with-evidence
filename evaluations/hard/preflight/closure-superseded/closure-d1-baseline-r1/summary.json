@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "closure-d1",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:23:53.479+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\n  \"quartz\": {\n    \"required_coverage\": {\n      \"R8\": [],\n      \"R3\": [],\n      \"R5\": []\n    },\n    \"legacy_gate\": true,\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"The legacy adapter has explicit goals and no registered required goals or deliverables to fail. The full skill preserves the signed scope: optional G4 cannot satisfy mandatory R8, and R3 and R5 are unrepresented.\"\n  },\n  \"maple\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [],\n      \"R5\": [\"G2\"]\n    },\n    \"legacy_gate\": true,\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"All registered required goals pass the legacy adapter, but mandatory R3 has no corresponding required goal, criterion, or accepted checklist. No signed amendment removes it.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 20578,
+          "inputTokens": 20288,
+          "cachedInputTokens": 8192,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 290,
+          "reasoningOutputTokens": 48
+        },
+        "last": {
+          "totalTokens": 12200,
+          "inputTokens": 11933,
+          "cachedInputTokens": 8192,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 267,
+          "reasoningOutputTokens": 48
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:23:54.441+00:00",
+      "completed_at": "2026-11-14T19:24:04.994+00:00",
+      "elapsed_s": 10.554
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\n  \"orchid\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [\"G9\"],\n      \"R6\": [\"G7\"]\n    },\n    \"legacy_gate\": true,\n    \"stop_receipt\": null,\n    \"disposition\": \"release\",\n    \"rationale\": \"The signed amendment replaces R5 with R6, and all current mandatory items are verified. X16 addresses a different order and does not bar release.\"\n  },\n  \"linen\": {\n    \"required_coverage\": {\n      \"R8\": [\"G4\"],\n      \"R3\": [\"G9\"],\n      \"R5\": [\"G2\"]\n    },\n    \"legacy_gate\": true,\n    \"stop_receipt\": \"S81\",\n    \"disposition\": \"withhold\",\n    \"rationale\": \"All mandatory outputs are verified, but S81 withdrew authorization before notification publication. The legacy adapter does not consult the stop-event stream at its final transition.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 33382,
+          "inputTokens": 32878,
+          "cachedInputTokens": 20224,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 504,
+          "reasoningOutputTokens": 48
+        },
+        "last": {
+          "totalTokens": 12804,
+          "inputTokens": 12590,
+          "cachedInputTokens": 12032,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 214,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 0,
+      "started_at": "2026-11-14T19:24:04.997+00:00",
+      "completed_at": "2026-11-14T19:24:11.043+00:00",
+      "elapsed_s": 6.043
+    }
+  ],
+  "tool_calls": 1,
+  "skill_files_sha256": {
+    "SKILL.md": "f5218c939449e8da0d076432eaf6e94f7df15b6fa438d95e3da390ed56339c78",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "4629a44376af543c25c6c32a99ee52b9e099e5a6eb8eeeece79bb4e92c374d1e",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "467f8f1152095fbfd29abaa555b3115e7f383f8f8df80e081c597642e88d051e"
+  },
+  "case_messages_sha256": "81f54ec15c7f56af5f2d47c4a15dfcbd96745e53c2a9e49869359654c7dbae2f",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 17.579,
+  "provider": "openai",
+  "thread_id": "01a1db84-2a5f-7e52-9652-ac36493ad9e4",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:24:11.056+00:00",
+  "app_server_exit_code": 0
+}

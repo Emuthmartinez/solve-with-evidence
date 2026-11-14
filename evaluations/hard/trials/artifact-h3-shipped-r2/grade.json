@@ -1,0 +1,131 @@
+{
+  "arm": "shipped",
+  "case": "artifact-h3",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "artifact-h3",
+    "points": 5,
+    "max_points": 17,
+    "pass": false,
+    "critical_failures": [
+      "stage1_supplied",
+      "stage1_edges",
+      "stage1_generated",
+      "stage1_row_composition",
+      "stage1_counterexample",
+      "stage1_pure",
+      "stage2_supplied",
+      "stage2_edges",
+      "stage2_block",
+      "stage2_generated",
+      "stage2_row_composition",
+      "stage2_pure"
+    ],
+    "checks": {
+      "stage1_supplied": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_edges": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_generated": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_row_composition": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_delivered_fields": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_counterexample": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_pure": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_supplied": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_edges": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_block": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_generated": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_row_composition": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage2_delivered_fields": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_counterexample": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_pure": {
+        "passed": false,
+        "weight": 1
+      }
+    },
+    "execution": {
+      "1": {
+        "matched": {
+          "supplied": 0,
+          "edges": 0,
+          "generated": 0,
+          "row_composition": 0
+        },
+        "totals": {
+          "supplied": 1,
+          "edges": 7,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "runtime_error": "calculator exit 1"
+      },
+      "2": {
+        "matched": {
+          "supplied": 0,
+          "edges": 0,
+          "block": 0,
+          "generated": 0,
+          "row_composition": 0
+        },
+        "totals": {
+          "supplied": 1,
+          "edges": 7,
+          "block": 8,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "runtime_error": "calculator exit 1"
+      }
+    }
+  }
+}

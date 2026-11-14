@@ -1,0 +1,8 @@
+{
+  "arm": "shipped",
+  "case": "ledger-h2",
+  "repeat": 2,
+  "status": "failed",
+  "runner_exit": 1,
+  "error": "turn failed: {'message': 'You\u2019ve hit your usage limit. Visit https://chatgpt.com/settings/usage to purchase more credits or try again at <redacted quota reset time>.', 'codexErrorInfo': 'usageLimitExceeded', 'additionalDetails': None, 'misalignment': None}"
+}

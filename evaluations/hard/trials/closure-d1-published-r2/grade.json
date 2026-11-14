@@ -1,0 +1,90 @@
+{
+  "arm": "published",
+  "case": "closure-d1",
+  "repeat": 2,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "closure-d1",
+    "points": 16,
+    "max_points": 16,
+    "pass": true,
+    "critical_failures": [],
+    "checks": {
+      "1.quartz.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.quartz.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "1.maple.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "1.maple.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.orchid.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.orchid.outcome": {
+        "passed": true,
+        "weight": 2
+      },
+      "2.linen.coverage": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.scope_event": {
+        "passed": true,
+        "weight": 1
+      },
+      "2.linen.outcome": {
+        "passed": true,
+        "weight": 2
+      }
+    },
+    "diagnostics": {
+      "quartz": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The legacy adapter has explicit registered goals and no registered required goals or deliverables to fail. Loaded predicate 1 instead derives requirements from the signed order: optional G4 cannot satisfy mandatory R8, and R3 and R5 are unrepresented.",
+        "legacy_false_positive": true
+      },
+      "maple": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "The registered required goals and deliverables pass the legacy adapter. Loaded predicate 1 uses the signed-order domain, where the mandatory printable sampling checklist R3 remains unrepresented; verified delivery cannot be published.",
+        "legacy_false_positive": true
+      },
+      "orchid": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "permits",
+        "rationale": "The signed amendment replaces R5 with R6, and all current mandatory outcomes are covered and verified. Under predicate 6, X16 does not bind this order.",
+        "legacy_false_positive": false
+      },
+      "linen": {
+        "legacy_adapter_matches": true,
+        "configured_gate_interpretation": "blocks",
+        "rationale": "All mandatory outputs are verified. The legacy adapter does not read the stop stream at its final transition. Loaded predicate 6 and the final authority guard block publication because S81 binds this order before any notification was committed.",
+        "legacy_false_positive": true
+      }
+    }
+  }
+}

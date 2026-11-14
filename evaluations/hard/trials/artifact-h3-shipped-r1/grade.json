@@ -1,0 +1,120 @@
+{
+  "arm": "shipped",
+  "case": "artifact-h3",
+  "repeat": 1,
+  "status": "completed",
+  "runner_exit": 0,
+  "score": {
+    "case": "artifact-h3",
+    "points": 16,
+    "max_points": 17,
+    "pass": false,
+    "critical_failures": [
+      "stage1_counterexample"
+    ],
+    "checks": {
+      "stage1_supplied": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_edges": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_generated": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_row_composition": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_delivered_fields": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage1_counterexample": {
+        "passed": false,
+        "weight": 1
+      },
+      "stage1_pure": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_supplied": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_edges": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_block": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_generated": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_row_composition": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_delivered_fields": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_reported_result": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_counterexample": {
+        "passed": true,
+        "weight": 1
+      },
+      "stage2_pure": {
+        "passed": true,
+        "weight": 1
+      }
+    },
+    "execution": {
+      "1": {
+        "matched": {
+          "supplied": 1,
+          "edges": 7,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "totals": {
+          "supplied": 1,
+          "edges": 7,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "runtime_error": null
+      },
+      "2": {
+        "matched": {
+          "supplied": 1,
+          "edges": 7,
+          "block": 8,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "totals": {
+          "supplied": 1,
+          "edges": 7,
+          "block": 8,
+          "generated": 24,
+          "row_composition": 12
+        },
+        "runtime_error": null
+      }
+    }
+  }
+}

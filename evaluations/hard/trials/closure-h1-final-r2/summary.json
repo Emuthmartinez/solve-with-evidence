@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "closure-h1",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:31:05.292+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\n  \"coral\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [],\n      \"R4\": [\"G6\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"The legacy registry-local checks pass, but numbered condition 1 independently derives requirements from the signed order. R9 has no required goal, criterion, or accepted usable output. G1 addresses optional R7 and cannot fill that gap.\"\n  },\n  \"silver\": {\n    \"required_coverage\": {\n      \"R2\": [],\n      \"R9\": [],\n      \"R4\": []\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": null,\n    \"disposition\": \"withhold\",\n    \"rationale\": \"The legacy adapter has explicit registered goals; its checks over registered required goals and deliverables pass vacuously. Numbered condition 1 instead uses the signed-order domain: optional G8 cannot cover mandatory R2, and R9 and R4 are absent. No signed amendment removes these obligations.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 21275,
+          "inputTokens": 20944,
+          "cachedInputTokens": 12672,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 331,
+          "reasoningOutputTokens": 44
+        },
+        "last": {
+          "totalTokens": 12643,
+          "inputTokens": 12335,
+          "cachedInputTokens": 8448,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 308,
+          "reasoningOutputTokens": 44
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:31:06.011+00:00",
+      "completed_at": "2026-11-14T19:31:16.436+00:00",
+      "elapsed_s": 10.426
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\n  \"opal\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [\"G3\"],\n      \"R4\": [\"G6\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"blocks\",\n    \"stop_receipt\": \"S27\",\n    \"disposition\": \"withhold\",\n    \"rationale\": \"Required outputs are verified, but S27 became binding before publication. Numbered condition 6 and the final-transition authority guard suppress a new success notification. The legacy adapter does not read the stop stream at its final transition.\"\n  },\n  \"cedar\": {\n    \"required_coverage\": {\n      \"R2\": [\"G8\"],\n      \"R9\": [\"G3\"],\n      \"R5\": [\"G4\"]\n    },\n    \"legacy_gate\": true,\n    \"configured_gate\": \"permits\",\n    \"stop_receipt\": null,\n    \"disposition\": \"release\",\n    \"rationale\": \"The signed amendment replaces R4 with R5, and all current mandatory items have required goals with passing criteria and usable outputs. X16 concerns a different order and does not bind this transition.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 34557,
+          "inputTokens": 33973,
+          "cachedInputTokens": 25088,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 584,
+          "reasoningOutputTokens": 44
+        },
+        "last": {
+          "totalTokens": 13282,
+          "inputTokens": 13029,
+          "cachedInputTokens": 12416,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 253,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 0,
+      "started_at": "2026-11-14T19:31:16.439+00:00",
+      "completed_at": "2026-11-14T19:31:22.954+00:00",
+      "elapsed_s": 6.517
+    }
+  ],
+  "tool_calls": 1,
+  "skill_files_sha256": {
+    "SKILL.md": "bb99098cc84a0efa24bc53dfbdaa1ede1869ec1a38d50bfc6fa43614d417edd7",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "dfb915b997d9d6c4a4e869e90f33c51409cfb13af44b93ed5f5e14272d0f1429",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "342bac2ccac467f20542d50b4a293ed83072febff63846570df70f23b93aaea9"
+  },
+  "case_messages_sha256": "cfaa52cf17458ce43de4a6a7968b937dbf200284b0125e1c43d74e41504b2ced",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 17.686,
+  "provider": "openai",
+  "thread_id": "01a1db8a-c08a-7ee1-a2ae-e26ff5635e22",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:31:22.978+00:00",
+  "app_server_exit_code": 0
+}

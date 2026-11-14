@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "case_id": "closure-h2",
+  "status": "completed",
+  "model": "gpt-6.1-sol",
+  "requested_model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_at": "2026-11-14T19:29:26.448+00:00",
+  "auth": "chatgpt",
+  "turn_timeout_s": 200,
+  "tool_cap_per_turn": 24,
+  "calculator_timeout_s": 6,
+  "calculator_output_cap_bytes_per_stream": 65536,
+  "turns": [
+    {
+      "stage": 1,
+      "status": "completed",
+      "text": "{\n  \"Cobalt\": {\n    \"disposition\": \"withhold\",\n    \"obligations\": [],\n    \"evidence\": [],\n    \"rationale\": \"FYI9 requests no work. Neither the imported T0 card nor the automatic acknowledgment establishes a deliverable.\"\n  },\n  \"Reed\": {\n    \"disposition\": \"release\",\n    \"obligations\": [\"Q7\"],\n    \"evidence\": [\"V6\"],\n    \"rationale\": \"P6 fulfills the requested written plan, verified against current Q7. Tape transfers were expressly excluded.\"\n  },\n  \"Mica\": {\n    \"disposition\": \"withhold\",\n    \"obligations\": [],\n    \"evidence\": [],\n    \"rationale\": \"IN4 does not uniquely establish a work product. T8 and V8 belong to an earlier order and cannot qualify delivery for Mica.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 20582,
+          "inputTokens": 20370,
+          "cachedInputTokens": 8192,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 212,
+          "reasoningOutputTokens": 0
+        },
+        "last": {
+          "totalTokens": 12237,
+          "inputTokens": 12048,
+          "cachedInputTokens": 8192,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 189,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 1,
+      "started_at": "2026-11-14T19:29:27.255+00:00",
+      "completed_at": "2026-11-14T19:29:35.204+00:00",
+      "elapsed_s": 7.951
+    },
+    {
+      "stage": 2,
+      "status": "completed",
+      "text": "{\n  \"Cobalt\": {\n    \"disposition\": \"release\",\n    \"obligations\": [\"U3\"],\n    \"evidence\": [\"Z2\"],\n    \"rationale\": \"Z2 verifies the requested paragraph and its accessibility. No purchase or physical test was required.\"\n  },\n  \"Reed\": {\n    \"disposition\": \"withhold\",\n    \"obligations\": [],\n    \"evidence\": [],\n    \"rationale\": \"W4 withdrew Q7 and prohibited a delivery receipt before publication. Historical V6 and the green import do not override withdrawal.\"\n  },\n  \"Mica\": {\n    \"disposition\": \"withhold\",\n    \"obligations\": [\"U9\"],\n    \"evidence\": [],\n    \"rationale\": \"U9 establishes the current packing-list obligation, but its QA remains pending. Other orders' receipts cannot verify it.\"\n  }\n}",
+      "usage": {
+        "total": {
+          "totalTokens": 33259,
+          "inputTokens": 32859,
+          "cachedInputTokens": 20224,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 400,
+          "reasoningOutputTokens": 0
+        },
+        "last": {
+          "totalTokens": 12677,
+          "inputTokens": 12489,
+          "cachedInputTokens": 12032,
+          "cacheWriteInputTokens": 0,
+          "outputTokens": 188,
+          "reasoningOutputTokens": 0
+        },
+        "modelContextWindow": 475000
+      },
+      "tool_calls": 0,
+      "started_at": "2026-11-14T19:29:35.207+00:00",
+      "completed_at": "2026-11-14T19:29:41.528+00:00",
+      "elapsed_s": 6.321
+    }
+  ],
+  "tool_calls": 1,
+  "skill_files_sha256": {
+    "SKILL.md": "bb99098cc84a0efa24bc53dfbdaa1ede1869ec1a38d50bfc6fa43614d417edd7",
+    "references/architecture.md": "cd9b0cd969385ffa43b90e3203ba0febb0abfe497f83cacd84a6765ee34fdc4b",
+    "references/contracts.md": "dfb915b997d9d6c4a4e869e90f33c51409cfb13af44b93ed5f5e14272d0f1429",
+    "references/sources.md": "b27b441e506c9fe8fc2837f51690a7a9b5f6ea6b0710bcee2fd30391363b284e",
+    "references/validation.md": "342bac2ccac467f20542d50b4a293ed83072febff63846570df70f23b93aaea9"
+  },
+  "case_messages_sha256": "257ef8b92d3a2e86485d85213c1590c160562e9161724c140b09d32391eac7ee",
+  "runner_sha256": {
+    "run_trial.py": "2d98136c73a39444ee11c15451c9e6a5c7802db95ab22dd636160f49cacaa1b1",
+    "calculate.py": "021660d773de10f2371800437921f6b58aa3d1828902755da60c8e58b4692636"
+  },
+  "runtime": {
+    "codex_cli": "codex-cli 0.166.0",
+    "python": "3.15.2",
+    "platform": "Darwin",
+    "arch": "arm64",
+    "cli_options": [
+      "--enable",
+      "skip_host_skill_discovery",
+      "-c",
+      "project_doc_max_bytes=0",
+      "-c",
+      "web_search=\"disabled\"",
+      "-c",
+      "suppress_unstable_features_warning=true",
+      "--disable",
+      "apps",
+      "--disable",
+      "plugins",
+      "--disable",
+      "remote_plugin",
+      "--disable",
+      "memories",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "hooks",
+      "--disable",
+      "computer_use",
+      "--disable",
+      "browser_use",
+      "--disable",
+      "shell_tool",
+      "--disable",
+      "view_image",
+      "--disable",
+      "image_generation",
+      "--disable",
+      "skill_search",
+      "--disable",
+      "shell_snapshot",
+      "--disable",
+      "artifact",
+      "--disable",
+      "in_app_browser",
+      "--disable",
+      "in_app_chat",
+      "--disable",
+      "workspace_dependencies",
+      "--disable",
+      "chronicle",
+      "--disable",
+      "unified_exec"
+    ]
+  },
+  "capture": "Public app-server conversation, completed item payloads, exact dynamic tool arguments and replies, calculator streams/exit, submitted instructions, stage times, and provider-reported token usage.",
+  "unavailable": [
+    "provider prompt serialization, server-internal instruction layers and model weights",
+    "hidden reasoning, model sampling seed and per-request price",
+    "app-server internal tool dispatch and provider-side timestamps beyond public events"
+  ],
+  "excluded": [
+    "private reasoning data",
+    "account metadata apart from auth mode",
+    "transport text deltas duplicated by completed items",
+    "app-server diagnostics"
+  ],
+  "elapsed_s": 15.088,
+  "provider": "openai",
+  "thread_id": "01a1db89-3dca-72a0-81b5-c61207305600",
+  "settings": {
+    "model": "gpt-6.1-sol",
+    "modelProvider": "openai",
+    "reasoningEffort": "medium",
+    "serviceTier": null,
+    "instructionSources": [],
+    "cwd": "/",
+    "approvalPolicy": "never"
+  },
+  "ended_at": "2026-11-14T19:29:41.536+00:00",
+  "app_server_exit_code": 0
+}

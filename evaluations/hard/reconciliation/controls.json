@@ -1,0 +1,112 @@
+{
+  "ledger-d1": {
+    "reference": 18,
+    "max_points": 18,
+    "incorrect_stage1": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic"
+    ],
+    "ignores_provider_amendment": [
+      "stage2_instance",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic"
+    ],
+    "hardcoded_visible": [
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic"
+    ],
+    "mutates_input": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage1_pure",
+      "stage2_instance",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic",
+      "stage2_pure"
+    ],
+    "empty_counterexample": [
+      "stage1_counterexample",
+      "stage2_counterexample"
+    ],
+    "host_read": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage1_pure",
+      "stage2_instance",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic",
+      "stage2_pure"
+    ]
+  },
+  "ledger-h1": {
+    "reference": 18,
+    "max_points": 18,
+    "incorrect_stage1": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic"
+    ],
+    "ignores_provider_amendment": [
+      "stage2_instance",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic"
+    ],
+    "hardcoded_visible": [
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic"
+    ],
+    "mutates_input": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage1_pure",
+      "stage2_instance",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic",
+      "stage2_pure"
+    ],
+    "empty_counterexample": [
+      "stage1_counterexample",
+      "stage2_counterexample"
+    ],
+    "host_read": [
+      "stage1_instance",
+      "stage1_rules",
+      "stage1_seeded",
+      "stage1_metamorphic",
+      "stage1_pure",
+      "stage2_instance",
+      "stage2_rules",
+      "stage2_amendment",
+      "stage2_seeded",
+      "stage2_metamorphic",
+      "stage2_pure"
+    ]
+  }
+}
