@@ -1,0 +1,65 @@
+[
+  {
+    "trial": "artifact-h3-shipped-r1",
+    "stage": 1,
+    "original_sha256": "65eb34b2a76ab898f1944dfe4bc8dc40c9f0e3fca1e351c2124e57fafafdc516",
+    "original_accepted": false,
+    "replacement_provenance": {
+      "call_id": "exec-d3a4812a-a444-47c4-a1a1-82e43ea0f4b8",
+      "call_seq": 9,
+      "result_seq": 10,
+      "operation": "Wrap only the same producer-tested rows under the required job.rows name."
+    },
+    "delivered": {
+      "filename": "590b02d178de5303385de6c12a0f2707ef831139998aff3c138b2f22cb8ed1e1.json",
+      "sha256": "590b02d178de5303385de6c12a0f2707ef831139998aff3c138b2f22cb8ed1e1",
+      "bytes": 373
+    }
+  },
+  {
+    "trial": "artifact-h3-shipped-r1",
+    "stage": 2,
+    "original_sha256": "198f634c70fbfe5c56fd85f7d881d74827eb98ed8f05070b01f2932a7300cef5",
+    "original_accepted": true,
+    "replacement_provenance": null,
+    "delivered": {
+      "filename": "198f634c70fbfe5c56fd85f7d881d74827eb98ed8f05070b01f2932a7300cef5.json",
+      "sha256": "198f634c70fbfe5c56fd85f7d881d74827eb98ed8f05070b01f2932a7300cef5",
+      "bytes": 615
+    }
+  },
+  {
+    "trial": "artifact-h3-shipped-r2",
+    "stage": 1,
+    "original_sha256": "c9923516171a70934e8c0ae658d03821a29d2de56a19191eb92bd570a4e79f5f",
+    "original_accepted": false,
+    "replacement_provenance": {
+      "call_id": "exec-2f78ea9f-118e-4b1f-b450-183e2bde5baf",
+      "call_seq": 9,
+      "result_seq": 10,
+      "operation": "Restore exact source from the successful producer-serialized payload. Wrap only the same producer-tested rows under the required job.rows name."
+    },
+    "delivered": {
+      "filename": "f7a5e2ab6bb23a8ac10484ab6fe03ef0c174439afcd2365227ded865450429a7.json",
+      "sha256": "f7a5e2ab6bb23a8ac10484ab6fe03ef0c174439afcd2365227ded865450429a7",
+      "bytes": 398
+    }
+  },
+  {
+    "trial": "artifact-h3-shipped-r2",
+    "stage": 2,
+    "original_sha256": "7f04bd6a768ecdc0d3b5451a45b2092b2dc4877fe282befd9c2fb7e9fdd5a1ff",
+    "original_accepted": false,
+    "replacement_provenance": {
+      "call_id": "exec-74d970fd-2712-4386-9ec5-cf6ca7f5a0f7",
+      "call_seq": 22,
+      "result_seq": 23,
+      "operation": "Restore exact source from the successful producer-serialized payload."
+    },
+    "delivered": {
+      "filename": "d965d7421ae7a0d4aac345454d78d838791bc59ab394c214277054fe496612a2.json",
+      "sha256": "d965d7421ae7a0d4aac345454d78d838791bc59ab394c214277054fe496612a2",
+      "bytes": 593
+    }
+  }
+]

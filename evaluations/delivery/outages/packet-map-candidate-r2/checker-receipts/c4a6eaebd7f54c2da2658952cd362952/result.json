@@ -1,0 +1,8 @@
+{
+  "time_ns": 1794688718407547000,
+  "exit": 2,
+  "stdout": "",
+  "stderr": "unavailable: simulated recipient outage\n",
+  "sha256": "b5b8de23588c61baacc7fc7f998b88ccc2b202405cb76c8657315a7223b85278",
+  "origin": "host consumer"
+}

@@ -1,0 +1,10 @@
+{
+  "case": "packet-map",
+  "files": {
+    "consumer.py": "940a55e03534b85d81ffe2aca0686f8a7a8b21cd41e74cd45d02edbb412d6dd1",
+    "controls.json": "7703dcf979ff398b7df4d057114c3f305e435bce74d29eb4c133564bfee94683",
+    "inputs/packet-map.json": "a52f79c34c3ae0a55fc64dbc16fefc33e630f1f9d35a53524203f4be50446d19",
+    "test_controls.py": "842c9b0b5b99c3413300f6911d78dfe928a4768644da327206027613fc8a5624"
+  },
+  "comparison": "two independent matched repetitions per assigned version, same one-turn prompt and checker; preserve every original final and score only recipient bytes."
+}

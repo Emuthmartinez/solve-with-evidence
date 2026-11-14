@@ -1,0 +1,1 @@
+The JSON is prepared, but `./case-check` reported “simulated recipient outage” on both attempts. Verification remains blocked, so the skill requires withholding the artifact link until the checker accepts its bytes.

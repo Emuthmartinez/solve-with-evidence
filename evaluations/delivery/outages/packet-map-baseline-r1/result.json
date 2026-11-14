@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "case": "packet-map",
+  "arm": "baseline",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 32.399,
+  "tokens": {
+    "input_tokens": 56984,
+    "cached_input_tokens": 51712,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1136,
+    "reasoning_output_tokens": 235
+  },
+  "checker_acceptances": [],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/byte-map.json",
+  "correct": true,
+  "verified": false,
+  "received_sha256": "0f90a1514ff15ee92c1d79af62c742fd3d00bb02a13e90d895f55c8c69014bb4",
+  "received_bytes": 406,
+  "consumer_exit": 0,
+  "consumer_stderr": ""
+}

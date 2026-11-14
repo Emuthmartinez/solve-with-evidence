@@ -1,0 +1,13 @@
+{
+  "message_sha256": "4b49e3487c497d7633f27b269bc398b41aff5c3c4c18365b75428355bdad0ec0",
+  "message_bytes": 305,
+  "channel": "inline",
+  "consumer_accepted": true,
+  "checked_before_delivery": false,
+  "verified_link_delivery": false,
+  "received_sha256": "4b49e3487c497d7633f27b269bc398b41aff5c3c4c18365b75428355bdad0ec0",
+  "received_bytes": 305,
+  "consumer_exit": 0,
+  "consumer_stdout": "",
+  "consumer_stderr": "accepted sha256=4b49e3487c497d7633f27b269bc398b41aff5c3c4c18365b75428355bdad0ec0\n"
+}

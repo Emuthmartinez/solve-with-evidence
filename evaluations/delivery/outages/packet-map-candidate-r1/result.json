@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "case": "packet-map",
+  "arm": "candidate",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 26.3,
+  "tokens": {
+    "input_tokens": 75395,
+    "cached_input_tokens": 52352,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 862,
+    "reasoning_output_tokens": 17
+  },
+  "checker_acceptances": [],
+  "errors": [],
+  "channel": "inline",
+  "opened": null,
+  "correct": false,
+  "verified": false,
+  "received_sha256": "0bd04703c4f9ae34e9c853bc06bd2eae762542dba89c67bf3c4c08d2fd67e967",
+  "received_bytes": 219,
+  "consumer_exit": 1,
+  "consumer_stderr": "packet, wire, byte map, reads or discriminating proof failed\n"
+}

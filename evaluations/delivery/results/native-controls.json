@@ -1,0 +1,16 @@
+{
+  "recipient substitution, accepted semantics but changed bytes": "recorded raw outcome or verified identity differs",
+  "received body lost or gained trailing LF": "opened file differs from archived recipient bytes",
+  "model final export rewrite": "CLI last-message differs from final message",
+  "final link now points to missing artifact": "final link or opened path mismatch",
+  "final link escaped workspace": "final link or opened path mismatch",
+  "post-final acceptance backfilled": "acceptance recorded after the final reply",
+  "accepting receipt replaced by rejection": "recorded checker decision differs from rerun",
+  "workspace receipt marked as host evidence": "receipt was not captured by the host consumer",
+  "command replaced by echo with original digest output": "successful receipt lacks a unique corroborating native command before delivery",
+  "unearned raw-score change": "recorded raw outcome or verified identity differs",
+  "unearned identity-score change": "recorded raw outcome or verified identity differs",
+  "symlink target": "archive contains a symbolic link",
+  "hard-linked target": "archive contains an aliased file",
+  "CommonMark whitespace around destination": "same checked bytes still received"
+}

@@ -2,7 +2,7 @@
 
 This study asks two different questions. Did the solver deliver a correct artifact? Did it exercise the actual deliverable and check the result before handing it over? A solver can earn full outcome credit from an external grader even when its own trace contains no execution.
 
-The baseline is the installed skill captured before the experiment. The `shipped` arm is the package at the root of this repository. The intermediate snapshots in `snapshots/` and the successive [experiment decisions](protocol.md) document changes made during development. The labels `candidate`, `release`, `final`, and `published` are historical trial identifiers. Use `shipped` to reproduce the version distributed with this release.
+The baseline is the installed skill captured before the experiment. The `shipped` arm is preserved in [snapshots/shipped](snapshots/shipped). The intermediate snapshots in `snapshots/` and the successive [experiment decisions](protocol.md) document changes made during development. The labels `candidate`, `release`, `final`, and `published` are historical trial identifiers. Use `shipped` to reproduce the version distributed with this release.
 
 ## Results
 
@@ -49,7 +49,7 @@ cd evaluations/hard
 python3 -B tracecheck/audit.py --root . --cohorts cohorts.json \
   --skill baseline=snapshots/baseline --skill candidate=snapshots/candidate \
   --skill release=snapshots/release --skill final=snapshots/final \
-  --skill published=snapshots/published --skill shipped=../../solve-with-evidence \
+  --skill published=snapshots/published --skill shipped=snapshots/shipped \
   --out /tmp/solve-with-evidence-regrade.json
 python3 -B tracecheck/test_audit.py --root .
 python3 -B closure/check_gate.py
@@ -62,7 +62,7 @@ python3 -B compare.py --out /tmp/swe-new-run --arms baseline shipped \
   --cases ledger-d1 --repeats 1 2 --jobs 2
 ```
 
-The model received the five Markdown files in the [instruction manifest](shipped-manifest.json). The [distribution manifest](distribution-manifest.json) also covers the optional host-side Python checker added after the model trials. Verify the full installed package from the repository root with `python3 -B evaluations/verify_evidence.py --manifest evaluations/hard/distribution-manifest.json`. The contract directory retains the frozen experiment launcher and its original layout assumptions. Use `compare.py` above for fresh runs in this repository.
+The model received the five Markdown files in the [instruction manifest](shipped-manifest.json). The [distribution manifest](distribution-manifest.json) also covers the optional host-side Python checker added after the model trials. Verify that historical package from the repository root with `python3 -B evaluations/verify_evidence.py --manifest evaluations/hard/distribution-manifest.json --package evaluations/hard/snapshots/shipped`. The contract directory retains the frozen experiment launcher and its original layout assumptions. Use `compare.py` above for fresh runs in this repository.
 
 ## Limits
 

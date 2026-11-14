@@ -1,0 +1,82 @@
+[
+  {
+    "case": "night-window",
+    "control": "hand-traced 18 jobs and isolated witnesses",
+    "exit": 0
+  },
+  {
+    "case": "night-window",
+    "control": "removed receiver envelope",
+    "exit": 1
+  },
+  {
+    "case": "night-window",
+    "control": "witness detects both faults without isolating first_match",
+    "exit": 1
+  },
+  {
+    "case": "night-window",
+    "control": "boolean admitted as day zero",
+    "exit": 1
+  },
+  {
+    "case": "night-window",
+    "control": "ordered-first receiver",
+    "exit": 1
+  },
+  {
+    "case": "night-window",
+    "control": "current-day-only receiver",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "independent sequential-replace encoder",
+    "exit": 0
+  },
+  {
+    "case": "octet-frame",
+    "control": "source counts characters on hidden inputs",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "newline normalization changes sample",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "string literal corrupted by output escaping",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "witness agrees with faulty encoder",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "job object replaced by positional list",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "correct frame with mutated input",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "object with duplicate top-level key",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "fenced valid JSON",
+    "exit": 1
+  },
+  {
+    "case": "octet-frame",
+    "control": "invalid UTF-8",
+    "exit": 1
+  }
+]

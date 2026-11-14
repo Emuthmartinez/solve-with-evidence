@@ -1,0 +1,13 @@
+{
+  "message_sha256": "d759e3a8ec1548917055403c68a7da0e00c7ba858050b41a07fe24d59546cc76",
+  "message_bytes": 308,
+  "channel": "inline",
+  "consumer_accepted": false,
+  "checked_before_delivery": false,
+  "verified_link_delivery": false,
+  "received_sha256": "d759e3a8ec1548917055403c68a7da0e00c7ba858050b41a07fe24d59546cc76",
+  "received_bytes": 308,
+  "consumer_exit": 1,
+  "consumer_stdout": "",
+  "consumer_stderr": "rejected: Expecting ',' delimiter: line 1 column 309 (char 308)\n"
+}

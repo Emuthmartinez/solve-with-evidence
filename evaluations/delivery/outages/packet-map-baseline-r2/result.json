@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "case": "packet-map",
+  "arm": "baseline",
+  "repeat": 2,
+  "exit": 0,
+  "runtime_seconds": 32.821,
+  "tokens": {
+    "input_tokens": 56931,
+    "cached_input_tokens": 41216,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1174,
+    "reasoning_output_tokens": 250
+  },
+  "checker_acceptances": [],
+  "errors": [],
+  "channel": "inline",
+  "opened": null,
+  "correct": true,
+  "verified": false,
+  "received_sha256": "5b358000c972e17cc913eb5f330042bd42bb4fccd50b322ef83aa44e57df2a78",
+  "received_bytes": 404,
+  "consumer_exit": 0,
+  "consumer_stderr": ""
+}

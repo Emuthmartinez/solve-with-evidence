@@ -1,0 +1,16 @@
+{
+  "message_sha256": "a9bf9dc555aa005ab702c9847f6ff2a9297248444f80a159fd6f313be0c2a8a7",
+  "message_bytes": 105,
+  "channel": "file",
+  "consumer_accepted": true,
+  "checked_before_delivery": true,
+  "verified_link_delivery": true,
+  "opened": "artifacts/57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63.json",
+  "filename_matches_bytes": true,
+  "received_sha256": "57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63",
+  "received_bytes": 306,
+  "producer_call_id": "exec-ce36e11c-359f-4295-9ac7-7ba50454f944",
+  "consumer_exit": 0,
+  "consumer_stdout": "",
+  "consumer_stderr": "accepted sha256=57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63\n"
+}

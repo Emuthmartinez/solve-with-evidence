@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "case": "night-window",
+  "arm": "candidate",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 33.83,
+  "tokens": {
+    "input_tokens": 59984,
+    "cached_input_tokens": 47872,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 926,
+    "reasoning_output_tokens": 97
+  },
+  "checker_acceptances": [
+    {
+      "item": "item_6",
+      "sha256": "72ab2d222aeec8fd20759e01908e55c116f76b24f04fa9439eca3149d48e6f37"
+    }
+  ],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/72ab2d222aeec8fd20759e01908e55c116f76b24f04fa9439eca3149d48e6f37.json",
+  "correct": true,
+  "verified": true,
+  "received_sha256": "72ab2d222aeec8fd20759e01908e55c116f76b24f04fa9439eca3149d48e6f37",
+  "received_bytes": 569,
+  "consumer_exit": 0,
+  "consumer_stderr": "accepted sha256=72ab2d222aeec8fd20759e01908e55c116f76b24f04fa9439eca3149d48e6f37\n"
+}
