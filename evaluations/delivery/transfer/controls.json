@@ -1,0 +1,16 @@
+{
+  "hand counted reference": "accepted",
+  "different JSON serialization": "accepted",
+  "alternate counterexample at empty text": "accepted",
+  "valid but identical overlap predicates": "rejected",
+  "stated outputs swapped": "rejected",
+  "bare window in proof.input": "rejected",
+  "incorrect already-paired inclusive results": "rejected",
+  "forged wider mixed integer span": "rejected",
+  "true used as a record ID": "rejected",
+  "NFC substitution changes wire": "rejected",
+  "CRLF rewritten as LF": "rejected",
+  "empty query contributes one hit": "rejected",
+  "duplicate nested key": "rejected",
+  "markdown fence": "rejected"
+}

@@ -1,0 +1,34 @@
+{
+  "status": "completed",
+  "case": "packet-map",
+  "arm": "baseline",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 29.467,
+  "tokens": {
+    "input_tokens": 56896,
+    "cached_input_tokens": 46336,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1062,
+    "reasoning_output_tokens": 240
+  },
+  "checker_acceptances": [
+    {
+      "receipt": "5d7604c13b4747c687720e1ed99174bb",
+      "sha256": "5b358000c972e17cc913eb5f330042bd42bb4fccd50b322ef83aa44e57df2a78"
+    },
+    {
+      "receipt": "88af878a4073488ebe597ca9b1111235",
+      "sha256": "5b358000c972e17cc913eb5f330042bd42bb4fccd50b322ef83aa44e57df2a78"
+    }
+  ],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/byte-map.json",
+  "correct": true,
+  "verified": true,
+  "received_sha256": "5b358000c972e17cc913eb5f330042bd42bb4fccd50b322ef83aa44e57df2a78",
+  "received_bytes": 404,
+  "consumer_exit": 0,
+  "consumer_stderr": ""
+}

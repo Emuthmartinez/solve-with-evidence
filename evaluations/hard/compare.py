@@ -20,7 +20,7 @@ def run_job(job, destination):
     inputs.mkdir(parents=True, exist_ok=True)
     case_file = inputs / f'{case}-{arm}-r{repeat}.json'
     case_file.write_text(json.dumps({'id': case, 'messages': messages}, indent=2) + '\n')
-    package = HERE.parents[1] / 'solve-with-evidence' if arm == 'shipped' else HERE / 'snapshots' / arm
+    package = HERE / 'snapshots' / arm
     cmd = [sys.executable, '-B', str(HERE / 'runner/run_trial.py'),
            '--case', str(case_file), '--skill', str(package), '--out', str(trial),
            '--model', 'gpt-6.1-sol', '--effort', 'medium', '--timeout', '200']

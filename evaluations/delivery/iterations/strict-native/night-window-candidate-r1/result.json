@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "case": "night-window",
+  "arm": "candidate",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 30.411,
+  "tokens": {
+    "input_tokens": 77147,
+    "cached_input_tokens": 69760,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1049,
+    "reasoning_output_tokens": 103
+  },
+  "checker_acceptances": [
+    {
+      "receipt": "0d3dbb1763c8427fb7dac54feef7a036",
+      "sha256": "312c65036a88119fc86f7aa2051e9b933ad24e2bf6a5cb2ef845cff840f1197c"
+    }
+  ],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/312c65036a88119fc86f7aa2051e9b933ad24e2bf6a5cb2ef845cff840f1197c.json",
+  "correct": true,
+  "verified": true,
+  "received_sha256": "312c65036a88119fc86f7aa2051e9b933ad24e2bf6a5cb2ef845cff840f1197c",
+  "received_bytes": 566,
+  "consumer_exit": 0,
+  "consumer_stderr": "accepted sha256=312c65036a88119fc86f7aa2051e9b933ad24e2bf6a5cb2ef845cff840f1197c\n"
+}

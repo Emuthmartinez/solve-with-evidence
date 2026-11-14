@@ -1,0 +1,1 @@
+{"routes":["reed","plum","reed","reed","cobalt","plum","plum","plum","elm","cobalt","idle","shell","gold","gold","idle","cobalt","idle","reed"],"witnesses":{"day_owner":{"job":{"receiver":{"day":5,"minute":200}},"expected":"cobalt"},"first_match":{"job":{"receiver":{"day":4,"minute":1380}},"expected":"reed"}}}

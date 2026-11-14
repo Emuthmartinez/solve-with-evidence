@@ -1,0 +1,38 @@
+[
+  {
+    "trial": "packet-map-baseline-r1",
+    "checker_available": false,
+    "thread_id": "01a1dbc7-b126-79a0-a147-23891afa86f2",
+    "channel": "file",
+    "correct": true,
+    "verified": false,
+    "matched_command_ids": []
+  },
+  {
+    "trial": "packet-map-baseline-r2",
+    "checker_available": false,
+    "thread_id": "01a1dbc8-189a-7240-a1aa-3ae31236485b",
+    "channel": "inline",
+    "correct": true,
+    "verified": false,
+    "matched_command_ids": []
+  },
+  {
+    "trial": "packet-map-candidate-r1",
+    "checker_available": false,
+    "thread_id": "01a1dbc7-b124-7011-9294-b9536f6658f8",
+    "channel": "inline",
+    "correct": false,
+    "verified": false,
+    "matched_command_ids": []
+  },
+  {
+    "trial": "packet-map-candidate-r2",
+    "checker_available": false,
+    "thread_id": "01a1dbc8-304f-7050-9c49-5b8a8be894fa",
+    "channel": "inline",
+    "correct": false,
+    "verified": false,
+    "matched_command_ids": []
+  }
+]

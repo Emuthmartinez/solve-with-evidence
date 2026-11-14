@@ -1,0 +1,62 @@
+[
+  {
+    "trial": "packet-map-baseline-r1",
+    "status": "completed",
+    "case": "packet-map",
+    "arm": "baseline",
+    "repeat": 1,
+    "channel": "file",
+    "raw_correct": true,
+    "checked_bytes_delivered": true,
+    "verified_link_delivery": true,
+    "attempts": 1,
+    "gate_rejections": 0,
+    "elapsed_s": 31.84,
+    "provider_tokens": 38399
+  },
+  {
+    "trial": "packet-map-baseline-r2",
+    "status": "completed",
+    "case": "packet-map",
+    "arm": "baseline",
+    "repeat": 2,
+    "channel": "inline",
+    "raw_correct": true,
+    "checked_bytes_delivered": false,
+    "verified_link_delivery": false,
+    "attempts": 0,
+    "gate_rejections": 0,
+    "elapsed_s": 28.843,
+    "provider_tokens": 28089
+  },
+  {
+    "trial": "packet-map-candidate-r1",
+    "status": "completed",
+    "case": "packet-map",
+    "arm": "candidate",
+    "repeat": 1,
+    "channel": "file",
+    "raw_correct": true,
+    "checked_bytes_delivered": true,
+    "verified_link_delivery": true,
+    "attempts": 1,
+    "gate_rejections": 0,
+    "elapsed_s": 29.398,
+    "provider_tokens": 38632
+  },
+  {
+    "trial": "packet-map-candidate-r2",
+    "status": "completed",
+    "case": "packet-map",
+    "arm": "candidate",
+    "repeat": 2,
+    "channel": "file",
+    "raw_correct": true,
+    "checked_bytes_delivered": true,
+    "verified_link_delivery": true,
+    "attempts": 1,
+    "gate_rejections": 0,
+    "elapsed_s": 19.297,
+    "provider_tokens": 37759
+  }
+]

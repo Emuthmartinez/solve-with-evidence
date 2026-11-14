@@ -1,0 +1,12 @@
+{
+  "checker-receipts/825d8fca53f145d78b3acc6229a79d81/input.bin": "0f90a1514ff15ee92c1d79af62c742fd3d00bb02a13e90d895f55c8c69014bb4",
+  "checker-receipts/825d8fca53f145d78b3acc6229a79d81/result.json": "50ae73e3f0561fe86c632fbfabfa72d96b7255de286f915660dded672231be04",
+  "checker-receipts/bf1ea0e9f37c4077b5a801b4e0e773a9/input.bin": "0f90a1514ff15ee92c1d79af62c742fd3d00bb02a13e90d895f55c8c69014bb4",
+  "checker-receipts/bf1ea0e9f37c4077b5a801b4e0e773a9/result.json": "beabf1418e06fe3f427c3396b50ba84f7e9b3976b02f97a4569dfc51d1811d7e",
+  "outputs/byte-map.json": "0f90a1514ff15ee92c1d79af62c742fd3d00bb02a13e90d895f55c8c69014bb4",
+  "received.json": "0f90a1514ff15ee92c1d79af62c742fd3d00bb02a13e90d895f55c8c69014bb4",
+  "request.json": "90043685d989c89c92564a8fccebc83414906be0a91fc2aa54aa9b554beb0bb3",
+  "response.md": "88285a508ba296a43a65073569db3b2771c7445ef4952efbf58d7e08f2b20529",
+  "result.json": "564556b176944455c1dd6e78196accbaddeb9f1bdadab8f0497d2869a8761aff",
+  "trace.jsonl": "ad6c0f7e326db7c518b08db7b1805a140d9190bf4b5bebe7f868fd916eeb1f8c"
+}

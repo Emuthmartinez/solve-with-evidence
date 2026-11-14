@@ -1,0 +1,10 @@
+{
+  "checker-receipts/a69419c791fb4e21bcbe4946c73aeed3/input.bin": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "checker-receipts/a69419c791fb4e21bcbe4946c73aeed3/result.json": "5766b2c2a7e3b48e233a6597c74e5dafc31660dcfde30a95027a690db36299e6",
+  "outputs/frame.json": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "received.json": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "request.json": "ac461a7590db43d3fd29a0c164e793d51a4e2d01bd450d5ff6941d82bfb6c088",
+  "response.md": "ab4cfff03de699a36ebd087c5412eaa9c045aa0aecbdb20389561cf7e9e85f0c",
+  "result.json": "6d2696595c12062565a1206cb2ebc3288c1d2c0e2da114d85979b3d9efea0342",
+  "trace.jsonl": "c603c13add16fbcaff1e4415ba43e369f947ea4781ea5e90b20963b152207c55"
+}

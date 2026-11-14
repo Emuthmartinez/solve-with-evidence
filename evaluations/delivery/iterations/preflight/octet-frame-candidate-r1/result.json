@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "case": "octet-frame",
+  "arm": "candidate",
+  "repeat": 1,
+  "exit": 0,
+  "runtime_seconds": 31.383,
+  "tokens": {
+    "input_tokens": 73858,
+    "cached_input_tokens": 57856,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 967,
+    "reasoning_output_tokens": 121
+  },
+  "checker_acceptances": [],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/frame.json",
+  "correct": true,
+  "verified": false,
+  "received_sha256": "190790212d29d4f16c6578b8a50a1c9bd3b5e74da626800da00da541d753bd90",
+  "received_bytes": 570,
+  "consumer_exit": 0,
+  "consumer_stderr": "accepted sha256=190790212d29d4f16c6578b8a50a1c9bd3b5e74da626800da00da541d753bd90\n"
+}

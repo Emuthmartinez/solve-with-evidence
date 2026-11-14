@@ -1,0 +1,8 @@
+{
+  "time_ns": 1794688707936735000,
+  "exit": 0,
+  "stdout": "",
+  "stderr": "accepted sha256=1c8d6b87135088812e53fa51a1e63765c3c2ce24e71c0cf7bd9ef7a8e02044f0\n",
+  "sha256": "1c8d6b87135088812e53fa51a1e63765c3c2ce24e71c0cf7bd9ef7a8e02044f0",
+  "origin": "host consumer"
+}

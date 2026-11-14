@@ -1,0 +1,10 @@
+{
+  "checker-receipts/0df06a9412404becad9e6406efe41e9d/input.bin": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "checker-receipts/0df06a9412404becad9e6406efe41e9d/result.json": "aa7978f6f076bac183af81c43e10d2a99f17769b915ab08934fe66aaeff8050f",
+  "outputs/answer.json": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "received.json": "81f4becdc0c866a97d69a4fe1f08b0c68ab0efeeb9e9e86d6631daea92b039bb",
+  "request.json": "a440ffce869ae6d326c06ec4fca1c308da774b45a73bff57221b8b86cc4427e5",
+  "response.md": "53d40eb678ccdde2887999765f397af44736f53447a3bcc57f133d06fbd79996",
+  "result.json": "227cb322e27d06596baa1aaf7420ed7390b27c78c9032d1a858bb921f648cda5",
+  "trace.jsonl": "a058e914a9421499a0295af1bc107089f70e9a687c98d40133c58f8b06235e07"
+}

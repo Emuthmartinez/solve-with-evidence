@@ -46,19 +46,23 @@ $solve-with-evidence Compare these venue offers against capacity, step-free acce
 
 If no offer qualifies, the skill should report that rather than relax the limits.
 
-## Exact JSON handoffs
+## Deliver a checked JSON file
 
-When another program consumes an answer, route the received bytes through the included checker before forwarding them. Supply a trusted validator for the recipient’s schema and behavior. From the installed skill directory, run
+For a machine-readable JSON object, the skill can deliver a file directly from the buffer the recipient’s checker accepted. Codex gives the user the file link. There is no second copy of the JSON in the final chat message. From the installed skill directory, a caller can run
 
 ```sh
-python3 scripts/json_handoff.py received.json -- python3 your_consumer.py > accepted.json
+python3 scripts/json_handoff.py candidate.json --deliver-to outputs -- python3 your_consumer.py
 ```
 
-Forward the output after exit code 0. Codex does not automatically intercept the final chat response. A host or caller must wire this step into delivery. On 28 archived stage answers from the affected transfers, it accepted 21 as received and rejected all seven defective answers ([evaluations/hard/README.md](evaluations/hard/README.md); [checker and replay guide](evaluations/hard/handoff/README.md)).
+Supply a validator you trust for this recipient. It reads stdin, returns 0 for acceptance, 1 for a rejected submission, and 2 for an unavailable check. On success the command returns the absolute file path, SHA-256 and byte count. Link that path in a persistent, caller-owned output directory. Reusing the same checked bytes returns the same file. A rejected input produces no receipt. For other JSON root types or other formats, use the trusted consumer and a byte-preserving delivery path suited to that format.
+
+Hosts that require inline JSON can omit `--deliver-to` and forward the command’s accepted stdout unchanged. A normal chat message composed by a model cannot provide that inline transport guarantee. [Release tests and full traces](evaluations/delivery/README.md) · [Earlier failures and repair evidence](evaluations/hard/handoff/README.md)
 
 ## Evidence
 
-On the repeated benchmark in [evaluations/hard/README.md](evaluations/hard/README.md), six versions produced 182 completed two-turn trials across 17 cases. The shipped instructions passed 32/34 trials and 453/466 points. The installed baseline passed 34/34 trials and 466/466 points. The cases use synthetic inputs, restricted tools, and two trials per cell. They do not estimate reliability across professions, open-web research, distributed execution, or deployment.
+The current release delivered the checker-approved bytes in 12/12 normal trials, compared with 9/12 for the previous release. Both versions preserved the checked file in all six native Codex shell trials. The updated skill also withheld both payloads during simulated checker outages. [Delivery benchmark and traces](evaluations/delivery/README.md)
+
+In the previous release’s benchmark in [evaluations/hard/README.md](evaluations/hard/README.md), six versions produced 182 completed two-turn trials across 17 cases. That release’s instructions passed 32/34 trials and 453/466 points. The installed baseline passed 34/34 trials and 466/466 points. The cases use synthetic inputs, restricted tools, and two trials per cell. They do not estimate reliability across professions, open-web research, distributed execution, or deployment.
 
 An earlier self-audit is in [evaluations/README.md](evaluations/README.md). Design notes are in [evaluations/general-solver-design.md](evaluations/general-solver-design.md).
 

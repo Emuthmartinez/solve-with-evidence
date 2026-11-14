@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "case": "packet-map",
+  "arm": "candidate",
+  "repeat": 2,
+  "exit": 0,
+  "runtime_seconds": 27.529,
+  "tokens": {
+    "input_tokens": 56863,
+    "cached_input_tokens": 51072,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 932,
+    "reasoning_output_tokens": 209
+  },
+  "checker_acceptances": [
+    {
+      "receipt": "24bd0cd3804646f6a1dd77ce144f1976",
+      "sha256": "0dffb0a8eddbed1095c265041028d010c6a39c3f7a6a204a2d60e14f4d37d12e"
+    }
+  ],
+  "errors": [],
+  "channel": "file",
+  "opened": "outputs/0dffb0a8eddbed1095c265041028d010c6a39c3f7a6a204a2d60e14f4d37d12e.json",
+  "correct": true,
+  "verified": true,
+  "received_sha256": "0dffb0a8eddbed1095c265041028d010c6a39c3f7a6a204a2d60e14f4d37d12e",
+  "received_bytes": 404,
+  "consumer_exit": 0,
+  "consumer_stderr": ""
+}

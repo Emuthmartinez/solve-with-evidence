@@ -1,0 +1,17 @@
+[
+  {
+    "delivery_call_id": "exec-b4d6b3dd-c119-4696-b678-8f3b31070634",
+    "producer_call_id": "exec-e96c61e3-42a0-43c9-bd7d-f6baae764527",
+    "status": "accepted",
+    "producer_sha256": "57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63",
+    "producer_bytes": 306,
+    "exit": 0,
+    "diagnostic": "accepted sha256=57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63\n",
+    "receipt": {
+      "path": "artifacts/57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63.json",
+      "sha256": "57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63",
+      "bytes": 306
+    },
+    "link": "[Download verified JSON](artifacts/57fbc8d6ea5415a1ad5b9367892b8622a689a83ec460a2c5d7c9e33397805c63.json)"
+  }
+]
