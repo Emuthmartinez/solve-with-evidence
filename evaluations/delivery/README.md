@@ -1,6 +1,6 @@
 # Did the recipient get the bytes the checker accepted?
 
-The updated skill delivered the exact checked file in all 12 normal trials across two hosts. The previous release did so in nine. Each host ran three cases twice per version under Codex CLI 0.166.0 with gpt-6.1-sol and medium effort. The historical baseline is the publicly installed six-file package at commit c764b94. The candidate is the [distribution in this release](distribution-manifest.json).
+The updated skill delivered the exact checked file in all 12 normal trials across two hosts. The previous release did so in nine. Each host ran three cases twice per version under Codex CLI 0.166.0 with gpt-6.1-sol and medium effort. This benchmark compared the package published at `c764b94` with the six files shipped at `edbbaf8`. The replay and fresh-run commands below use those archived versions. [Baseline](../hard/snapshots/shipped) · [Candidate](snapshots/candidate) · [Candidate digests](distribution-manifest.json)
 
 | Receiving path | Previous release, raw correct | Updated skill, raw correct | Previous release, checked bytes received | Updated skill, checked bytes received |
 |---|---:|---:|---:|---:|
@@ -36,9 +36,9 @@ uv run --no-project --with markdown-it-py==4.0.0 python -B evaluations/delivery/
 uv run --no-project --with markdown-it-py==4.0.0 python -B evaluations/delivery/audit_native.py evaluations/delivery/outages --cases packet-map
 uv run --no-project --with markdown-it-py==4.0.0 python -B evaluations/delivery/test_audit_native.py evaluations/delivery/native-trials
 python3 -B evaluations/delivery/runner/test_audit.py
-python3 -B evaluations/delivery/test_artifact.py
-python3 -B evaluations/delivery/replay_printer.py
-python3 -B evaluations/verify_evidence.py --manifest evaluations/delivery/distribution-manifest.json
+python3 -B evaluations/delivery/test_artifact.py --cli evaluations/delivery/snapshots/candidate/scripts/json_handoff.py
+python3 -B evaluations/delivery/replay_printer.py --cli evaluations/delivery/snapshots/candidate/scripts/json_handoff.py
+python3 -B evaluations/verify_evidence.py --manifest evaluations/delivery/distribution-manifest.json --package evaluations/delivery/snapshots/candidate
 ```
 
 For new trials, provide fresh output directories. Both arms have the same available operations within a host.

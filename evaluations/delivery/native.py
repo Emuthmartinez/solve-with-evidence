@@ -87,7 +87,7 @@ def session(arm,case,repeat,out,unavailable,runtime,stack):
     stack.callback(os.close,directory)
     auth = Path(os.environ.get('CODEX_HOME',Path.home()/'.codex'))/'auth.json'
     (home/'auth.json').symlink_to(auth)
-    package = ROOT/('solve-with-evidence' if arm=='candidate' else 'evaluations/hard/snapshots/shipped')
+    package = HERE/'snapshots/candidate' if arm == 'candidate' else ROOT/'evaluations/hard/snapshots/shipped'
     shutil.copytree(package,job/'skill')
     suite = HERE / ('transfer' if case == 'packet-map' else 'cases')
     consumer = suite / 'consumer.py'

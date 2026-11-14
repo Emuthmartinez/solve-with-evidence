@@ -40,11 +40,23 @@ Copy the same folder into one of the skill directories Cursor loads: `.cursor/sk
 
 ## Example
 
+### Choose a workshop venue
+
+Attach the [three fictional workshop offers](evaluations/readme/venue-offers.md) in a new Codex chat and run the prompt below.
+
 ```text
-$solve-with-evidence Compare these venue offers against capacity, step-free access, and a fixed budget. Recommend a venue only if it satisfies every hard constraint.
+$solve-with-evidence Use the attached workshop offers. Which venue should we choose within budget, capacity and access requirements? Show the total cost and the decisive evidence, and say what could change the decision.
 ```
 
-If no offer qualifies, the skill should report that rather than relax the limits.
+**None of the three offers meets all requirements.** The workshop needs 45 seats including facilitators, step-free access, and a total cost of $600 or less. Printing costs $54 for every option (45 packets × $1.20).
+
+| Venue | Total with printing | Decisive evidence |
+|---|---:|---|
+| Oak Hall | $400 + $54 = **$454** | Seats 50 but lacks step-free access. |
+| River Room | $300 + $54 = **$354** | Step-free, but its 40 seats leave five people without a place. |
+| Garden Center | $500 + $75 setup + $54 = **$629** | Step-free and seats 50. The required setup fee puts it $29 over budget. |
+
+Keep the search open at the quoted prices. A $29 reduction in Garden Center’s quote would bring the total to exactly $600 and make it eligible. [Worked answer and reader test](evaluations/readme/README.md)
 
 ## Deliver a checked JSON file
 
@@ -60,9 +72,9 @@ Hosts that require inline JSON can omit `--deliver-to` and forward the command�
 
 ## Evidence
 
-The current release delivered the checker-approved bytes in 12/12 normal trials, compared with 9/12 for the previous release. Both versions preserved the checked file in all six native Codex shell trials. The updated skill also withheld both payloads during simulated checker outages. [Delivery benchmark and traces](evaluations/delivery/README.md)
+The [delivery release](https://github.com/Emuthmartinez/solve-with-evidence/commit/edbbaf8f78256660d74328540d8cdf6d46eba991) delivered the checker-approved bytes in 12/12 normal trials, compared with 9/12 for the previous release. Both versions preserved the checked file in all six native Codex shell trials. The updated skill also withheld both payloads during simulated checker outages. [Delivery benchmark and traces](evaluations/delivery/README.md)
 
-In the previous release’s benchmark in [evaluations/hard/README.md](evaluations/hard/README.md), six versions produced 182 completed two-turn trials across 17 cases. That release’s instructions passed 32/34 trials and 453/466 points. The installed baseline passed 34/34 trials and 466/466 points. The cases use synthetic inputs, restricted tools, and two trials per cell. They do not estimate reliability across professions, open-web research, distributed execution, or deployment.
+In the earlier benchmark in [evaluations/hard/README.md](evaluations/hard/README.md), six versions produced 182 completed two-turn trials across 17 cases. That release’s instructions passed 32/34 trials and 453/466 points. The installed baseline passed 34/34 trials and 466/466 points. The cases use synthetic inputs, restricted tools, and two trials per cell. They do not estimate reliability across professions, open-web research, distributed execution, or deployment.
 
 An earlier self-audit is in [evaluations/README.md](evaluations/README.md). Design notes are in [evaluations/general-solver-design.md](evaluations/general-solver-design.md).
 
