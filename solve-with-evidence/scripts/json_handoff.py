@@ -83,10 +83,16 @@ def main():
     parser.add_argument('--deliver-to', type=Path, metavar='DIRECTORY',
                         help='atomically publish checked bytes here and print a JSON file receipt')
     parser.add_argument('--timeout', type=int, default=20, help='positive wall-time limit for each consumer attempt')
+    parser.add_argument('--unchecked', action='append', default=[], metavar='ITEM',
+                        help='something the consumer does not check; listed in the receipt. Repeatable. Needs --deliver-to')
     parser.add_argument('consumer', nargs='+', help='trusted validator command after --; reads stdin; exits 0 only on acceptance, 1 on rejection')
     args = parser.parse_args()
     if args.timeout <= 0:
         parser.error('timeout must be positive')
+    if args.unchecked and args.deliver_to is None:
+        parser.error('--unchecked needs --deliver-to: the receipt is what carries the list')
+    if not all(item.strip() for item in args.unchecked):
+        parser.error('each --unchecked item must say what was not checked')
 
     def consume(raw):
         code = subprocess.run(args.consumer, input=raw, stdout=subprocess.DEVNULL, stderr=sys.stderr,
@@ -103,6 +109,9 @@ def main():
             accepted = check(raw, consume)
             if args.deliver_to is not None:
                 receipt = deliver(accepted, args.deliver_to)
+                if args.unchecked:
+                    # The consumer still accepted these bytes. The list travels with them.
+                    receipt.update(outcome='delivered_unchecked', unchecked=args.unchecked)
                 print(json.dumps(receipt), flush=True)
                 return 0
         except Reject as exc:
