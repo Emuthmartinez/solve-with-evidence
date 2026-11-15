@@ -243,7 +243,8 @@ class MockRun(Scratch):
             if text:
                 (folder / 'answer.md').write_text(text)
         (out / 'run.json').write_text(json.dumps({'adapter': 'codex', 'family': 'openai', 'arms': list(texts),
-                                                 'tasks': ['write-01-thread-reply'], 'repeats': [1]}))
+                                                 'tasks': ['write-01-thread-reply'], 'repeats': [1],
+                                                 'freeze': bench.freeze_digest()}))
         shown = []
 
         def stub(adapter, settings, model, prompt, timeout):
@@ -263,6 +264,8 @@ class MockRun(Scratch):
         pair, = result['pairs']
         self.assertEqual((pair['outcome'], pair['winner']), ('decided', 'no-skill'))
         self.assertEqual(result['judge']['independent'], True)
+        self.assertEqual(pair['answers'], {'skill': bench.sha(b'SKILL TEXT'), 'no-skill': bench.sha(b'PLAIN TEXT')})
+        self.assertEqual(result['freeze'], bench.freeze_digest())
 
     def test_a_judge_that_follows_position_decides_nothing(self):
         result, _ = self.judged_real_run({'skill': 'SKILL TEXT', 'no-skill': 'PLAIN TEXT'}, lambda a, b: 'A')
@@ -276,7 +279,7 @@ class MockRun(Scratch):
         out = self.tmp / 'real'
         out.mkdir()
         (out / 'run.json').write_text(json.dumps({'adapter': 'codex', 'family': 'openai', 'arms': [], 'tasks': [],
-                                                 'repeats': [1]}))
+                                                 'repeats': [1], 'freeze': bench.freeze_digest()}))
         with self.assertRaises(SystemExit):
             judge.judge(out, 'mock', False)
 
@@ -300,6 +303,10 @@ class MockRun(Scratch):
         self.assertEqual(len(rows), 2 * len(key))
         for row in rows:
             self.assertEqual(row['winner'], key[row['pair_id']]['1'])
+            self.assertEqual(row['freeze'], bench.freeze_digest())
+            for arm, digest in row['answers'].items():  # each pick names the two answers the rater saw
+                answer = bench.trial_dir(out, row['task'], arm, row['repeat']) / 'work/answer.md'
+                self.assertEqual(digest, bench.sha(answer.read_text().strip().encode()))
         with self.assertRaises(SystemExit):  # a second export would relabel the pairs
             judge.human_export(out, self.tmp / 'packet-2')
 
@@ -406,6 +413,27 @@ class MockRun(Scratch):
         self.assertTrue(seen and all(not work.is_relative_to(out) for work in seen))
         self.assertTrue(all((bench.trial_dir(out, t, 'skill', 1) / 'work').is_dir() for t in self.TASKS))
 
+    def test_a_rerun_answer_makes_its_judgment_stale(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        judge.judge(out, None, False)
+        why = lambda: report.Run(out).report()['criteria']['writing_pairwise']['why']
+        self.assertEqual(why(), 'writing trials are incomplete')  # this small run has three of the twenty tasks
+        work = bench.trial_dir(out, 'write-01-thread-reply', 'skill', 1) / 'work'
+        work.mkdir(exist_ok=True)
+        (work / 'answer.md').write_text('A substantially different answer.\n')
+        self.assertIn('rerun judge.py', why())
+        judge.judge(out, None, False)
+        self.assertEqual(why(), 'writing trials are incomplete')
+
+    def test_a_run_from_another_freeze_is_not_judged(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        meta = json.loads((out / 'run.json').read_text())
+        (out / 'run.json').write_text(json.dumps({**meta, 'freeze': '0' * 64}))
+        with self.assertRaises(SystemExit):
+            judge.judge(out, None, False)
+        with self.assertRaises(SystemExit):
+            judge.human_export(out, self.tmp / 'packet')
+
     def test_judge_from_the_solver_family_is_refused(self):
         out, _ = self.run_mock(('skill', 'no-skill'))
         meta = json.loads((out / 'run.json').read_text())
@@ -419,7 +447,8 @@ class PassBar(Scratch):
     ARMS = ['skill', 'no-skill', 'skill-weak', 'no-skill-weak', 'no-skill-budget']
 
     def build(self, exec_passes, tokens, false_completions=None, refusals=0, judge_wins=24, independent=True,
-              forfeits=0, edit=lambda record: record, freeze=None):
+              forfeits=0, edit=lambda record: record, freeze=None, judged=lambda pairs: pairs, judged_under=None,
+              human=None, before_report=lambda run: None):
         false_completions = false_completions or {'skill': 0, 'no-skill': 3, 'skill-weak': 1, 'no-skill-weak': 4,
                                                   'no-skill-budget': 3}
         freeze = freeze or bench.freeze_digest()
@@ -451,12 +480,19 @@ class PassBar(Scratch):
             'tasks': [t['id'] for t in tasks], 'repeats': [1, 2], 'models': {'strong': 's', 'weak': 'w'}}))
         pairs = []
         for x, y in (('skill', 'no-skill'), ('skill-weak', 'no-skill-weak')):
-            for n in range(16):
-                pairs.append({'task': 'w', 'repeat': 1, 'arms': [x, y],
-                              'outcome': 'forfeit' if len(pairs) < forfeits else 'decided',
-                              'winner': x if len(pairs) < judge_wins else y})
-        (run / 'judgments.json').write_text(json.dumps({'judge': {'independent': independent}, 'pairs': pairs}))
+            for t in (t for t in tasks if t['kind'] == 'write'):
+                for repeat in (1, 2):  # no trial here wrote an answer, so every judgment is of two empty ones
+                    pairs.append({'task': t['id'], 'repeat': repeat, 'arms': [x, y], 'answers': {x: self.EMPTY, y: self.EMPTY},
+                                  'outcome': 'forfeit' if len(pairs) < forfeits else 'decided',
+                                  'winner': x if len(pairs) < judge_wins else y})
+        (run / 'judgments.json').write_text(json.dumps({'judge': {'independent': independent},
+                                                       'freeze': judged_under or freeze, 'pairs': judged(pairs)}))
+        if human:
+            (run / 'human.json').write_text(json.dumps(human))
+        before_report(run)
         return report.Run(run).report()
+
+    EMPTY = bench.sha(b'')
 
     GOOD = dict(exec_passes={'skill': 13, 'no-skill': 8, 'skill-weak': 10, 'no-skill-weak': 5, 'no-skill-budget': 9},
                 tokens={'skill': 2500, 'no-skill': 1000, 'skill-weak': 2500, 'no-skill-weak': 1000, 'no-skill-budget': 2500})
@@ -503,6 +539,41 @@ class PassBar(Scratch):
         pairwise = result['criteria']['writing_pairwise']
         self.assertEqual((pairwise['decided'], pairwise['not_judged'], pairwise['wins']), (12, 20, 4))
         self.assertEqual(pairwise['result'], 'inconclusive')  # fewer than half the pairs were decided
+
+    def pairwise(self, **changes):
+        return self.build(**self.GOOD, **changes)['criteria']['writing_pairwise']
+
+    def test_a_partial_set_of_judgments_cannot_pass(self):
+        four_wins = self.pairwise(judged=lambda pairs: pairs[:4])
+        self.assertEqual((four_wins['result'], four_wins['pairs'], four_wins['missing'], four_wins['wins']),
+                         ('inconclusive', 32, 28, 4))
+        one_short = self.pairwise(judge_wins=32, judged=lambda pairs: pairs[:-1])
+        self.assertEqual((one_short['result'], one_short['missing']), ('inconclusive', 1))
+
+    def test_judgments_of_other_answers_are_not_counted(self):
+        def rerun(run):  # the judged trial is replaced by one with a different answer
+            (bench.trial_dir(run, 'write-01-thread-reply', 'skill', 1) / 'work').mkdir()
+            (bench.trial_dir(run, 'write-01-thread-reply', 'skill', 1) / 'work/answer.md').write_text('A new answer.')
+        unbound = lambda pairs: [{key: value for key, value in pair.items() if key != 'answers'} for pair in pairs]
+        for stale in (dict(before_report=rerun), dict(judged_under='0' * 64), dict(judged=unbound),
+                      dict(judged=lambda pairs: pairs + pairs[:1]),
+                      dict(judged=lambda pairs: pairs + [{**pairs[0], 'task': 'no-such-task'}])):
+            result = self.pairwise(**stale)
+            self.assertEqual(result['result'], 'inconclusive', stale)
+            self.assertIn('rerun judge.py', result['why'])
+
+    def test_human_picks_count_only_for_the_answers_they_saw(self):
+        picks = lambda answer: [
+            {'pair_id': f'p{n}', 'rater': 'ana', 'task': t['id'], 'repeat': repeat, 'arms': ['no-skill', 'skill'],
+             'winner': 'skill', 'answers': {'skill': answer, 'no-skill': self.EMPTY}, 'freeze': bench.freeze_digest()}
+            for n, (t, repeat) in enumerate((t, r) for t in bench.load_tasks() if t['kind'] == 'write' for r in (1, 2))]
+        seen = self.pairwise(human=picks(self.EMPTY))
+        self.assertEqual((seen['result'], seen['human']['picks'], seen['human']['wins']), ('pass', 16, 16))
+        other = self.pairwise(human=picks(bench.sha(b'an answer that is no longer in the run')))
+        self.assertEqual(other['result'], 'inconclusive')
+        self.assertIn('human picks', other['why'])
+        self.assertEqual(self.pairwise(human=[{**pick, 'freeze': '0' * 64} for pick in picks(self.EMPTY)])['result'],
+                         'inconclusive')
 
     def test_false_completions_with_none_to_reduce(self):
         only_skill = self.build(**self.GOOD, false_completions={**dict.fromkeys(self.ARMS, 0), 'skill': 2})

@@ -12,6 +12,7 @@ import statistics
 import sys
 
 import bench
+import judge
 
 Z95 = 1.959964
 
@@ -46,6 +47,7 @@ def rounded(value):
 
 class Run:
     def __init__(self, run):
+        self.run = run
         self.meta = json.loads((run / 'run.json').read_text())
         self.bar = json.loads((bench.HERE / 'pass_bar.json').read_text())
         if self.bar['design']['confidence'] != 0.95:
@@ -104,27 +106,49 @@ class Run:
         pairs = self.bar['design']['pairs']
         if not self.judgments:
             return {'result': 'inconclusive', 'why': 'not judged yet'}
+        # A judgment counts only for the two answers now in the run, under this freeze, once per
+        # comparison. A trial rerun after it was judged leaves a judgment of an answer that is gone.
+        expected = {(task['id'], repeat, x, y): judge.answer_hashes(x, y, text_x, text_y)
+                    for task, repeat, x, y, text_x, text_y in judge.writing_pairs(self.run) if [x, y] in pairs}
+        freeze = self.meta['freeze']
+
+        def current(row, arms):
+            key = (row['task'], row['repeat'], *arms)
+            return key in expected and row.get('answers') == expected[key]
+
+        rows = [p for p in self.judgments['pairs'] if p['arms'] in pairs]
+        judged = {(p['task'], p['repeat'], *p['arms']) for p in rows}
+        if (self.judgments.get('freeze') != freeze or len(judged) != len(rows)
+                or not all(current(p, p['arms']) for p in rows)):
+            return {'result': 'inconclusive',
+                    'why': 'judgments are for other answers or another freeze, or repeat a comparison: rerun judge.py'}
+        ordered = lambda h: next(p for p in pairs if sorted(p) == h['arms'])
+        human = [h for h in self.human or [] if h['arms'] in [sorted(p) for p in pairs]]
+        if not all(h.get('freeze') == freeze and current(h, ordered(h)) for h in human):
+            return {'result': 'inconclusive', 'why': 'human picks are for other answers or another freeze: '
+                    'collect new picks, or remove human.json and human-key.json'}
         if not self.complete([arm for pair in pairs for arm in pair], ['write']):
             return {'result': 'inconclusive', 'why': 'writing trials are incomplete'}
-        rows = [p for p in self.judgments['pairs'] if p['arms'] in pairs]
         # A pair is decided only when the judge named the same answer in both orders. A pair where
         # one side delivered nothing was never judged. It is counted here and scored under refusals.
         decided = [p for p in rows if p['outcome'] == 'decided']
         wins = sum(p['winner'] == p['arms'][0] for p in decided)
-        out = {'pairs': len(rows), 'decided': len(decided), 'wins': wins,
+        out = {'pairs': len(expected), 'missing': len(expected) - len(judged), 'decided': len(decided), 'wins': wins,
                'not_judged': sum(p['outcome'] in ('forfeit', 'void') for p in rows),
                'split_or_tie': sum(p['outcome'] in ('split', 'tie') for p in rows),
                'win_rate': wins / len(decided) if decided else None, 'ci95': wilson(wins, len(decided))}
-        human = [h for h in self.human or [] if h['arms'] in [sorted(p) for p in pairs]]
         if len(human) >= 16:
             chosen = [h for h in human if h['winner']]
-            human_wins = sum(h['winner'] == next(p[0] for p in pairs if sorted(p) == h['arms']) for h in chosen)
+            human_wins = sum(h['winner'] == ordered(h)[0] for h in chosen)
             out['human'] = {'picks': len(human), 'ties': len(human) - len(chosen), 'wins': human_wins,
                             'win_rate': human_wins / len(chosen) if chosen else 0.0,
                             'ci95': wilson(human_wins, len(chosen)), 'raters': len({h['rater'] for h in human})}
+        if out['missing']:
+            # Every designed comparison is in the denominator. A judged subset cannot stand in for the set.
+            return {**out, 'result': 'inconclusive', 'why': 'some designed comparisons have no judgment: rerun judge.py'}
         if not self.judgments['judge']['independent']:
             return {**out, 'result': 'inconclusive', 'why': "the judge is from the solver's model family"}
-        if not rows or len(decided) / len(rows) < rule['min_decided_fraction']:
+        if not expected or len(decided) / len(expected) < rule['min_decided_fraction']:
             return {**out, 'result': 'inconclusive', 'why': 'too few pairs were decided in both orders'}
         passed = out['win_rate'] >= rule['min_win_rate'] and out['ci95'][0] > rule['min_ci_lower_exclusive']
         if passed and 'human' in out and out['human']['win_rate'] < 0.5:
