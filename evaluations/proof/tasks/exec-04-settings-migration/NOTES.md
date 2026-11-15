@@ -45,6 +45,9 @@ It is the first version a quick solver writes from the fixtures: each rename app
 | results share no state | "`load` never changes `DEFAULTS`. The dict it returns shares no object with `DEFAULTS` or with an earlier result, so the caller may change it freely." | `docs/schema.md`, Side effects |
 | save writes migrated settings as schema 3 | "writes the full schema 3 object to `path`: `"schema": 3`, every schema 3 key, and every unknown key" | `docs/schema.md`, save |
 | save leaves its argument unchanged | "`save` does not change `settings`." and "so may any key or member that has a default" | `docs/schema.md`, save |
+| save rejects a schema number other than 3 | "`save` checks it as `load` checks a schema 3 file, raises `SettingsError` if it fails". In schema 3 `schema` is "The integer 3.", and "`true` and `false` are not integers, and `3.0` is not an integer." The key "may be missing", which the two checks above cover | `docs/schema.md`, save; Schema 3 |
+
+The starter's `save` already follows the last rule: its schema 3 check reads the `schema` key. The task is about `load`, so that check guards a rework that loses the rule, and no solver has to find a flaw in `save` that the prompt never mentions.
 
 Every hidden file is written into the grader's own temporary directory. The grader compares only the keys a check is about, so one mistake fails the checks for its own rule and not every check that loads a file.
 

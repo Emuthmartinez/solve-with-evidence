@@ -223,6 +223,13 @@ def save_keeps_argument(s):
     return given == snapshot and s.load(path) == want
 
 
+
+def save_schema(s):
+    # 4 may raise UnsupportedVersion, which is a SettingsError.
+    return all(raises(s.SettingsError, s.save, path_for(), dict(defaults(), schema=value))
+               for value in (4, 2, 0, 3.0, '3', True, None))
+
+
 CHECKS = [
     ('schema 1 notify sets both notifications', notify),
     ('schema 1 timeout seconds become milliseconds', seconds),
@@ -251,6 +258,7 @@ CHECKS = [
     ('results share no state', no_shared_state),
     ('save writes migrated settings as schema 3', save_migrated),
     ('save leaves its argument unchanged', save_keeps_argument),
+    ('save rejects a schema number other than 3', save_schema),
 ]
 
 if __name__ == '__main__':

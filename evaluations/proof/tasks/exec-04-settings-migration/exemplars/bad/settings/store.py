@@ -32,7 +32,7 @@ def load(path):
         raise SettingsError(f'bad schema number: {version!r}')
     if version > SCHEMA:
         raise UnsupportedVersion(f'schema {version} is newer than this release understands')
-    data = dict(data)
+    data = dict(data, schema=SCHEMA)
     if 'notify' in data:
         notify = data.pop('notify')
         data['notifications'] = {'email': notify, 'push': notify}
@@ -81,6 +81,9 @@ def read(path):
 
 def current(data):
     """Check a dict against schema 3. Return a new dict with every schema 3 key and the unknown keys."""
+    schema = data.get('schema', SCHEMA)
+    if not is_int(schema) or schema != SCHEMA:
+        raise SettingsError(f'bad schema number: {schema!r}')
     result = {key: copy.deepcopy(value) for key, value in data.items() if key != 'schema' and key not in DEFAULTS}
     result['schema'] = SCHEMA
     result['notifications'] = members(data, 'notifications', {'email': is_bool, 'push': is_bool})

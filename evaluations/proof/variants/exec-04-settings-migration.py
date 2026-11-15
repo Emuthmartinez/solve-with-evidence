@@ -3,6 +3,7 @@ STORE = 'settings/store.py'
 MERGE = "    known.update(unknown)\n"
 NEW_1 = "    new = {'schema': 2, 'timeout_ms': timeout * 1000}\n"
 APPEARANCE = "appearance={'theme': theme, 'contrast': 'high' if old.get('high_contrast') else 'normal'})"
+CHECK_SCHEMA = "    if not is_int(schema) or schema != SCHEMA:\n"
 DIGIT_STRING = "    if isinstance(timeout, str) and DIGITS.match(timeout):\n        timeout = int(timeout)\n"
 
 VARIANTS = [
@@ -119,4 +120,10 @@ VARIANTS = [
     ('save fills in the dict it was given',
      {STORE: [("    data = current(settings)\n", "    settings.update(current(settings))\n    data = settings\n")]},
      ['save leaves its argument unchanged']),
+    ('the schema number dropped unread, so save writes any declared schema as 3',
+     {STORE: [(CHECK_SCHEMA, "    if False:\n")]},
+     ['save rejects a schema number other than 3']),
+    ('the schema number compared with ==, which 3.0 passes',
+     {STORE: [(CHECK_SCHEMA, "    if schema != SCHEMA:\n")]},
+     ['save rejects a schema number other than 3']),
 ]
