@@ -1,0 +1,182 @@
+"""Plausible mistakes for exec-06-retry-client. Each is the good exemplar with one edit:
+to the client, or to the tests delivered with it."""
+CLIENT = 'client/http.py'
+TESTS = 'test_retries.py'
+LIMIT = "MAX_ATTEMPTS = 3\n"
+STATUSES = "RETRY_STATUSES = (429, 502, 503, 504)\n"
+HONORED = "RETRY_AFTER_STATUSES = (429, 503)\n"
+METHODS = "REPEATABLE_METHODS = ('GET', 'HEAD', 'PUT', 'DELETE')\n"
+BACKOFF = "    return min(0.5 * 2 ** (attempt - 2), 8.0)\n"
+FINAL = "    if response.status not in RETRY_STATUSES:\n        return None\n"
+WHOLE = "        if value is not None and value.isascii() and value.isdigit():\n"
+SECONDS = "            return int(value) if int(value) <= MAX_RETRY_AFTER else None\n"
+KEYED = "header(request.headers, 'Idempotency-Key') is not None"
+COUNT = "        attempt = 0\n"
+DELAY = "            delay = wait_before(attempt + 1, response) if repeatable and attempt < MAX_ATTEMPTS else None\n"
+ELAPSED = "self._clock() - start + delay > deadline"
+SLEEP = "            self._sleep(delay)\n"
+# The good tests cover every rule, so a client that breaks one also fails its own tests.
+OWN_TESTS = 'tests pass on the delivered client'
+# Tests that fail on a correct client catch nothing.
+CATCHES = ['tests catch a fourth attempt', 'tests catch a POST retried without a key', 'tests catch a retried 500',
+           'tests catch a sleep after the last attempt', 'tests catch a Retry-After ignored on a 429',
+           'tests catch a retry after a Retry-After above 30', 'tests catch an ignored deadline',
+           'tests catch a changed request on a retry']
+
+
+def without(*tests):
+    """The edit that leaves these tests out of the good test file."""
+    dropped = ', '.join(f'Retries.test_{test}' for test in tests)
+    return [("\n\nif __name__ == '__main__':", f"\n\ndel {dropped}\n\n\nif __name__ == '__main__':")]
+
+
+VARIANTS = [
+    ('four attempts, the limit 0003 had before 0005 amended it',
+     {CLIENT: [(LIMIT, "MAX_ATTEMPTS = 4\n")]},
+     ['at most three attempts are made', OWN_TESTS]),
+    ('a 429 is final, as it was before 0005',
+     {CLIENT: [(STATUSES, "RETRY_STATUSES = (502, 503, 504)\n")]},
+     ['429 is retried', 'Retry-After on a 429 replaces the delay', OWN_TESTS]),
+    ('Retry-After is honored on a 503 only, as it was before 0005',
+     {CLIENT: [(HONORED, "RETRY_AFTER_STATUSES = (503,)\n")]},
+     ['Retry-After on a 429 replaces the delay', 'Retry-After above 30 is not retried', OWN_TESTS]),
+    ('the computed delay is waited for, whatever Retry-After says',
+     {CLIENT: [(SECONDS, "            return backoff(attempt) if int(value) <= MAX_RETRY_AFTER else None\n")]},
+     ['Retry-After on a 503 replaces the delay', 'Retry-After on a 429 replaces the delay',
+      'the Retry-After name may be in lower case', 'Retry-After of 0 sleeps 0 seconds',
+      'Retry-After of exactly 30 is retried', 'the computed delay follows the attempt number',
+      'the deadline is checked against the Retry-After delay', OWN_TESTS]),
+    ('a Retry-After above 30 is waited for, as it was before 0005',
+     {CLIENT: [(SECONDS, "            return int(value)\n")]},
+     ['Retry-After above 30 is not retried', OWN_TESTS]),
+    ('a Retry-After of exactly 30 is refused',
+     {CLIENT: [(SECONDS, "            return int(value) if int(value) < MAX_RETRY_AFTER else None\n")]},
+     ['Retry-After of exactly 30 is retried', OWN_TESTS]),
+    ('the deadline is accepted and ignored',
+     {CLIENT: [("deadline is not None and " + ELAPSED, "False")]},
+     ['a deadline stops the retries', 'the time attempts take counts toward the deadline',
+      'the deadline is checked against the Retry-After delay', OWN_TESTS]),
+    ('a retry that would end exactly at the deadline is refused',
+     {CLIENT: [(ELAPSED, "self._clock() - start + delay >= deadline")]},
+     ['a retry that ends exactly at the deadline is made', OWN_TESTS]),
+    ('the deadline counts only the time slept',
+     {CLIENT: [(COUNT, "        attempt = slept = 0\n"), (ELAPSED, "slept + delay > deadline"),
+               (SLEEP, SLEEP + "            slept += delay\n")]},
+     ['the time attempts take counts toward the deadline', OWN_TESTS]),
+    ('the deadline is taken as a clock reading, not as seconds from the start',
+     {CLIENT: [(ELAPSED, "self._clock() + delay > deadline")]},
+     ['a deadline stops the retries', 'a retry that ends exactly at the deadline is made',
+      'the time attempts take counts toward the deadline',
+      'the deadline is checked against the Retry-After delay', OWN_TESTS]),
+    ('the deadline is checked against the computed delay where Retry-After names another',
+     {CLIENT: [(ELAPSED, "self._clock() - start + backoff(attempt + 1) > deadline")]},
+     ['the deadline is checked against the Retry-After delay', OWN_TESTS]),
+    ('every method is retried, with or without a key',
+     {CLIENT: [("(request.method in REPEATABLE_METHODS\n                      or " + KEYED + ")", "True")]},
+     ['POST without a key gets one attempt', OWN_TESTS]),
+    ('POST and PATCH are never retried, key or not',
+     {CLIENT: [("\n                      or " + KEYED, "")]},
+     ['POST with a key is retried', 'the key header name may be in any letter case',
+      "every attempt gets the caller's request unchanged", OWN_TESTS]),
+    ('only GET is retried without a key',
+     {CLIENT: [(METHODS, "REPEATABLE_METHODS = ('GET',)\n")]},
+     ['PUT DELETE and HEAD are retried', OWN_TESTS]),
+    ('the key header is found in one letter case only',
+     {CLIENT: [(KEYED, "'Idempotency-Key' in request.headers")]},
+     ['the key header name may be in any letter case', OWN_TESTS]),
+    ('Retry-After is found in one letter case only',
+     {CLIENT: [("header(response.headers, 'Retry-After')", "response.headers.get('Retry-After')")]},
+     ['the Retry-After name may be in lower case', OWN_TESTS]),
+    ('a negative Retry-After counts as a number',
+     {CLIENT: [(WHOLE, "        if value is not None and value.lstrip('-').isdigit():\n")]},
+     ['Retry-After that is not a whole number is ignored', OWN_TESTS]),
+    ('a Retry-After of 0 falls back to the computed delay',
+     {CLIENT: [(SECONDS, "            if int(value) > MAX_RETRY_AFTER:\n                return None\n"
+                         "            return int(value) or backoff(attempt)\n")]},
+     ['Retry-After of 0 sleeps 0 seconds', OWN_TESTS]),
+    ('Retry-After is honored on every retried status',
+     {CLIENT: [(HONORED, "RETRY_AFTER_STATUSES = RETRY_STATUSES\n")]},
+     ['Retry-After on other statuses has no effect', OWN_TESTS]),
+    ('each computed delay is twice the wait before it',
+     {CLIENT: [(BACKOFF, "    return min(attempt * 2, 8.0)\n"), (COUNT, COUNT + "        waited = 0.25\n"),
+               ("wait_before(attempt + 1, response)", "wait_before(waited, response)"),
+               (SLEEP, SLEEP + "            waited = delay\n")]},
+     ['the computed delay follows the attempt number', OWN_TESTS]),
+    ('a sleep after the last attempt',
+     {CLIENT: [(DELAY, "            delay = wait_before(attempt + 1, response) if repeatable else None\n"
+                       "            if delay is not None and attempt == MAX_ATTEMPTS:\n"
+                       "                self._sleep(delay)\n                delay = None\n")]},
+     ['no sleep follows the last attempt', OWN_TESTS]),
+    ('a new error is raised in place of the one the transport raised',
+     {CLIENT: [("                    raise error\n", "                    raise TransportError('gave up') from error\n")]},
+     ['the last transport error is raised when attempts run out', 'POST without a key gets one attempt',
+      'a deadline stops the retries', OWN_TESTS]),
+    ('a response that used up the attempts is turned into an error',
+     {CLIENT: [("                return response\n",
+                "                if response.status in RETRY_STATUSES and attempt == MAX_ATTEMPTS:\n"
+                "                    raise TransportError('out of attempts')\n                return response\n")]},
+     ['the last response is returned when attempts run out', OWN_TESTS]),
+    ('each attempt sends a copy of the request',
+     {CLIENT: [("self._transport.send(request)",
+                "self._transport.send(request._replace(headers=dict(request.headers)))")]},
+     ["every attempt gets the caller's request unchanged", OWN_TESTS]),
+    ("the attempt number is written into the caller's headers",
+     {CLIENT: [("            try:\n", "            request.headers['X-Attempt'] = str(attempt)\n            try:\n")]},
+     ["every attempt gets the caller's request unchanged", OWN_TESTS]),
+    ('attempts are counted for the client, not for each call',
+     {CLIENT: [(COUNT + "        while True:\n            attempt += 1\n",
+                "        while True:\n            self._attempts = attempt = getattr(self, '_attempts', 0) + 1\n")]},
+     ['every call starts over with the same delays', OWN_TESTS]),
+    ('jitter on the computed delay, as the proposed 0006 has it',
+     {CLIENT: [("from collections import namedtuple\n", "import random\nfrom collections import namedtuple\n"),
+               (BACKOFF, "    return min(0.5 * 2 ** (attempt - 2), 8.0) * random.Random(attempt).uniform(0.5, 1.5)\n")]},
+     ['502 503 504 and a transport error are retried', '429 is retried', 'delays are 0.5 then 1 second',
+      'every call starts over with the same delays', 'PUT DELETE and HEAD are retried',
+      'POST with a key is retried', 'the key header name may be in any letter case',
+      'Retry-After that is not a whole number is ignored', 'Retry-After on other statuses has no effect',
+      'the computed delay follows the attempt number', 'a deadline stops the retries',
+      'a retry that ends exactly at the deadline is made',
+      'the time attempts take counts toward the deadline', OWN_TESTS]),
+    ('5 attempts one second apart, as the README says',
+     {CLIENT: [(LIMIT, "MAX_ATTEMPTS = 5\n"), (BACKOFF, "    return 1.0\n")]},
+     ['502 503 504 and a transport error are retried', '429 is retried', 'at most three attempts are made',
+      'delays are 0.5 then 1 second', 'no sleep follows the last attempt',
+      'the last response is returned when attempts run out',
+      'the last transport error is raised when attempts run out', 'every call starts over with the same delays',
+      'PUT DELETE and HEAD are retried', 'POST with a key is retried',
+      'the key header name may be in any letter case', 'Retry-After that is not a whole number is ignored',
+      'Retry-After on other statuses has no effect', 'the computed delay follows the attempt number',
+      'a deadline stops the retries', 'a retry that ends exactly at the deadline is made',
+      'the time attempts take counts toward the deadline', OWN_TESTS]),
+    ('only a 200 is final, every other status is retried',
+     {CLIENT: [(FINAL, "    if response.status == 200:\n        return None\n")]},
+     ['a success makes one attempt and no sleep', 'other statuses are returned at once', OWN_TESTS]),
+    ('every 5xx status is retried',
+     {CLIENT: [(FINAL, "    if response.status != 429 and response.status < 500:\n        return None\n")]},
+     ['other statuses are returned at once', OWN_TESTS]),
+    ('the tests never check the attempt limit',
+     {TESTS: without('at_most_three_attempts')}, ['tests catch a fourth attempt']),
+    ('the tests never send a POST without a key',
+     {TESTS: without('post_and_patch_without_a_key_get_one_attempt')}, ['tests catch a POST retried without a key']),
+    ('the tests leave 500 out of the final statuses',
+     {TESTS: [("(201, 301, 400, 404, 408, 500, 501)", "(201, 301, 400, 404, 408, 501)")]},
+     ['tests catch a retried 500']),
+    ('the tests never count the sleeps when attempts run out',
+     {TESTS: without('no_sleep_after_the_last_attempt')}, ['tests catch a sleep after the last attempt']),
+    ('the tests send Retry-After on a 503 only',
+     {TESTS: without('retry_after_on_a_429_replaces_the_delay') + [("status(429, '600')", "status(503, '600')")]},
+     ['tests catch a Retry-After ignored on a 429']),
+    ('the tests never send a Retry-After above 30',
+     {TESTS: without('retry_after_above_30_is_not_retried')}, ['tests catch a retry after a Retry-After above 30']),
+    ('the tests never give a deadline',
+     {TESTS: without('a_deadline_stops_the_retries', 'a_retry_that_ends_exactly_at_the_deadline_is_made',
+                     'the_time_attempts_take_counts_toward_the_deadline',
+                     'the_deadline_is_checked_against_the_retry_after_delay')},
+     ['tests catch an ignored deadline']),
+    ('the tests never look at the requests the transport received',
+     {TESTS: without('every_attempt_gets_the_request_of_the_caller_unchanged')},
+     ['tests catch a changed request on a retry']),
+    ('the tests read a constant that only the delivered client has',
+     {TESTS: [("from client.http import Client,", "from client.http import MAX_ATTEMPTS, Client,")]},
+     ['tests pass on a reference client'] + CATCHES),
+]

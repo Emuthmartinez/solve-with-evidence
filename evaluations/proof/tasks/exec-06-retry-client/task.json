@@ -1,0 +1,1 @@
+{"id": "exec-06-retry-client", "kind": "exec", "title": "Add the retries the decision records settle, with tests that prove them", "deliverable": "client/http.py"}
