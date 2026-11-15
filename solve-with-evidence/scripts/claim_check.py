@@ -34,8 +34,11 @@ NUMBER = re.compile(
     r'(?:\s+(?P<scale>hundred|thousand|million|billion|trillion)\b)?(?P<percent>\s?%%|\s+percent\b)?' % ('|'.join(TENS), '|'.join(UNITS), '|'.join(WORDS)),
     re.IGNORECASE)
 QUOTE = re.compile(r'["“]([^"“”]+)["”]')
-IDENTIFIER = re.compile(r'https?://\S+|[@#]\w+|\b\d{1,2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}\b|\b\w+(?:[._/-]\w+)*\.[a-z]{2,4}\b'
-                        r'|\b[A-Za-z]+[-.]?\d[\w.-]*|\b[a-z]+[A-Z]\w*|\b\w+_\w+\b')
+# Inside a repeated group a separator is never also a member of the run it separates.
+# Otherwise a long run of underscores takes exponential time.
+IDENTIFIER = re.compile(r'https?://\S+|[@#]\w+|\b\d{1,2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}\b'
+                        r'|\b[\w/-]+(?:\.[\w/-]+)*\.[a-z]{2,4}\b'
+                        r'|\b[A-Za-z]+[-.]?\d[\w.-]*|\b[a-z]+[A-Z]\w*|\b[A-Za-z0-9]+(?:_[A-Za-z0-9]+)+\b')
 WORD = re.compile(r"[A-Za-z][\w'’-]*")
 BOUNDARY = re.compile(r'[.!?]["”’)\]]*\s+(?=["“‘(\[]?[A-Z0-9@#$])')
 MIDCAP = re.compile(r"(?<=[a-z,;:] )[A-Z][\w'’-]+")
@@ -82,7 +85,7 @@ def numbers(text):
         yield (key, bool(m['percent'])), m
 
 
-def blocks(text, skip_code=False):
+def blocks(text, skip_code=False, skipped=None):
     """Yield (line number, text, is_heading) for each paragraph, list item, table row or heading."""
     current, start, fenced = [], 0, False
     for number, line in enumerate(text.splitlines() + [''], 1):
@@ -91,6 +94,8 @@ def blocks(text, skip_code=False):
             fenced = not fenced
             stripped = ''
         if fenced and skip_code:
+            if stripped and skipped is not None:
+                skipped.append(number)
             continue
         opener = re.match(r'(#+|[-*+>]|\d+[.)]|\|)\s*', stripped)
         if current and (not stripped or opener):
@@ -99,7 +104,9 @@ def blocks(text, skip_code=False):
         if not stripped:
             continue
         clean = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1 (\2)', stripped)
-        clean = re.sub(r'[*`|]+', ' ', clean[opener.end():] if opener else clean).strip()
+        clean = clean[opener.end():] if opener else clean
+        # A table cell boundary becomes a comma so two cells never read as one name.
+        clean = re.sub(r'[*`]+', ' ', re.sub(r'\s*\|\s*', ', ', clean)).strip(' ,')
         if opener and opener[1].startswith('#'):
             if clean:
                 yield number, clean, True
@@ -178,7 +185,9 @@ def facts(sentence, heading, midcaps, known):
     for key, m in numbers(sentence):
         before, after = ordered_terms(sentence[:m.start()]), ordered_terms(sentence[m.end():])
         unit = re.match(r'\s+([A-Za-z]+)', sentence[m.end():])
-        if unit and unit[1].lower() not in STOP:
+        if unit and unit[1].lower() in STOP:
+            unit = None
+        if unit:
             context = set(after[:2])  # "47 additional clinics": the unit phrase must be in the passage
         else:
             context = set(before[-2:] + after[:2])
@@ -200,8 +209,10 @@ def check(deliverable, sources, min_overlap=0.4):
     for _, text in sources:
         midcaps.update(MIDCAP.findall(text))
         known.update(tokens(text))
-    report = {'outcome': 'all_mapped', 'sentences': 0, 'mapped': 0, 'skipped': 0, 'flags': [], 'map': []}
-    for line, block, heading in blocks(deliverable, skip_code=True):
+    report = {'outcome': 'all_mapped', 'sentences': 0, 'mapped': 0, 'skipped': 0, 'code_lines_not_checked': 0,
+              'flags': [], 'map': []}
+    in_code = []
+    for line, block, heading in blocks(deliverable, skip_code=True, skipped=in_code):
         for offset, sentence in sentences(block):
             report['sentences'] += 1
             wanted = terms(sentence)
@@ -233,16 +244,18 @@ def check(deliverable, sources, min_overlap=0.4):
             else:
                 report['mapped'] += 1
                 report['map'].append(entry)
+    report['code_lines_not_checked'] = len(in_code)
     if report['flags']:
         report['outcome'] = 'flagged'
     return report
 
 
-def read_sources(paths):
+def read_sources(paths, deliverable):
     for path in paths:
         files = sorted(p for p in path.rglob('*') if p.suffix in ('.md', '.txt')) if path.is_dir() else [path]
         for file in files:
-            yield str(file), file.read_text(encoding='utf-8')
+            if file.resolve() != deliverable.resolve():  # a draft is never its own source
+                yield str(file), file.read_text(encoding='utf-8')
 
 
 def main():
@@ -255,9 +268,11 @@ def main():
     parser.add_argument('--json', action='store_true', help='print the full report as JSON')
     args = parser.parse_args()
     try:
-        report = check(args.deliverable.read_text(encoding='utf-8'), list(read_sources(args.source)),
-                       args.min_overlap)
-    except (OSError, UnicodeDecodeError) as exc:
+        text = args.deliverable.read_text(encoding='utf-8')
+        report = check(text, list(read_sources(args.source, args.deliverable)), args.min_overlap)
+        if not report['sentences']:
+            raise ValueError(f'{args.deliverable} has no prose to check')
+    except (OSError, ValueError) as exc:
         print(f'claim check unavailable: {exc}', file=sys.stderr)
         return 2
     if args.json:
@@ -269,6 +284,8 @@ def main():
                   f"\n  {flag['sentence']}")
         print(f"{report['mapped']} of {report['sentences']} sentences mapped, {len(report['flags'])} flagged, "
               f"{report['skipped']} too short to check.")
+        if report['code_lines_not_checked']:
+            print(f"{report['code_lines_not_checked']} lines inside code fences were not checked.")
     return 1 if report['flags'] else 0
 
 

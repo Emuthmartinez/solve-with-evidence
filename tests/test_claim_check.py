@@ -47,7 +47,7 @@ class ClaimCheck(unittest.TestCase):
             self.assertEqual(flags(sentence), [], sentence)
 
     def test_percent_is_not_a_bare_number(self):
-        self.assertEqual(items('Revenue fell 47% in February.'), [('number', '47% in', 'not in any source')])
+        self.assertEqual(items('Revenue fell 47% in February.'), [('number', '47%', 'not in any source')])
 
     def test_unknown_name_and_altered_quote_are_flagged(self):
         found = items('Priya Raman said "We stopped double-booking in the first week."')
@@ -74,6 +74,20 @@ class ClaimCheck(unittest.TestCase):
         flag, = flags('Harbor launched on 3 March 2026.\nThe outage lasted\n90 minutes.')
         self.assertEqual((flag['line'], flag['sentence']), (2, 'The outage lasted 90 minutes.'))
 
+    def test_long_underscore_runs_finish_quickly(self):
+        import time
+        started = time.monotonic()
+        check('_' * 80 + ' signed.\n' + '_'.join(['part'] * 60) + ' is defined.', [('notes.md', NOTES + '_' * 80)])
+        self.assertLess(time.monotonic() - started, 2)
+
+    def test_table_cells_are_separate_names(self):
+        found = items('| Plan | Old Price | New Price |')
+        self.assertEqual([text for _, text, _ in found], ['Old Price', 'New Price'])
+
+    def test_fenced_text_is_reported_as_not_checked(self):
+        report = check('Harbor launched on 3 March 2026.\n\n```\nRevenue fell 99%.\n```\n', [('notes.md', NOTES)])
+        self.assertEqual((report['flags'], report['code_lines_not_checked']), ([], 1))
+
     def test_does_not_judge_entailment(self):
         # The stated limit: the opposite claim shares the number and the wording, so it maps.
         self.assertEqual(flags('Revenue grew 20% in February.'), [])
@@ -91,6 +105,11 @@ class ClaimCheck(unittest.TestCase):
             self.assertEqual(flagged.returncode, 1)
             self.assertEqual(json.loads(flagged.stdout)['flags'][0]['items'][0]['text'], '9 March')
             self.assertEqual(run(good, '--source', Path(tmp) / 'missing.md').returncode, 2)
+            # A directory that holds the draft does not make the draft its own source.
+            self.assertEqual(run(bad, '--source', tmp).returncode, 1)
+            empty = Path(tmp) / 'empty.md'
+            empty.write_text('')
+            self.assertEqual(run(empty, '--source', notes).returncode, 2)
 
 
 if __name__ == '__main__':

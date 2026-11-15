@@ -46,7 +46,7 @@ Every sentence is mapped to a source passage or flagged. `--source` takes files 
 | `unsupported` | A number, name or quotation is in no source, or a number appears only beside different wording | Find the source and add it, correct the claim, or cut it |
 | `unmatched` | No passage shares enough of the sentence's wording, or an opening word may be an unsourced name | Decide whether it is a claim or your own framing. A claim needs a source |
 
-Exit status is 0 when every sentence maps, 1 when anything is flagged, and 2 when a file cannot be read.
+Exit status is 0 when every sentence maps, 1 when anything is flagged, and 2 when a file cannot be read or the draft has no prose. Text inside code fences is not checked, and the summary says how many lines that was. A draft found inside a source directory is never used as its own source.
 
 What the checker cannot do:
 
