@@ -1,4 +1,11 @@
-"""Dispatch matched trials with isolated solver contexts, and score recorded final answers."""
+"""Dispatch matched trials with isolated solver contexts, and score recorded final answers.
+
+Arms are defined in arms.json: a skill folder or none, a model tier, and an optional token
+budget copied from another arm. Two suites use them:
+
+  sealed  the 17 two-turn cases in this directory, through the Codex app-server runner (default)
+  proof   the 20-task benchmark in ../proof, through a pluggable agent CLI or the offline mock
+"""
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
@@ -10,6 +17,8 @@ import sys
 HERE = Path(__file__).resolve().parent
 from tracecheck.audit import Suites
 
+ARMS = json.loads((HERE / 'arms.json').read_text())
+
 
 def run_job(job, destination):
     arm, case, repeat = job
@@ -20,10 +29,12 @@ def run_job(job, destination):
     inputs.mkdir(parents=True, exist_ok=True)
     case_file = inputs / f'{case}-{arm}-r{repeat}.json'
     case_file.write_text(json.dumps({'id': case, 'messages': messages}, indent=2) + '\n')
-    package = HERE / 'snapshots' / arm
+    spec, codex = ARMS['arms'][arm], ARMS['adapters']['codex']
+    # The frozen runner needs a skill folder. A no-skill arm gets one line saying none is supplied.
+    package = HERE / (spec['skill'] or 'no-skill')
     cmd = [sys.executable, '-B', str(HERE / 'runner/run_trial.py'),
            '--case', str(case_file), '--skill', str(package), '--out', str(trial),
-           '--model', 'gpt-6.1-sol', '--effort', 'medium', '--timeout', '200']
+           '--model', codex['models'][spec['model']], '--effort', codex['effort'], '--timeout', '200']
     print('start',trial.name,flush=True)
     result=subprocess.run(cmd,capture_output=True,text=True)
     summary_file=trial/'summary.json'
@@ -44,8 +55,11 @@ def run_job(job, destination):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True, help='Fresh directory for captured traces and inputs')
-    parser.add_argument('--arms', nargs='+', choices=['baseline', 'candidate', 'release', 'final', 'published', 'shipped'], required=True)
-    parser.add_argument('--cases', nargs='+', required=True)
+    parser.add_argument('--arms', nargs='+', choices=sorted(ARMS['arms']), required=True)
+    parser.add_argument('--suite', choices=['sealed', 'proof'], default='sealed')
+    parser.add_argument('--adapter', choices=sorted(ARMS['adapters']), default='codex',
+                        help='agent CLI for the proof suite; mock runs offline and measures nothing')
+    parser.add_argument('--cases', nargs='+', required=True, help='case or task ids; "all" selects every proof task')
     parser.add_argument('--repeats', nargs='+', type=int, required=True)
     parser.add_argument('--jobs', type=int, default=2)
     args = parser.parse_args()
@@ -58,6 +72,16 @@ def main():
     jobs = [(arm, case, rep) for rep in args.repeats for case in args.cases for arm in args.arms]
     if len(set(jobs)) != len(jobs):
         parser.error('duplicate trials in requested matrix')
+    if args.suite == 'proof':
+        sys.path.insert(0, str(HERE.parent / 'proof'))
+        import bench
+        bench.run(destination, args.adapter, args.arms, args.cases, args.repeats, args.jobs)
+        print(f'next: python3 -B {HERE.parent}/proof/judge.py --run {destination}  then  report.py --run {destination}')
+        return
+    budgeted = [arm for arm in args.arms if ARMS['arms'][arm].get('budget_of')]
+    if budgeted or args.adapter != 'codex':
+        parser.error(f'the sealed suite runs only through Codex and cannot match a token budget ({budgeted}); '
+                     'use --suite proof')
     random.Random(1428).shuffle(jobs)
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         futures = [pool.submit(run_job, job, destination) for job in jobs]
