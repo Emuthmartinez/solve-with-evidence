@@ -99,6 +99,13 @@ class Adapters(Scratch):
         self.assertEqual(parsed['loaded'], {'skills': 0, 'mcp_servers': 0, 'slash_commands': 0,
                                             'plugins': ['cc-plugin-telemetry']})
 
+    def test_claude_adapter_keeps_user_instructions_and_memory_out(self):
+        with mock.patch.object(bench, 'run_cli', return_value=('', {'exit': 0})) as run:
+            bench.claude_agent({}, 'm', 'p', self.tmp, self.tmp / 'log', 1)
+        command, env = run.call_args.args[0], run.call_args.args[2]
+        self.assertEqual(command[command.index('--setting-sources') + 1], 'project,local')
+        self.assertEqual(env['CLAUDE_CODE_DISABLE_AUTO_MEMORY'], '1')
+
     def test_a_stream_without_usage_reports_unknown_tokens(self):
         self.assertIsNone(bench.parse_codex('not json\n')['tokens'])
         self.assertIsNone(bench.parse_claude('')['tokens'])
