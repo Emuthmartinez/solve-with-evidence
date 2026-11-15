@@ -161,6 +161,22 @@ class Grading(Scratch):
         grade = self.graded('exec-01-allocate-cents', 'good', {'status': 'verified'}, append='\nprint("self-test ok")\n')
         self.assertEqual((grade['success'], grade['checks']), (True, '24/24'))
 
+    def rewritten(self, task_id, rewrite):
+        """Grade the good exemplar after rewriting its source."""
+        work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
+        bench.prepare(task(task_id), None, work)
+        good = (task(task_id)['dir'] / 'exemplars/good/solution.py').read_text()
+        (work / 'solution.py').write_text(rewrite(good))
+        return bench.grade(task(task_id), work)
+
+    def test_a_solution_is_imported_the_way_python_imports_a_module(self):
+        dataclass = ('from __future__ import annotations\nfrom dataclasses import dataclass\n\n\n'
+                     '@dataclass\nclass Span:\n    start: int\n    end: int\n\n\n')
+        registered = 'import sys\nassert sys.modules[__name__].__name__ == "solution"\n\n\n'
+        for prefix in (dataclass, registered):
+            grade = self.rewritten('exec-02-sessionize', lambda good: prefix + good)
+            self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '29/29', []))
+
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']
         work = self.tmp / 'fenced'
