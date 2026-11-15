@@ -227,8 +227,6 @@ def call_agent(adapter, settings, model, prompt, work, log, timeout):
     return agent(settings, model, prompt, work, log, timeout)
 
 
-# Grading.
-
 def read_status(work, delivered):
     try:
         data = json.loads((work / 'status.json').read_text())
@@ -270,8 +268,6 @@ def grade(task, work, grader_timeout=60):
                       unmatched=sum(f['kind'] == 'unmatched' for f in flags))
     return result
 
-
-# Trials.
 
 def trial_dir(out, task_id, arm, repeat):
     return out / 'trials' / f'{task_id}--{arm}--r{repeat}'

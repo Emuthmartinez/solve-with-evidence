@@ -119,7 +119,7 @@ The review that proposed this benchmark estimated about 8 million tokens for the
 
 Model names for each tier are in `arms.json`. Changing them changes the freeze digest, which is intended: a run names exactly what it compared.
 
-Each real adapter was exercised once, on a trivial non-benchmark prompt, to capture its output format (codex-cli 0.166.0 and Claude Code 2.1.322). The parsers are tested against those shapes. No benchmark task has been sent to either.
+Each real adapter was exercised on a trivial non-benchmark prompt (codex-cli 0.166.0 and Claude Code 2.1.322): once to capture its output format, and once through the harness's own command line, which also checked the judge's reply parser. The parsers are tested against the captured shapes. No benchmark task has been sent to either.
 
 ## Limits
 
