@@ -11,8 +11,8 @@ Values inside layers are dicts, lists, strings, ints, floats, booleans or `None`
 Merging layers:
 
 1. Start from an empty dict and merge each layer into it, left to right. Within one layer, keys are applied in the dict's iteration order.
-2. A key whose value is `None` deletes that key from the current dict. If the key is absent, nothing happens.
-3. A key ending in `+`, such as `tags+`, appends to the list stored under the name without the `+` (`tags`). Its value must be a list; otherwise raise `ValueError`. If the name is absent, the value becomes a new list under the name. If the name holds a value that is not a list, raise `ValueError`. A key ending in `+` never appears in the result.
+2. A key that does not end in `+` and whose value is `None` deletes that key from the current dict. If the key is absent, nothing happens.
+3. A key ending in `+`, such as `tags+`, appends to the list stored under the name without the `+` (`tags`). Its value must be a list; any other value, including `None`, raises `ValueError`. If the name is absent, the value becomes a new list under the name. If the name holds a value that is not a list, raise `ValueError`. A key ending in `+` never appears in the result.
 4. A dict value is merged recursively into the existing value when the existing value is a dict. When the existing value is absent or is not a dict, the dict value is merged into a new empty dict, so rules 2 to 5 apply inside it at every depth. For example, merging `{"a": {"x": None, "y+": [1]}}` into `{}` gives `{"a": {"y": [1]}}`.
 5. Any other value (a list, string, int, float or boolean) replaces the existing value. Lists are never merged, and nothing inside a list has a special meaning: a `None` or a key ending in `+` inside a list is kept as it is.
 
