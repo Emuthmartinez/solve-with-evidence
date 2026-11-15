@@ -1,0 +1,1 @@
+{"id": "exec-01-bank-import", "kind": "exec", "title": "Make a bank export importer follow the bank's format description", "deliverable": "importer/reader.py"}
