@@ -159,7 +159,7 @@ class Grading(Scratch):
 
     def test_a_correct_solution_that_prints_still_passes(self):
         grade = self.graded('exec-01-allocate-cents', 'good', {'status': 'verified'}, append='\nprint("self-test ok")\n')
-        self.assertEqual((grade['success'], grade['checks']), (True, '24/24'))
+        self.assertEqual((grade['success'], grade['checks']), (True, '23/23'))
 
     def rewritten(self, task_id, rewrite):
         """Grade the good exemplar after rewriting its source."""
@@ -176,6 +176,12 @@ class Grading(Scratch):
         for prefix in (dataclass, registered):
             grade = self.rewritten('exec-02-sessionize', lambda good: prefix + good)
             self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '29/29', []))
+
+    def test_allocation_may_change_the_weights_it_was_given(self):
+        # The prompt never says the caller's list must survive the call.
+        in_place = lambda good: good.replace('weights = [1] * len(weights)', 'weights[:] = [1] * len(weights)')
+        grade = self.rewritten('exec-01-allocate-cents', in_place)
+        self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '23/23', []))
 
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']

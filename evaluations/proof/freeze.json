@@ -1,9 +1,9 @@
 {
-  "digest": "3bde8c528bddbccb550c7b2487cfba735f1d0ac56df7179080dbd3fedd262929",
+  "digest": "dc7705abc8cf453aa3d4220971d75d444811d1fdc3e89bc48d38702f55f1efe9",
   "files": {
     "tasks/exec-01-allocate-cents/exemplars/bad/solution.py": "38004a6e9b2e76571c5f44fe295f26bce697bd043c052a6a8480a45b9bbcfa88",
     "tasks/exec-01-allocate-cents/exemplars/good/solution.py": "5820cc3a23ee267e80360aea02c61a98177879dbee37fffbbcf1695d79508991",
-    "tasks/exec-01-allocate-cents/grader.py": "cb8a524a28e5303fac5c399aafd418f70c4ae1dd81d08ec2d5d5dcef22a46ff2",
+    "tasks/exec-01-allocate-cents/grader.py": "23cbe90eb1e53a819b8df290586a24bccc836ba6cb5fe30edbb7e41250fd9af0",
     "tasks/exec-01-allocate-cents/prompt.md": "82faffaf682aadf6be051dbdbffd5d10c1986c2bb77d3f4e4ae2b75cb0fa2fa3",
     "tasks/exec-01-allocate-cents/task.json": "98442f2b2f92a0d15cfcd7cee478e719b057e12337b5be4d90fa4f22286d1ba2",
     "tasks/exec-02-sessionize/exemplars/bad/solution.py": "489f1542416ed7f8b907c474cf3168dcbc5e382b001a230ccbbf02db29cebb90",
