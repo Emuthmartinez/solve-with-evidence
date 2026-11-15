@@ -149,18 +149,19 @@ def larger_invoice(s):
 
 
 def shape(s):
+    # The docstrings name dict, list, str and int. A subclass of one, such as OrderedDict, is one.
     for result in (invoice(s, ISSUE), credit(s, ISSUE), credit(s, ISSUE, {0: 1})):
-        if type(result) is not dict or set(result) != {'lines', 'taxes', 'net', 'tax', 'total'}:
+        if not isinstance(result, dict) or set(result) != {'lines', 'taxes', 'net', 'tax', 'total'}:
             return False
-        if type(result['lines']) is not list or type(result['taxes']) is not list:
+        if not isinstance(result['lines'], list) or not isinstance(result['taxes'], list):
             return False
         for entries, keys in ((result['lines'], LINE_KEYS), (result['taxes'], TAX_KEYS)):
             for entry in entries:
-                if type(entry) is not dict or set(entry) != set(keys):
+                if not isinstance(entry, dict) or set(entry) != set(keys):
                     return False
-                if any(type(entry[key]) is not (str if key in ('sku', 'rate') else int) for key in keys):
+                if not all(isinstance(entry[key], str if key in ('sku', 'rate') else int) for key in keys):
                     return False
-        if any(type(result[key]) is not int for key in ('net', 'tax', 'total')):
+        if not all(isinstance(result[key], int) for key in ('net', 'tax', 'total')):
             return False
     return True
 

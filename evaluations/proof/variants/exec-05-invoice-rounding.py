@@ -67,6 +67,16 @@ ZERO_RATED = ['the invoice in the issue totals 47.18', 'the breakdown runs from 
               'a zero rate is listed with zero tax', 'a larger invoice', 'full credit note of the issue invoice',
               'full credit note of the larger invoice', 'partial credit lists lines in invoice order']
 
+# Correct solutions that differ from the exemplar. Each must pass every check.
+RESULT = "    return {'lines': out, 'taxes': taxes, 'net': net, 'tax': tax, 'total': net + tax}\n"
+ENTRY = "        out.append({'sku': line.sku, 'gross': gross, 'discount': discount, 'net': net, 'rate': rate})\n"
+ACCEPTED = [
+    ('the invoice and its lines built as OrderedDicts, which are dicts',
+     {INVOICE: [("from collections import namedtuple\n", "from collections import OrderedDict, namedtuple\n"),
+                (ENTRY, ENTRY.replace("out.append({", "out.append(OrderedDict({").replace("})\n", "}))\n")),
+                (RESULT, RESULT.replace("return {", "return OrderedDict({").replace("}\n", "})\n"))]}),
+]
+
 VARIANTS = [
     ('half a cent rounded to even, as round() does',
      {MONEY: [(AWAY, "    return round(value)\n")]},

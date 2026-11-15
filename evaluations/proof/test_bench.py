@@ -205,7 +205,9 @@ class ExecTasks(Scratch):
 
         VARIANTS = [(mistake, {file: [(old, new), ...] or the whole new text}, [checks it must fail])]
 
-    Each is the good exemplar with those edits, and must fail exactly the checks it lists."""
+    Each is the good exemplar with those edits, and must fail exactly the checks it lists. A file
+    may also hold `ACCEPTED = [(solution, edits)]`: correct solutions that differ from the exemplar.
+    Each must fail no check."""
 
     def failed(self, task, exemplar, edits=None):
         work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
@@ -235,8 +237,11 @@ class ExecTasks(Scratch):
         self.assertEqual(self.failed(task, 'good'), [])
         caught = set(self.failed(task, 'bad'))
         self.assertTrue(caught)
-        variants = load_source(HERE / 'variants' / f"{task['id']}.py").VARIANTS
-        for mistake, edits, expected in variants:
+        variants = load_source(HERE / 'variants' / f"{task['id']}.py")
+        for solution, edits in getattr(variants, 'ACCEPTED', []):
+            with self.subTest(solution=solution):
+                self.assertEqual(self.failed(task, 'good', edits), [])
+        for mistake, edits, expected in variants.VARIANTS:
             with self.subTest(mistake=mistake):
                 self.assertTrue(expected)
                 self.assertEqual(sorted(self.failed(task, 'good', edits)), sorted(expected))
