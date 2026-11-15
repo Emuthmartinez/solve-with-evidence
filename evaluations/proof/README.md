@@ -38,7 +38,7 @@ Arms are defined in [`../hard/arms.json`](../hard/arms.json) and dispatched by [
 | `no-skill-weak` | None | Weak | Its comparison |
 | `no-skill-budget` | None | Strong | Same token budget, no method |
 
-"Live" means the skill folder as it is when the run starts. Before the first trial, each skill arm's package is copied to `skills/<arm>` in the run directory and its sha256 goes into `run.json`. Every trial of that arm copies the snapshot and records the hash of the copy it was handed. Editing the skill during a run changes nothing in that run. The report refuses a run whose snapshot or trials do not match the hashes in `run.json`.
+"Live" means the skill folder as it is when the run starts. Before the first trial, each skill arm's package is copied to `skills/<arm>` in the run directory, without any `__pycache__` folder, and its sha256 goes into `run.json`. Every trial of that arm copies the snapshot and records the hash of the copy it was handed. Editing the skill during a run changes nothing in that run. The report refuses a run whose snapshot or trials do not match the hashes in `run.json`.
 
 The budget control runs with no skill, then is re-invoked in the same directory with a generic "check and improve your work" prompt until it has spent the `skill` arm's median tokens on that task, or six rounds. It is one way to spend extra compute without the method. Raising reasoning effort is another, and is not tested. The report recomputes each target from the `skill` trials in the run. If a control chased a different target, "method, not compute" is inconclusive.
 

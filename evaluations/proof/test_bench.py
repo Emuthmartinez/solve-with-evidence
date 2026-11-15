@@ -368,6 +368,24 @@ class MockRun(Scratch):
             with self.assertRaises(SystemExit):
                 report.Run(out)
 
+    def test_the_pinned_hash_names_the_skill_source_not_a_bytecode_cache(self):
+        hashes = []
+        for cached in (False, True):
+            source = self.tmp / f'skill-{cached}'
+            (source / 'scripts').mkdir(parents=True)
+            (source / 'SKILL.md').write_text('the same skill\n')
+            if cached:
+                (source / 'scripts/__pycache__').mkdir()
+                (source / 'scripts/__pycache__/tool.cpython-315.pyc').write_bytes(b'left by an earlier import')
+            config = bench.load_config()
+            config['arms']['skill']['skill'] = str(source)
+            out = self.tmp / f'run-{cached}'
+            with mock.patch.object(bench, 'load_config', return_value=config):
+                bench.run(out, 'mock', ['skill'], self.TASKS[:1], [1], 1)
+            hashes.append(json.loads((out / 'run.json').read_text())['skills']['skill'])
+            self.assertFalse(list(out.rglob('__pycache__')))
+        self.assertEqual(hashes[0], hashes[1])
+
     def test_a_trial_made_with_another_skill_is_neither_scored_nor_kept(self):
         out, _ = self.run_mock(('skill', 'no-skill'))
         pinned = json.loads((out / 'run.json').read_text())['skills']['skill']

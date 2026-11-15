@@ -387,7 +387,9 @@ def run(out, adapter, arms, task_ids, repeats, jobs, resume=False):
     for arm in arms:
         source = config['arms'][arm].get('skill')
         if source and not resume:
-            shutil.copytree((ARMS_FILE.parent / source).resolve(), out / 'skills' / arm)
+            # A bytecode cache left by an earlier import is not part of the skill.
+            shutil.copytree((ARMS_FILE.parent / source).resolve(), out / 'skills' / arm,
+                            ignore=shutil.ignore_patterns('__pycache__'))
         skills[arm] = skill_sha(out / 'skills' / arm) if source else None
     meta = {'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
             'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family'],
