@@ -194,6 +194,13 @@ class Grading(Scratch):
                          (False, True, ['example never (TimeoutError)', '31st of short months never (TimeoutError)']))
         successful = self.rewritten('exec-06-next-run', slow('expr == "59 23 31 12 *"'))
         self.assertEqual((successful['success'], successful['failed']), (False, ['year rollover (TimeoutError)']))
+        # Slow once, then answered from a cache: asking again must not turn a slow call into a pass.
+        cached = lambda good: good.replace('def next_run(', 'def fast(') + (
+            '\n\nimport time as clock\n\nSEEN = {}\n\n\ndef next_run(expr, after):\n    if (expr, after) not in SEEN:\n'
+            '        if expr == "0 0 30 2 *":\n            clock.sleep(1.1)\n        SEEN[expr, after] = fast(expr, after)\n'
+            '    return SEEN[expr, after]\n')
+        once = self.rewritten('exec-06-next-run', cached)
+        self.assertEqual((once['success'], once['failed']), (False, ['example never (TimeoutError)']))
 
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']

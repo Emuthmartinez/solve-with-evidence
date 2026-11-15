@@ -1,5 +1,5 @@
 {
-  "digest": "00b32c8ad7e29db1fcb30793f47ab45d3bb05be238b7bf382e397c420b1d3ef4",
+  "digest": "ea0970b83b51f02385758cb32c286a5f4acbd5c0d0e6be8a2e4878b8ed689033",
   "files": {
     "tasks/exec-01-allocate-cents/exemplars/bad/solution.py": "38004a6e9b2e76571c5f44fe295f26bce697bd043c052a6a8480a45b9bbcfa88",
     "tasks/exec-01-allocate-cents/exemplars/good/solution.py": "5820cc3a23ee267e80360aea02c61a98177879dbee37fffbbcf1695d79508991",
@@ -31,7 +31,7 @@
     "tasks/exec-05-inventory-fix/workspace/test_visible.py": "3f0e315d9ff42e66b7b8e3637e108fcf45ebdeeaac6f44f8813d653fb1390c93",
     "tasks/exec-06-next-run/exemplars/bad/solution.py": "958951669f015abd7d0068ee48b53f37abffd69a70083a96559896905796ead6",
     "tasks/exec-06-next-run/exemplars/good/solution.py": "30d705a196162448fb3eda44eeb17ee3b5d2017b81c6f23ef7399abc443350ad",
-    "tasks/exec-06-next-run/grader.py": "d3a823dc8dd781dca0de86b6531dadeb1f6503a81635673970378935f3d095bc",
+    "tasks/exec-06-next-run/grader.py": "5a00627f424ef8ec13277331e1eca07425209c240e27aea5284b1e3d3f13480e",
     "tasks/exec-06-next-run/prompt.md": "f0fa63defeb1f9ced201b413b00f0af5fa67fa01e4abff6c61406325caff032b",
     "tasks/exec-06-next-run/task.json": "e3a590c190c558d9c5ab09bc822512dac5a216088d0e30688993f1a2c0033497",
     "tasks/exec-07-humanize-duration/exemplars/bad/solution.py": "30839e0977c3d51d245611cbe82ad9eecdb69b0d4140f3ed0aa65301e52becd3",

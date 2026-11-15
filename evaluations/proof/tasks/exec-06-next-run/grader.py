@@ -57,14 +57,13 @@ def oracle(expr, after):
 
 
 def timed(s, expr, after):
-    """Rule 9, for calls that return a time and calls that return None. A slow call is tried once
-    more, so a stall on a busy machine is not charged to the solution."""
-    for _ in range(2):
-        started = time.perf_counter()
-        found = s.next_run(expr, after)
-        if time.perf_counter() - started < LIMIT_S:
-            return found
-    raise TimeoutError(f'next_run took {LIMIT_S} s or longer, twice')
+    """Rule 9, for calls that return a time and calls that return None. There is no second try:
+    a solution that caches its results would answer it at once."""
+    started = time.perf_counter()
+    found = s.next_run(expr, after)
+    if time.perf_counter() - started >= LIMIT_S:
+        raise TimeoutError(f'next_run took {LIMIT_S} s or longer')
+    return found
 
 
 def agrees(expr, after):

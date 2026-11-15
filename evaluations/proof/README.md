@@ -14,7 +14,7 @@ Earlier benchmarks in this repository compared versions of the skill with each o
 
 Twenty tasks, frozen by [`freeze.json`](freeze.json). `python3 -B evaluations/proof/bench.py check` verifies the freeze.
 
-The freeze digest was `2c78ed622e9a` for the pilot. It is `00b32c8ad7e2` now, after an independent review found three grader defects, fixed here: a valid solution could fail to load, the allocation grader enforced a rule its prompt does not state, and the scheduling grader did not enforce a time limit its prompt does state. No prompt and no threshold changed. A freeze may change only while no skill arm has run.
+The freeze digest was `2c78ed622e9a` for the pilot. It is `ea0970b83b51` now, after an independent review found three grader defects, fixed here: a valid solution could fail to load, the allocation grader enforced a rule its prompt does not state, and the scheduling grader did not enforce a time limit its prompt does state. No prompt and no threshold changed. A freeze may change only while no skill arm has run.
 
 | Kind | Count | Deliverable | Graded by |
 |---|---|---|---|
@@ -138,7 +138,7 @@ Each real adapter was exercised on a trivial non-benchmark prompt (codex-cli 0.1
 ## Limits
 
 - **The executable tasks are too easy.** The target is an unaided strong model passing about half the executable trials. The pilot measured 16 of 16. Until harder tasks pass a new pilot under a new freeze, any full run is inconclusive on calibration.
-- **One executable check depends on the clock.** The scheduling task fails a call that takes one second or longer, measured by wall time, after one retry. The reference solution runs all 40 checks in about 0.03 seconds, so the margin is wide, but a machine stalled for a full second twice in a row would fail a correct solution.
+- **One executable check depends on the clock.** The scheduling task fails a call that takes one second or longer, measured by wall time. A slow call is not tried again, because a solution that caches its results would answer the second try at once. The reference solution runs all 40 checks in about 0.03 seconds, so the margin is wide, but a machine stalled for a full second during one call would fail a correct solution.
 - **Low power.** Two repetitions give 16 to 48 trials per comparison. Repetitions of one task are not independent, and the Wilson interval treats them as if they were. A pass is a reason to run a larger held-out set.
 - **The tasks are public.** They are disclosed regression material from the day they are pushed. Hold out fresh tasks for any later claim, and rotate them.
 - **One metric is also the skill's tool.** The skill tells the agent to run `claim_check.py`, and unsupported claims per output is counted with the same script. The pairwise judging and human picks do not share that bias. Read the two together.
