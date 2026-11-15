@@ -383,13 +383,15 @@ def run(out, adapter, arms, task_ids, repeats, jobs, resume=False):
     out.mkdir(parents=True, exist_ok=True)
     # Every trial of an arm reads one snapshot of its skill, taken before the first trial runs,
     # so a skill edited during the run or before a resume cannot split the run.
-    skills = {}
+    skills, taken = {}, {}
     for arm in arms:
         source = config['arms'][arm].get('skill')
         if source and not resume:
+            # Arms that share a skill copy the first snapshot of it, so they cannot differ.
             # A bytecode cache left by an earlier import is not part of the skill.
-            shutil.copytree((ARMS_FILE.parent / source).resolve(), out / 'skills' / arm,
+            shutil.copytree(taken.get(source) or (ARMS_FILE.parent / source).resolve(), out / 'skills' / arm,
                             ignore=shutil.ignore_patterns('__pycache__'))
+            taken.setdefault(source, out / 'skills' / arm)
         skills[arm] = skill_sha(out / 'skills' / arm) if source else None
     meta = {'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
             'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family'],

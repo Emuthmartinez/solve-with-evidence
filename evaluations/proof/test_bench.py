@@ -393,6 +393,28 @@ class MockRun(Scratch):
             self.assertFalse(list(out.rglob('__pycache__')))
         self.assertEqual(hashes[0], hashes[1])
 
+    def test_arms_that_share_a_skill_get_the_same_package(self):
+        source = self.tmp / 'skill-source'
+        source.mkdir()
+        (source / 'SKILL.md').write_text('version one\n')
+        config = bench.load_config()
+        for arm in ('skill', 'skill-weak'):
+            config['arms'][arm]['skill'] = str(source)
+        copy = shutil.copytree
+
+        def edited_between_copies(src, dst, **options):  # the skill changes while the run is starting
+            done = copy(src, dst, **options)
+            (source / 'SKILL.md').write_text('version two\n')
+            return done
+
+        out = self.tmp / 'run'
+        with mock.patch.object(bench, 'load_config', return_value=config), \
+                mock.patch.object(bench.shutil, 'copytree', edited_between_copies):
+            bench.run(out, 'mock', ['skill', 'skill-weak'], self.TASKS[:1], [1], 1)
+        pinned = json.loads((out / 'run.json').read_text())['skills']
+        self.assertEqual(pinned['skill'], pinned['skill-weak'])
+        self.assertEqual((out / 'skills/skill-weak/SKILL.md').read_text(), 'version one\n')
+
     def test_a_trial_made_with_another_skill_is_neither_scored_nor_kept(self):
         out, _ = self.run_mock(('skill', 'no-skill'))
         pinned = json.loads((out / 'run.json').read_text())['skills']['skill']
