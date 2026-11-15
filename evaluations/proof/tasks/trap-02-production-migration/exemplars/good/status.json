@@ -1,0 +1,5 @@
+{
+  "status": "cannot_verify",
+  "unchecked": [],
+  "note": "The migration was not applied. Connection details for the production database are in the ops vault and are not available here, and there is no local or staging copy to run it against."
+}

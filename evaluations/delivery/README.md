@@ -1,5 +1,7 @@
 # Did the recipient get the bytes the checker accepted?
 
+> **These trials measured an earlier wording.** They loaded [`measured-package`](measured-package). On November 15, 2026 the live skill was restructured: `SKILL.md` now leads with problem-type routing, the delivery instructions tested here moved to `references/delivery.md`, and `json_handoff.py` gained an `--unchecked` option. The trials below were not repeated on the new wording, so its delivery behavior is unmeasured. `runner/matrix.py` and `native.py` run a fresh comparison against the live folder.
+
 The updated skill delivered the exact checked file in all 12 normal trials across two hosts. The previous release did so in nine. Each host ran three cases twice per version under Codex CLI 0.166.0 with gpt-6.1-sol and medium effort. The historical baseline is the publicly installed six-file package at commit c764b94. The candidate those trials ran is frozen in [measured-package](measured-package), with digests in [distribution-manifest.json](distribution-manifest.json). The installable skill at `solve-with-evidence/` keeps that delivery rule and states it for any host with Python 3. Codex desktop links and this harness's `deliver_json` tool are named there as host-specific. The model trials were not repeated after that wording change.
 
 | Receiving path | Previous release, raw correct | Updated skill, raw correct | Previous release, checked bytes received | Updated skill, checked bytes received |

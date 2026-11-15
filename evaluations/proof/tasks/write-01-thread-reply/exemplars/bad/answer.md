@@ -1,0 +1,1 @@
+Couldn't agree more, Jonas! At Harbor we're thrilled to see clinics cut no-shows by over 50% in just 2 weeks. Our AI-powered waitlist is a game-changer that refills 90% of cancelled slots. As you saw when you tried Harbor, boring wins. Check out our site to learn more! #healthtech

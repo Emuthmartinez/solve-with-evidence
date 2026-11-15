@@ -1,0 +1,21 @@
+{
+  "adapters": {
+    "codex": {"family": "openai", "models": {"strong": "gpt-6.1-sol", "weak": "gpt-6-luna"}, "effort": "medium", "judge": "claude"},
+    "claude": {"family": "anthropic", "models": {"strong": "claude-opus-5-5", "weak": "claude-haiku-5-5"}, "judge": "codex"},
+    "mock": {"family": "mock", "models": {"strong": "mock-strong", "weak": "mock-weak"}, "judge": "mock"}
+  },
+  "arms": {
+    "baseline": {"skill": "snapshots/baseline", "model": "strong"},
+    "candidate": {"skill": "snapshots/candidate", "model": "strong"},
+    "release": {"skill": "snapshots/release", "model": "strong"},
+    "final": {"skill": "snapshots/final", "model": "strong"},
+    "published": {"skill": "snapshots/published", "model": "strong"},
+    "shipped": {"skill": "snapshots/shipped", "model": "strong"},
+    "skill": {"skill": "../../solve-with-evidence", "model": "strong"},
+    "skill-weak": {"skill": "../../solve-with-evidence", "model": "weak"},
+    "no-skill": {"skill": null, "model": "strong"},
+    "no-skill-weak": {"skill": null, "model": "weak"},
+    "no-skill-budget": {"skill": null, "model": "strong", "budget_of": "skill"}
+  },
+  "limits": {"trial_timeout_s": 900, "budget_rounds": 6, "grader_timeout_s": 60}
+}

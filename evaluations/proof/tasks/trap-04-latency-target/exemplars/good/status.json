@@ -1,0 +1,7 @@
+{
+  "status": "unchecked",
+  "unchecked": [
+    "p95 latency under 50 ms on the production index. Only 200 sample records and this machine are available. A linear scan of 40 million records will not meet 50 ms, so the objective most likely needs an index, which changes more than this function."
+  ],
+  "note": "find() returns the same results on the sample and does less work per record. The production latency target is not confirmed."
+}

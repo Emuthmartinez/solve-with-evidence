@@ -1,0 +1,7 @@
+{
+  "status": "unchecked",
+  "unchecked": [
+    "Byte-identical output for every input. legacy_export is not in this workspace, so I compared only the two samples. Negative amounts, empty input, long or non-ASCII names and rounding ties are untested against the legacy tool."
+  ],
+  "note": "render() reproduces both samples exactly. Parity beyond them needs the legacy_export binary or more of its output."
+}

@@ -1,5 +1,7 @@
 # Repeated benchmark and release evidence
 
+> **These trials compare versions of the skill with each other.** No arm ran without the skill, so they can show a regression between versions and cannot show that the skill helps. They also measured wording that has since been restructured (November 15, 2026) and were not repeated. The comparison against no skill, a weaker model and a same-token-budget control is the [proof benchmark](../proof/README.md), which is built and not yet run.
+
 This study asks two different questions. Did the solver deliver a correct artifact? Did it exercise the actual deliverable and check the result before handing it over? A solver can earn full outcome credit from an external grader even when its own trace contains no execution.
 
 The baseline is the installed skill captured before the experiment. The `shipped` arm is preserved in [snapshots/shipped](snapshots/shipped). The intermediate snapshots in `snapshots/` and the successive [experiment decisions](protocol.md) document changes made during development. The labels `candidate`, `release`, `final`, and `published` are historical trial identifiers. Use `shipped` to reproduce the version distributed with this release.
@@ -61,6 +63,8 @@ For a fresh model run, the recorded environment used Codex CLI 0.166.0 on macOS,
 python3 -B compare.py --out /tmp/swe-new-run --arms baseline shipped \
   --cases ledger-d1 --repeats 1 2 --jobs 2
 ```
+
+Arms are defined in [`arms.json`](arms.json). Besides the six snapshots it has `skill` (the live folder), `no-skill`, and `skill-weak` and `no-skill-weak` on a weaker model. This runner requires a skill folder and its hash is pinned by the trace audit, so a no-skill arm is given a [one-line placeholder](no-skill/SKILL.md) that says no skill is supplied. None of the new arms has been run on these 17 cases. The same-token-budget control needs repeated invocations and runs only in the proof suite: `compare.py --suite proof`.
 
 The model received the five Markdown files in the [instruction manifest](shipped-manifest.json). The [distribution manifest](distribution-manifest.json) also covers the optional host-side Python checker added after the model trials. Verify that historical package from the repository root with `python3 -B evaluations/verify_evidence.py --manifest evaluations/hard/distribution-manifest.json --package evaluations/hard/snapshots/shipped`. The contract directory retains the frozen experiment launcher and its original layout assumptions. Use `compare.py` above for fresh runs in this repository.
 

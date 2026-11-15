@@ -1,0 +1,1 @@
+The two-way sync with Medisoft is in progress. It is in private beta with 6 clinics. We have not committed a release date. It depends on Medisoft certifying our connector, and Medisoft has not given a date. Today Harbor exports to CSV. No other record-system integration exists.
