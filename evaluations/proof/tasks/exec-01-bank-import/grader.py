@@ -187,6 +187,27 @@ def empty_export(s):
     return loads(s, export('T;0;0')) == [] and loads(s, export('T;0;0', eol='\n', bom=False)) == []
 
 
+
+def not_utf8(s):
+    # 'Café' as Latin-1: the byte E9 followed by a line end is not UTF-8.
+    lines = (record('R1', '1,00', memo='Café'), 'T;1;1,00')
+    latin = [export(*lines), export(*lines, eol='\n', bom=False)]
+    for path in latin:
+        Path(path).write_bytes(Path(path).read_bytes().replace('é'.encode('utf-8'), b'\xe9'))
+    return loads(s, export(*lines)) == [tx('R1', 100, memo='Café')] and rejects(s, *latin)
+
+
+def misquoted(s):
+    # Text after the closing quote, and a double quote in a field that is not quoted.
+    return rejects(s, export(record('R1', '1,00', memo='"Invoice A-7" final'), 'T;1;1,00'),
+                   export(record('R1', '1,00', memo='Invoice "A-7" final'), 'T;1;1,00'))
+
+
+def lone_cr(s):
+    lines = (record('R1', '1,00'), record('R2', '2,00'), 'T;2;3,00')
+    return rejects(s, export(*lines, eol='\r'), export(*lines, eol='\r', bom=False, last_eol=False))
+
+
 CHECKS = [
     ('the sample loads', sample),
     ('english adjustments still parse', english_adjustments),
@@ -215,6 +236,9 @@ CHECKS = [
     ('an impossible date is an error', impossible_date),
     ('an unknown status is an error', unknown_status),
     ('an export with no records loads as an empty list', empty_export),
+    ('a file that is not UTF-8 is an error', not_utf8),
+    ('a double quote outside the quoting rules is an error', misquoted),
+    ('a line that ends in CR alone is an error', lone_cr),
 ]
 
 if __name__ == '__main__':

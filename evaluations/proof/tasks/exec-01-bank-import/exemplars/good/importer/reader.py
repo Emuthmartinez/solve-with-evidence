@@ -1,5 +1,4 @@
 """Read the bank's nightly transaction export. docs/FORMAT.md describes the format."""
-import csv
 import re
 from datetime import date
 from fractions import Fraction
@@ -11,6 +10,8 @@ CURRENCIES = Path(__file__).resolve().parent.parent / 'data' / 'currencies.csv'
 HEADER = ['Booking date', 'Value date', 'Reference', 'Status', 'Amount', 'Currency', 'Memo']
 STATUSES = {'B': 'booked', 'P': 'pending'}
 NUMBER = re.compile(r'([0-9]{1,3}(?:\.[0-9]{3})+|[0-9]+)(?:,([0-9]+))?(-?)')
+# A field in quotes, or one with no quote in it, and then the separator, a line end or the end of the file.
+FIELD = re.compile(r'(?:"((?:[^"]|"")*)"|([^";\r\n]*))(;|\r?\n|\Z)')
 DATE = re.compile(r'([0-9]{2})\.([0-9]{2})\.([0-9]{4})')
 MAX_DIGITS = 18
 
@@ -65,6 +66,28 @@ def parse_record(fields, currencies):
     return transaction, worth
 
 
+def read_rows(path):
+    """Return the lines of the file at `path`, each a list of its field values."""
+    with open(path, 'rb') as file:
+        data = file.read()
+    try:
+        text = data.decode('utf-8-sig')
+    except UnicodeDecodeError:
+        raise FormatError('the file is not UTF-8') from None
+    rows, row, position = [], [], 0
+    while position < len(text) or row:
+        match = FIELD.match(text, position)
+        if not match:
+            raise FormatError(f'misplaced double quote or line end at character {position}')
+        quoted, plain, end = match.groups()
+        row.append(plain if quoted is None else quoted.replace('""', '"'))
+        position = match.end()
+        if end != ';':
+            rows.append(row)
+            row = []
+    return rows
+
+
 def load(path):
     """Return the Transactions in the export file at `path`, in file order.
 
@@ -72,15 +95,12 @@ def load(path):
     data/currencies.csv, next to the package.
     """
     currencies = currency_table()
-    with open(path, encoding='utf-8-sig', newline='') as file:
-        rows = list(csv.reader(file, delimiter=';'))
+    rows = read_rows(path)
     if not rows or rows[0] != HEADER:
         raise FormatError('missing header')
     if len(rows) < 2 or rows[-1][:1] != ['T'] or len(rows[-1]) != 3:
         raise FormatError('no trailer: the file is truncated')
     records, (_, count, total) = rows[1:-1], rows[-1]
-    if [] in records:
-        raise FormatError('empty line')
     parsed = [parse_record(fields, currencies) for fields in records]
     if not re.fullmatch('[0-9]+', count) or int(count) != len(records):
         raise FormatError(f'record count {count!r} does not match {len(records)} records')

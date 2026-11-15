@@ -11,11 +11,12 @@ header line and closes with a trailer line that lets the client confirm the file
 
 ## Encoding and line ends
 
-Files are encoded in UTF-8. Some delivery channels put a byte-order mark (the bytes EF BB BF) at the
-start of the file and others do not, so readers must accept both. Lines end in CR LF or in LF alone,
-again depending on the channel. The last line of the file may or may not end with a line break.
-A file never contains an empty line. An empty line anywhere in the file, including after the
-trailer, makes the file invalid.
+Files are encoded in UTF-8, and a file that holds bytes that are not valid UTF-8 is invalid. Some
+delivery channels put a byte-order mark (the bytes EF BB BF) at the start of the file and others do
+not, so readers must accept both. Lines end in CR LF or in LF alone, again depending on the channel.
+A CR without an LF after it is not a line end, and a file whose lines end that way is invalid. The
+last line of the file may or may not end with a line break. A file never contains an empty line. An
+empty line anywhere in the file, including after the trailer, makes the file invalid.
 
 ## Layout
 
@@ -34,7 +35,9 @@ Fields are separated by semicolons, and every data record has exactly seven fiel
 the header. A field that contains a semicolon, a double quote or a line break is enclosed in double
 quotes, and a double quote inside it is written twice, as in RFC 4180. For example, the memo
 `Invoice "A-7"; final` is written `"Invoice ""A-7""; final"`. Any field may be quoted; the quotes are
-not part of its value. Values carry no padding.
+not part of its value. A double quote occurs nowhere else: one in a field that is not enclosed in
+quotes, or text between a closing quote and the next separator, makes the file invalid. Values carry
+no padding.
 
 A memo may contain a line break. The record then continues on the next physical line, and it is still
 one data record: one transaction, counted once in the trailer. Inside a memo the bank always writes

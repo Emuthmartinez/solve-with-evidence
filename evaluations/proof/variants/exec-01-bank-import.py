@@ -8,7 +8,26 @@ LIMITS = "    if decimals > currencies[currency] or digits > MAX_DIGITS:\n"
 TO_MINOR = "int(worth * 10 ** currencies[currency])"
 COUNT = "    if not re.fullmatch('[0-9]+', count) or int(count) != len(records):\n"
 HASH = "    if number(total)[0] != sum(worth for _, worth in parsed):\n"
-READ = "        rows = list(csv.reader(file, delimiter=';'))\n"
+READ = "    rows = read_rows(path)\n"
+FIELD = "FIELD = re.compile(r'(?:\"((?:[^\"]|\"\")*)\"|([^\";\\r\\n]*))(;|\\r?\\n|\\Z)')\n"
+DECODE = ("    try:\n        text = data.decode('utf-8-sig')\n    except UnicodeDecodeError:\n"
+          "        raise FormatError('the file is not UTF-8') from None\n")
+SPLIT = ("    rows, row, position = [], [], 0\n"
+         "    while position < len(text) or row:\n"
+         "        match = FIELD.match(text, position)\n"
+         "        if not match:\n"
+         "            raise FormatError(f'misplaced double quote or line end at character {position}')\n"
+         "        quoted, plain, end = match.groups()\n"
+         "        row.append(plain if quoted is None else quoted.replace('\"\"', '\"'))\n"
+         "        position = match.end()\n"
+         "        if end != ';':\n"
+         "            rows.append(row)\n"
+         "            row = []\n"
+         "    return rows\n")
+CSV_MODULE = ("    import csv\n    import io\n"
+              "    return list(csv.reader(io.StringIO(text, newline=''), delimiter=';'))\n")
+QUOTING = 'a double quote outside the quoting rules is an error'
+LONE_CR = 'a line that ends in CR alone is an error'
 SUPERSEDED = ['the sample loads', 'the trailer counts and adds superseded records',
               'a pending record superseded by a later booked one is dropped',
               'a pending record superseded by an earlier booked one is dropped']
@@ -103,18 +122,17 @@ VARIANTS = [
       'a pending record superseded by an earlier booked one is dropped', 'a pending record never booked is kept in file order',
       'a wrong hash total is an error', 'the trailer counts and adds superseded records']),
     ('empty lines skipped',
-     {READER: [(READ, "        rows = [row for row in csv.reader(file, delimiter=';') if row]\n")]},
+     {READER: [(READ, "    rows = [row for row in read_rows(path) if row != ['']]\n")]},
      ['nothing may follow the trailer']),
     ('fields split on every semicolon',
-     {READER: [(READ, "        rows = list(csv.reader(file, delimiter=';', quoting=csv.QUOTE_NONE))\n")]},
-     ['the sample loads', 'a quoted memo keeps its semicolon and quotes', 'a memo with a line break is one record']),
+     {READER: [(SPLIT, "    lines = re.split('\\r?\\n', text)\n"
+                       "    return [line.split(';') for line in (lines if lines[-1] else lines[:-1])]\n")]},
+     ['the sample loads', 'a quoted memo keeps its semicolon and quotes', 'a memo with a line break is one record', QUOTING]),
     ('one record per physical line',
-     {READER: [(READ, "        rows = [list(csv.reader([line], delimiter=';'))[0] for line in file.read().splitlines()]\n")]},
+     {READER: [(FIELD, FIELD.replace('[^\"]|', '[^\"\\n]|'))]},
      ['the sample loads', 'a memo with a line break is one record']),
     ('the first character always taken for a byte-order mark',
-     {READER: [("    with open(path, encoding='utf-8-sig', newline='') as file:\n" + READ,
-                "    with open(path, encoding='utf-8', newline='') as file:\n"
-                "        rows = list(csv.reader(file.read()[1:].splitlines(True), delimiter=';'))\n")]},
+     {READER: [("data.decode('utf-8-sig')", "data.decode('utf-8')[1:]")]},
      ['a file without byte-order mark or CR loads', 'an export with no records loads as an empty list']),
     ('an empty value date rejected',
      {READER: [("parse_date(value) if value else None", "parse_date(value)")]},
@@ -128,6 +146,26 @@ VARIANTS = [
      {READER: [("    if status not in STATUSES:\n        raise FormatError(f'unknown status {status!r}')\n", ""),
                ("STATUSES[status]", "STATUSES.get(status, 'pending')")]},
      ['an unknown status is an error']),
+    ('bytes that are not UTF-8 raise UnicodeDecodeError, not FormatError',
+     {READER: [(DECODE, "    text = data.decode('utf-8-sig')\n")]},
+     ['a file that is not UTF-8 is an error']),
+    ('bytes that are not UTF-8 replaced and the file imported',
+     {READER: [("data.decode('utf-8-sig')", "data.decode('utf-8-sig', errors='replace')")]},
+     ['a file that is not UTF-8 is an error']),
+    ('the file read with the csv module, which forgives a stray quote and takes a lone CR for a line end',
+     {READER: [(SPLIT, CSV_MODULE)]},
+     [QUOTING, LONE_CR]),
+    ('the csv module in strict mode, which still allows a quote in a field that is not quoted',
+     {READER: [(SPLIT, CSV_MODULE.replace("delimiter=';'", "delimiter=';', strict=True")),
+               (READ, "    try:\n        rows = read_rows(path)\n    except Exception as exc:\n"
+                      "        raise FormatError(str(exc)) from None\n")]},
+     [QUOTING, LONE_CR]),
+    ('a double quote allowed in a field that is not quoted',
+     {READER: [(FIELD, FIELD.replace('[^\";', '[^;'))]},
+     [QUOTING]),
+    ('a lone CR taken for a line end',
+     {READER: [(FIELD, FIELD.replace('\\r?\\n', '\\r\\n?|\\n'))]},
+     [LONE_CR]),
     ('a file needs at least one record',
      {READER: [("    if len(rows) < 2 or rows", "    if len(rows) < 3 or rows")]},
      ['an export with no records loads as an empty list']),
