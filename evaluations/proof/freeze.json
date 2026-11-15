@@ -1,9 +1,9 @@
 {
-  "digest": "2c78ed622e9a477b2bbb23a3a72ab36b1ae81c84c4672bee1a3fe50fd6378cd9",
+  "digest": "ea0970b83b51f02385758cb32c286a5f4acbd5c0d0e6be8a2e4878b8ed689033",
   "files": {
     "tasks/exec-01-allocate-cents/exemplars/bad/solution.py": "38004a6e9b2e76571c5f44fe295f26bce697bd043c052a6a8480a45b9bbcfa88",
     "tasks/exec-01-allocate-cents/exemplars/good/solution.py": "5820cc3a23ee267e80360aea02c61a98177879dbee37fffbbcf1695d79508991",
-    "tasks/exec-01-allocate-cents/grader.py": "cb8a524a28e5303fac5c399aafd418f70c4ae1dd81d08ec2d5d5dcef22a46ff2",
+    "tasks/exec-01-allocate-cents/grader.py": "23cbe90eb1e53a819b8df290586a24bccc836ba6cb5fe30edbb7e41250fd9af0",
     "tasks/exec-01-allocate-cents/prompt.md": "82faffaf682aadf6be051dbdbffd5d10c1986c2bb77d3f4e4ae2b75cb0fa2fa3",
     "tasks/exec-01-allocate-cents/task.json": "98442f2b2f92a0d15cfcd7cee478e719b057e12337b5be4d90fa4f22286d1ba2",
     "tasks/exec-02-sessionize/exemplars/bad/solution.py": "489f1542416ed7f8b907c474cf3168dcbc5e382b001a230ccbbf02db29cebb90",
@@ -31,7 +31,7 @@
     "tasks/exec-05-inventory-fix/workspace/test_visible.py": "3f0e315d9ff42e66b7b8e3637e108fcf45ebdeeaac6f44f8813d653fb1390c93",
     "tasks/exec-06-next-run/exemplars/bad/solution.py": "958951669f015abd7d0068ee48b53f37abffd69a70083a96559896905796ead6",
     "tasks/exec-06-next-run/exemplars/good/solution.py": "30d705a196162448fb3eda44eeb17ee3b5d2017b81c6f23ef7399abc443350ad",
-    "tasks/exec-06-next-run/grader.py": "75aeb2d3ed0fd074d74a7891448b5a116bcc12a363c31cda130ee4965b5928a6",
+    "tasks/exec-06-next-run/grader.py": "5a00627f424ef8ec13277331e1eca07425209c240e27aea5284b1e3d3f13480e",
     "tasks/exec-06-next-run/prompt.md": "f0fa63defeb1f9ced201b413b00f0af5fa67fa01e4abff6c61406325caff032b",
     "tasks/exec-06-next-run/task.json": "e3a590c190c558d9c5ab09bc822512dac5a216088d0e30688993f1a2c0033497",
     "tasks/exec-07-humanize-duration/exemplars/bad/solution.py": "30839e0977c3d51d245611cbe82ad9eecdb69b0d4140f3ed0aa65301e52becd3",
@@ -118,7 +118,7 @@
     "sources/08-thread.md": "0d3d74f597d396b1bbd24dbf155954e087fba9d8afe2707bd1f4434c58e81aed",
     "sources/README.md": "c103b7f574b58e0d8ac2e94706b3bc56376652eacc456a3ec7881217623ec427",
     "pass_bar.json": "8a0ec77a6b07922813d063b1eb523bee3f7c405a78385bec3ceb78c2370c190f",
-    "gradelib.py": "edeaa1e1916b7bb69df5b1c9538f46a0f98f990aec78f8823480ae8541c74d71",
+    "gradelib.py": "12a6df954f59270c4af12e92f3daf5e4e4ce96ee3e0e7e561445f5df976eb2fb",
     "arms.json": "979926154ca203006d54fc07ef49cf4cc37d01b363b308762923a7cbb3a8f6b5"
   }
 }

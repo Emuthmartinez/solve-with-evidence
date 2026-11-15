@@ -82,8 +82,10 @@ def freeze_digest():
     return recorded['digest']
 
 
-def skill_files(folder):
-    return {p.relative_to(folder).as_posix(): sha(p.read_bytes()) for p in sorted(folder.rglob('*')) if p.is_file()}
+def skill_sha(folder):
+    """One hash for a skill package: the path and contents of every file in it."""
+    files = {p.relative_to(folder).as_posix(): sha(p.read_bytes()) for p in sorted(folder.rglob('*')) if p.is_file()}
+    return sha(json.dumps(files, sort_keys=True).encode())
 
 
 def source_notes():
@@ -290,12 +292,14 @@ def run_trial(job, out, adapter, config, digest, target=None):
     spec = config['arms'][arm]
     settings = config['adapters'][adapter]
     model = settings['models'][spec['model']]
-    skill = (ARMS_FILE.parent / spec['skill']).resolve() if spec.get('skill') else None
+    skill = out / 'skills' / arm if spec.get('skill') else None
     folder = trial_dir(out, task['id'], arm, repeat)
     folder.mkdir(parents=True)
     # The agent works in a directory of its own, so other trials and their grades are not beside it.
     work = Path(tempfile.mkdtemp(prefix='proof-work-')) / 'work'
     prompt = prepare(task, skill, work)
+    # Hash the package this agent was handed, before it runs and can change its copy.
+    skill_sha256 = skill_sha(work / 'solve-with-evidence') if skill else None
     limits = config['limits']
     rounds = []
     while True:
@@ -316,7 +320,7 @@ def run_trial(job, out, adapter, config, digest, target=None):
     work = folder / 'work'
     record = {
         'task': task['id'], 'kind': task['kind'], 'arm': arm, 'repeat': repeat, 'adapter': adapter, 'model': model,
-        'freeze': digest, 'skill_sha256': sha(json.dumps(skill_files(skill), sort_keys=True).encode()) if skill else None,
+        'freeze': digest, 'skill_sha256': skill_sha256,
         'rounds': rounds, 'tokens': spent if all(r['tokens'] is not None for r in rounds) else None,
         'tool_calls': sum(r['tool_calls'] or 0 for r in rounds), 'wall_s': round(sum(r['wall_s'] for r in rounds), 1),
         'budget': None if target is None else {'target': target, 'used': spent, 'rounds': len(rounds)},
@@ -330,17 +334,29 @@ def run_trial(job, out, adapter, config, digest, target=None):
     return record
 
 
-def reusable(out, job):
-    """On resume, keep a finished trial. Set aside one that crashed or hit an infrastructure error."""
+def budget_targets(records, arm):
+    """Token target per task for a control that copies this arm: the median of the arm's counted trials."""
+    spent = {}
+    for record in records:
+        if record['arm'] == arm and record['tokens'] is not None and not record['infra_error']:
+            spent.setdefault(record['task'], []).append(record['tokens'])
+    return {task: int(statistics.median(tokens)) for task, tokens in spent.items()}
+
+
+def reusable(out, job, skill_sha256, target):
+    """On resume, keep a finished trial. Set aside one that crashed, hit an infrastructure error,
+    was made with a skill package other than the one pinned for its arm, or is a budget control
+    that chased a target the arm it copies no longer implies."""
     task, arm, repeat = job
     folder = trial_dir(out, task['id'], arm, repeat)
     if not folder.exists():
         return None
     try:
         record = json.loads((folder / 'trial.json').read_text())
-        if not record['infra_error']:
+        if (not record['infra_error'] and record['skill_sha256'] == skill_sha256
+                and (record['budget'] or {}).get('target') == target):
             return record
-    except (OSError, ValueError):
+    except (OSError, ValueError, KeyError):
         pass
     retired = out / 'retired'
     retired.mkdir(exist_ok=True)
@@ -364,37 +380,47 @@ def run(out, adapter, arms, task_ids, repeats, jobs, resume=False):
     for arm in budgeted:
         if config['arms'][arm]['budget_of'] not in plain:
             raise SystemExit(f"{arm} needs {config['arms'][arm]['budget_of']} in the same run to set its token budget")
-    meta = {'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
-            'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family']}
     out.mkdir(parents=True, exist_ok=True)
+    # Every trial of an arm reads one snapshot of its skill, taken before the first trial runs,
+    # so a skill edited during the run or before a resume cannot split the run.
+    skills, taken = {}, {}
+    for arm in arms:
+        source = config['arms'][arm].get('skill')
+        if source and not resume:
+            # Arms that share a skill copy the first snapshot of it, so they cannot differ.
+            # A bytecode cache left by an earlier import is not part of the skill.
+            shutil.copytree(taken.get(source) or (ARMS_FILE.parent / source).resolve(), out / 'skills' / arm,
+                            ignore=shutil.ignore_patterns('__pycache__'))
+            taken.setdefault(source, out / 'skills' / arm)
+        skills[arm] = skill_sha(out / 'skills' / arm) if source else None
+    meta = {'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
+            'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family'],
+            'skills': skills}
     if resume:
         earlier = json.loads((out / 'run.json').read_text())
-        if {key: earlier[key] for key in meta} != meta:
-            raise SystemExit('--resume needs the same adapter, arms, cases, repeats and freeze as the first run')
+        if {key: earlier.get(key) for key in meta} != meta:
+            raise SystemExit('--resume needs the same adapter, arms, cases, repeats and freeze as the first run, '
+                             'and its skill snapshots unchanged')
     else:
         (out / 'run.json').write_text(json.dumps(
             {**meta, 'started': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}, indent=2) + '\n')
 
     def trial(job, target=None):
-        return (resume and reusable(out, job)) or run_trial(job, out, adapter, config, digest, target)
+        task, arm, _ = job
+        kept = resume and reusable(out, job, skills[arm], target)
+        if not kept and arm in budgeted and target is None:
+            # Without a token count there is no budget to copy. The report sees the gap.
+            print('skip', task['id'], arm, 'no token usage recorded for the arm it copies', flush=True)
+            return None
+        return kept or run_trial(job, out, adapter, config, digest, target)
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         records = list(pool.map(trial, [(t, arm, r) for r in repeats for t in tasks for arm in plain]))
-        spent = {}
-        for record in records:
-            if record['tokens'] is not None and not record['infra_error']:
-                spent.setdefault((record['task'], record['arm']), []).append(record['tokens'])
-
-        def controlled(job):
-            task, arm, _ = job
-            matched = spent.get((task['id'], config['arms'][arm]['budget_of']))
-            if not matched:
-                # Without a token count there is no budget to copy. The report sees the gap.
-                print('skip', task['id'], arm, 'no token usage recorded for the arm it copies', flush=True)
-                return None
-            return trial(job, int(statistics.median(matched)))
-
-        records += filter(None, pool.map(controlled, [(t, arm, r) for r in repeats for t in tasks for arm in budgeted]))
+        # Targets come from the plain trials as they now stand. A resume that reran one of them
+        # can move a median, and then the control that chased the old target is rerun too.
+        targets = {arm: budget_targets(records, config['arms'][arm]['budget_of']) for arm in budgeted}
+        records += filter(None, pool.map(lambda job: trial(job, targets[job[1]].get(job[0]['id'])),
+                                         [(t, arm, r) for r in repeats for t in tasks for arm in budgeted]))
     return records
 
 

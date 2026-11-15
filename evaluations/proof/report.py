@@ -12,6 +12,7 @@ import statistics
 import sys
 
 import bench
+import judge
 
 Z95 = 1.959964
 
@@ -46,6 +47,7 @@ def rounded(value):
 
 class Run:
     def __init__(self, run):
+        self.run = run
         self.meta = json.loads((run / 'run.json').read_text())
         self.bar = json.loads((bench.HERE / 'pass_bar.json').read_text())
         if self.bar['design']['confidence'] != 0.95:
@@ -55,6 +57,12 @@ class Run:
         digest = bench.freeze_digest()
         if self.meta['freeze'] != digest or any(t['freeze'] != digest for t in trials):
             raise SystemExit('this run was made under a different freeze than the tasks and pass bar now on disk')
+        # One arm, one skill package: the snapshot must still be the one hashed before the first trial,
+        # and every trial must have been handed it.
+        skills = self.meta.get('skills') or {}
+        if (any(t['skill_sha256'] != skills.get(t['arm']) for t in trials)
+                or any(pin and bench.skill_sha(run / 'skills' / arm) != pin for arm, pin in skills.items())):
+            raise SystemExit('a trial or a skill snapshot does not match the skill hashes pinned in run.json')
         self.errors = [f"{t['task']}--{t['arm']}--r{t['repeat']}" for t in trials if t['infra_error']]
         self.trials = [t for t in trials if not t['infra_error']]
         optional = lambda name: json.loads((run / name).read_text()) if (run / name).exists() else None
@@ -98,27 +106,51 @@ class Run:
         pairs = self.bar['design']['pairs']
         if not self.judgments:
             return {'result': 'inconclusive', 'why': 'not judged yet'}
+        # A judgment counts only for the two answers now in the run, under this freeze, once per
+        # comparison. A trial rerun after it was judged leaves a judgment of an answer that is gone.
+        expected = {(task['id'], repeat, x, y): judge.answer_hashes(x, y, text_x, text_y)
+                    for task, repeat, x, y, text_x, text_y in judge.writing_pairs(self.run) if [x, y] in pairs}
+        freeze = self.meta['freeze']
+
+        def current(row, arms):
+            key = (row['task'], row['repeat'], *arms)
+            return key in expected and row.get('answers') == expected[key]
+
+        rows = [p for p in self.judgments['pairs'] if p['arms'] in pairs]
+        judged = {(p['task'], p['repeat'], *p['arms']) for p in rows}
+        if (self.judgments.get('freeze') != freeze or len(judged) != len(rows)
+                or not all(current(p, p['arms']) for p in rows)):
+            return {'result': 'inconclusive',
+                    'why': 'judgments are for other answers or another freeze, or repeat a comparison: rerun judge.py'}
+        ordered = lambda h: next(p for p in pairs if sorted(p) == h['arms'])
+        human = [h for h in self.human or [] if h['arms'] in [sorted(p) for p in pairs]]
+        if not all(h.get('freeze') == freeze and current(h, ordered(h)) for h in human):
+            return {'result': 'inconclusive', 'why': 'human picks are for other answers or another freeze: '
+                    'collect new picks, or remove human.json and human-key.json'}
         if not self.complete([arm for pair in pairs for arm in pair], ['write']):
             return {'result': 'inconclusive', 'why': 'writing trials are incomplete'}
-        rows = [p for p in self.judgments['pairs'] if p['arms'] in pairs]
         # A pair is decided only when the judge named the same answer in both orders. A pair where
         # one side delivered nothing was never judged. It is counted here and scored under refusals.
         decided = [p for p in rows if p['outcome'] == 'decided']
         wins = sum(p['winner'] == p['arms'][0] for p in decided)
-        out = {'pairs': len(rows), 'decided': len(decided), 'wins': wins,
+        # The pass bar says how many comparisons there are. The run record does not get to.
+        designed = len(pairs) * self.bar['design']['tasks']['write'] * self.reps
+        out = {'pairs': designed, 'missing': designed - len(judged), 'decided': len(decided), 'wins': wins,
                'not_judged': sum(p['outcome'] in ('forfeit', 'void') for p in rows),
                'split_or_tie': sum(p['outcome'] in ('split', 'tie') for p in rows),
                'win_rate': wins / len(decided) if decided else None, 'ci95': wilson(wins, len(decided))}
-        human = [h for h in self.human or [] if h['arms'] in [sorted(p) for p in pairs]]
         if len(human) >= 16:
             chosen = [h for h in human if h['winner']]
-            human_wins = sum(h['winner'] == next(p[0] for p in pairs if sorted(p) == h['arms']) for h in chosen)
+            human_wins = sum(h['winner'] == ordered(h)[0] for h in chosen)
             out['human'] = {'picks': len(human), 'ties': len(human) - len(chosen), 'wins': human_wins,
                             'win_rate': human_wins / len(chosen) if chosen else 0.0,
                             'ci95': wilson(human_wins, len(chosen)), 'raters': len({h['rater'] for h in human})}
+        if out['missing']:
+            # Every designed comparison is in the denominator. A judged subset cannot stand in for the set.
+            return {**out, 'result': 'inconclusive', 'why': 'some designed comparisons have no judgment: rerun judge.py'}
         if not self.judgments['judge']['independent']:
             return {**out, 'result': 'inconclusive', 'why': "the judge is from the solver's model family"}
-        if not rows or len(decided) / len(rows) < rule['min_decided_fraction']:
+        if len(decided) / designed < rule['min_decided_fraction']:
             return {**out, 'result': 'inconclusive', 'why': 'too few pairs were decided in both orders'}
         passed = out['win_rate'] >= rule['min_win_rate'] and out['ci95'][0] > rule['min_ci_lower_exclusive']
         if passed and 'human' in out and out['human']['win_rate'] < 0.5:
@@ -165,7 +197,14 @@ class Run:
         skill, control = self.bar['design']['budget_control']
         if not self.complete([skill, control], ('exec', 'trap')):
             return {'result': 'inconclusive', 'why': 'budget-control trials are incomplete'}
-        use = statistics.median(r['budget']['used'] / r['budget']['target'] for r in self.rows([control], ('exec', 'trap')))
+        controls = self.rows([control], ('exec', 'trap'))
+        # A control proves nothing unless it chased the budget the skill arm's trials imply now.
+        targets = bench.budget_targets(self.trials, skill)
+        stale = sum(r['budget']['target'] != targets.get(r['task']) for r in controls)
+        if stale:
+            return {'result': 'inconclusive', 'stale_targets': stale,
+                    'why': "control targets differ from the skill arm's median tokens: rerun compare.py with --resume"}
+        use = statistics.median(r['budget']['used'] / r['budget']['target'] for r in controls)
         a, b = (share(self.rows([arm], ('exec', 'trap')), 'success') for arm in (skill, control))
         out = {'budget_use_median': use, skill: a, control: b, 'points': points(a, b)}
         if use < rule['min_budget_use']:

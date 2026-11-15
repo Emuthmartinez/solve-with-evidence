@@ -1,6 +1,6 @@
 # Repeated benchmark and release evidence
 
-> **These trials compare versions of the skill with each other.** No arm ran without the skill, so they can show a regression between versions and cannot show that the skill helps. They also measured wording that has since been restructured (November 15, 2026) and were not repeated. The comparison against no skill, a weaker model and a same-token-budget control is the [proof benchmark](../proof/README.md), which is built and not yet run.
+> **These trials compare versions of the skill with each other.** No arm ran without the skill, so they can show a regression between versions and cannot show that the skill helps. They also measured wording that has since been restructured (November 15, 2026) and were not repeated. The comparison against no skill, a weaker model and a same-token-budget control is the [proof benchmark](../proof/README.md), which is built and has not yet run a skill arm.
 
 This study asks two different questions. Did the solver deliver a correct artifact? Did it exercise the actual deliverable and check the result before handing it over? A solver can earn full outcome credit from an external grader even when its own trace contains no execution.
 

@@ -1,4 +1,5 @@
 import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from gradelib import main, raises
 
 D = datetime
 LOWS = [0, 0, 1, 1, 0]
+LIMIT_S = 1.0  # rule 9 says "well under one second"; one second is the only number it states
 
 
 def _item_test(item, low):
@@ -54,12 +56,22 @@ def oracle(expr, after):
     return None
 
 
+def timed(s, expr, after):
+    """Rule 9, for calls that return a time and calls that return None. There is no second try:
+    a solution that caches its results would answer it at once."""
+    started = time.perf_counter()
+    found = s.next_run(expr, after)
+    if time.perf_counter() - started >= LIMIT_S:
+        raise TimeoutError(f'next_run took {LIMIT_S} s or longer')
+    return found
+
+
 def agrees(expr, after):
-    return lambda s: s.next_run(expr, after) == oracle(expr, after)
+    return lambda s: timed(s, expr, after) == oracle(expr, after)
 
 
 def equals(expr, after, expected):
-    return lambda s: s.next_run(expr, after) == expected
+    return lambda s: timed(s, expr, after) == expected
 
 
 NOON = D(2026, 11, 15, 12, 0)  # a Sunday

@@ -61,6 +61,19 @@ def writing_pairs(run):
                     yield tasks[task_id], repeat, x, y, texts[0], texts[1]
 
 
+def answer_hashes(x, y, text_x, text_y):
+    """What a judgment is bound to: the two answers as the judge or rater was shown them."""
+    return {x: bench.sha(text_x.encode()), y: bench.sha(text_y.encode())}
+
+
+def run_freeze(run):
+    """The freeze a run was made under. Judging it against other tasks or notes would mean nothing."""
+    digest = bench.freeze_digest()
+    if json.loads((run / 'run.json').read_text()).get('freeze') != digest:
+        raise SystemExit('this run was made under a different freeze than the tasks and notes now on disk')
+    return digest
+
+
 def mock_pick(first, second):
     """Content decides, except one pair in five always says A, to exercise the position-swap check."""
     low, high = sorted([bench.sha(first.encode()), bench.sha(second.encode())])
@@ -94,10 +107,12 @@ def judge(run, adapter, allow_same_family):
     if not independent and not allow_same_family:
         raise SystemExit(f"judge family {family} is the solver's family; choose another --adapter "
                          'or pass --allow-same-family and accept an inconclusive writing result')
+    digest = run_freeze(run)
     notes = '\n\n'.join(f'### {p.name}\n{p.read_text().strip()}' for p in bench.source_notes())
     pairs = []
     for task, repeat, x, y, text_x, text_y in writing_pairs(run):
-        row = {'task': task['id'], 'repeat': repeat, 'arms': [x, y], 'orders': [], 'winner': None}
+        row = {'task': task['id'], 'repeat': repeat, 'arms': [x, y], 'answers': answer_hashes(x, y, text_x, text_y),
+               'orders': [], 'winner': None}
         if not text_x or not text_y:
             row['winner'] = x if text_x else y if text_y else None
             row['outcome'] = 'forfeit' if row['winner'] else 'void'
@@ -127,7 +142,7 @@ def judge(run, adapter, allow_same_family):
     (run / 'judgments.json').write_text(json.dumps({
         'judge': {'adapter': adapter, 'model': settings['models']['strong'], 'family': family,
                   'solver_family': meta['family'], 'independent': independent, 'rubric': RUBRIC},
-        'pairs': pairs}, indent=2) + '\n')
+        'freeze': digest, 'pairs': pairs}, indent=2) + '\n')
 
 
 def human_export(run, packet):
@@ -135,6 +150,7 @@ def human_export(run, packet):
     if (run / 'human-key.json').exists():
         raise SystemExit('a packet was already exported for this run. Give every rater a copy of that packet: '
                          'a second export would relabel the pairs')
+    digest = run_freeze(run)
     packet.mkdir(parents=True, exist_ok=True)
     pairs = [p for p in writing_pairs(run) if p[4] and p[5]]
     order = sorted(range(len(pairs)), key=lambda _: secrets.randbits(64))
@@ -144,7 +160,8 @@ def human_export(run, packet):
         task, repeat, x, y, text_x, text_y = pairs[index]
         pair_id = f'p{number:03d}'
         flipped = secrets.randbits(1)
-        key[pair_id] = {'task': task['id'], 'repeat': repeat, '1': y if flipped else x, '2': x if flipped else y}
+        key[pair_id] = {'task': task['id'], 'repeat': repeat, '1': y if flipped else x, '2': x if flipped else y,
+                        'answers': answer_hashes(x, y, text_x, text_y), 'freeze': digest}
         one, two = (text_y, text_x) if flipped else (text_x, text_y)
         lines += [f'## {pair_id}', '', '**Brief.** ' + (task['dir'] / 'prompt.md').read_text().strip(), '',
                   '### Answer 1', '', one, '', '### Answer 2', '', two, '']
@@ -169,7 +186,7 @@ def human_import(run, files):
                     raise SystemExit(f'bad row in {picks}: {line}')
                 rows.append({'pair_id': line['pair_id'].strip(), 'rater': line['rater'].strip(), 'task': pair['task'],
                              'repeat': pair['repeat'], 'arms': sorted([pair['1'], pair['2']]),
-                             'winner': pair.get(pick)})
+                             'winner': pair.get(pick), 'answers': pair.get('answers'), 'freeze': pair.get('freeze')})
     if len({(row['pair_id'], row['rater']) for row in rows}) != len(rows):
         raise SystemExit('a rater picked the same pair twice')
     (run / 'human.json').write_text(json.dumps(rows, indent=2) + '\n')

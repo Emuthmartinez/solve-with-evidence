@@ -6,6 +6,7 @@ import csv
 import json
 from pathlib import Path
 import shutil
+import statistics
 import sys
 import tempfile
 import unittest
@@ -159,7 +160,47 @@ class Grading(Scratch):
 
     def test_a_correct_solution_that_prints_still_passes(self):
         grade = self.graded('exec-01-allocate-cents', 'good', {'status': 'verified'}, append='\nprint("self-test ok")\n')
-        self.assertEqual((grade['success'], grade['checks']), (True, '24/24'))
+        self.assertEqual((grade['success'], grade['checks']), (True, '23/23'))
+
+    def rewritten(self, task_id, rewrite):
+        """Grade the good exemplar after rewriting its source."""
+        work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
+        bench.prepare(task(task_id), None, work)
+        good = (task(task_id)['dir'] / 'exemplars/good/solution.py').read_text()
+        (work / 'solution.py').write_text(rewrite(good))
+        return bench.grade(task(task_id), work)
+
+    def test_a_solution_is_imported_the_way_python_imports_a_module(self):
+        dataclass = ('from __future__ import annotations\nfrom dataclasses import dataclass\n\n\n'
+                     '@dataclass\nclass Span:\n    start: int\n    end: int\n\n\n')
+        registered = 'import sys\nassert sys.modules[__name__].__name__ == "solution"\n\n\n'
+        for prefix in (dataclass, registered):
+            grade = self.rewritten('exec-02-sessionize', lambda good: prefix + good)
+            self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '29/29', []))
+
+    def test_allocation_may_change_the_weights_it_was_given(self):
+        # The prompt never says the caller's list must survive the call.
+        in_place = lambda good: good.replace('weights = [1] * len(weights)', 'weights[:] = [1] * len(weights)')
+        grade = self.rewritten('exec-01-allocate-cents', in_place)
+        self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '23/23', []))
+
+    def test_a_schedule_call_that_takes_over_a_second_fails(self):
+        def slow(when):  # the correct exemplar, made to sleep on some calls
+            return lambda good: good.replace('def next_run(', 'def fast(') + (
+                '\n\nimport time as clock\n\n\ndef next_run(expr, after):\n    found = fast(expr, after)\n'
+                f'    if {when}:\n        clock.sleep(1.1)\n    return found\n')
+        impossible = self.rewritten('exec-06-next-run', slow('found is None'))
+        self.assertEqual((impossible['success'], impossible['false_completion'], impossible['failed']),
+                         (False, True, ['example never (TimeoutError)', '31st of short months never (TimeoutError)']))
+        successful = self.rewritten('exec-06-next-run', slow('expr == "59 23 31 12 *"'))
+        self.assertEqual((successful['success'], successful['failed']), (False, ['year rollover (TimeoutError)']))
+        # Slow once, then answered from a cache: asking again must not turn a slow call into a pass.
+        cached = lambda good: good.replace('def next_run(', 'def fast(') + (
+            '\n\nimport time as clock\n\nSEEN = {}\n\n\ndef next_run(expr, after):\n    if (expr, after) not in SEEN:\n'
+            '        if expr == "0 0 30 2 *":\n            clock.sleep(1.1)\n        SEEN[expr, after] = fast(expr, after)\n'
+            '    return SEEN[expr, after]\n')
+        once = self.rewritten('exec-06-next-run', cached)
+        self.assertEqual((once['success'], once['failed']), (False, ['example never (TimeoutError)']))
 
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']
@@ -209,7 +250,8 @@ class MockRun(Scratch):
             if text:
                 (folder / 'answer.md').write_text(text)
         (out / 'run.json').write_text(json.dumps({'adapter': 'codex', 'family': 'openai', 'arms': list(texts),
-                                                 'tasks': ['write-01-thread-reply'], 'repeats': [1]}))
+                                                 'tasks': ['write-01-thread-reply'], 'repeats': [1],
+                                                 'freeze': bench.freeze_digest()}))
         shown = []
 
         def stub(adapter, settings, model, prompt, timeout):
@@ -229,6 +271,8 @@ class MockRun(Scratch):
         pair, = result['pairs']
         self.assertEqual((pair['outcome'], pair['winner']), ('decided', 'no-skill'))
         self.assertEqual(result['judge']['independent'], True)
+        self.assertEqual(pair['answers'], {'skill': bench.sha(b'SKILL TEXT'), 'no-skill': bench.sha(b'PLAIN TEXT')})
+        self.assertEqual(result['freeze'], bench.freeze_digest())
 
     def test_a_judge_that_follows_position_decides_nothing(self):
         result, _ = self.judged_real_run({'skill': 'SKILL TEXT', 'no-skill': 'PLAIN TEXT'}, lambda a, b: 'A')
@@ -242,7 +286,7 @@ class MockRun(Scratch):
         out = self.tmp / 'real'
         out.mkdir()
         (out / 'run.json').write_text(json.dumps({'adapter': 'codex', 'family': 'openai', 'arms': [], 'tasks': [],
-                                                 'repeats': [1]}))
+                                                 'repeats': [1], 'freeze': bench.freeze_digest()}))
         with self.assertRaises(SystemExit):
             judge.judge(out, 'mock', False)
 
@@ -266,6 +310,10 @@ class MockRun(Scratch):
         self.assertEqual(len(rows), 2 * len(key))
         for row in rows:
             self.assertEqual(row['winner'], key[row['pair_id']]['1'])
+            self.assertEqual(row['freeze'], bench.freeze_digest())
+            for arm, digest in row['answers'].items():  # each pick names the two answers the rater saw
+                answer = bench.trial_dir(out, row['task'], arm, row['repeat']) / 'work/answer.md'
+                self.assertEqual(digest, bench.sha(answer.read_text().strip().encode()))
         with self.assertRaises(SystemExit):  # a second export would relabel the pairs
             judge.human_export(out, self.tmp / 'packet-2')
 
@@ -292,6 +340,118 @@ class MockRun(Scratch):
         with self.assertRaises(SystemExit):  # a resume may not change what is being compared
             bench.run(out, 'mock', ['skill'], self.TASKS, [1, 2], 2, resume=True)
 
+    def break_trial(self, out, arm, repeat=1, **changes):
+        """Rewrite one finished trial's record, as a crash or an older harness would have left it."""
+        file = bench.trial_dir(out, 'exec-01-allocate-cents', arm, repeat) / 'trial.json'
+        file.write_text(json.dumps({**json.loads(file.read_text()), **changes}))
+        return file
+
+    def resume(self, out, arms):
+        return bench.run(out, 'mock', list(arms), self.TASKS, [1, 2], 2, resume=True)
+
+    def test_skill_contents_are_pinned_for_the_whole_run(self):
+        source = self.tmp / 'skill-source'
+        source.mkdir()
+        (source / 'SKILL.md').write_text('version one\n')
+        config = bench.load_config()
+        config['arms']['skill']['skill'] = str(source)
+        with mock.patch.object(bench, 'load_config', return_value=config):
+            out, records = self.run_mock(('skill', 'no-skill'))
+            pinned = json.loads((out / 'run.json').read_text())['skills']
+            self.assertTrue(pinned['skill'])
+            self.assertIsNone(pinned['no-skill'])
+            self.assertEqual({r['skill_sha256'] for r in records if r['arm'] == 'skill'}, {pinned['skill']})
+            # The skill changes on disk before a broken trial is rerun. The rerun gets the pinned package.
+            (source / 'SKILL.md').write_text('version two\n')
+            broken = self.break_trial(out, 'skill', infra_error=True)
+            again = self.resume(out, ('skill', 'no-skill'))
+            self.assertEqual({r['skill_sha256'] for r in again if r['arm'] == 'skill'}, {pinned['skill']})
+            self.assertEqual((broken.parent / 'work/solve-with-evidence/SKILL.md').read_text(), 'version one\n')
+            report.Run(out).report()
+            # A snapshot that no longer matches its recorded hash stops the resume and the report.
+            (out / 'skills/skill/SKILL.md').write_text('edited after the run started\n')
+            with self.assertRaises(SystemExit):
+                self.resume(out, ('skill', 'no-skill'))
+            with self.assertRaises(SystemExit):
+                report.Run(out)
+
+    def test_the_pinned_hash_names_the_skill_source_not_a_bytecode_cache(self):
+        hashes = []
+        for cached in (False, True):
+            source = self.tmp / f'skill-{cached}'
+            (source / 'scripts').mkdir(parents=True)
+            (source / 'SKILL.md').write_text('the same skill\n')
+            if cached:
+                (source / 'scripts/__pycache__').mkdir()
+                (source / 'scripts/__pycache__/tool.cpython-315.pyc').write_bytes(b'left by an earlier import')
+            config = bench.load_config()
+            config['arms']['skill']['skill'] = str(source)
+            out = self.tmp / f'run-{cached}'
+            with mock.patch.object(bench, 'load_config', return_value=config):
+                bench.run(out, 'mock', ['skill'], self.TASKS[:1], [1], 1)
+            hashes.append(json.loads((out / 'run.json').read_text())['skills']['skill'])
+            self.assertFalse(list(out.rglob('__pycache__')))
+        self.assertEqual(hashes[0], hashes[1])
+
+    def test_arms_that_share_a_skill_get_the_same_package(self):
+        source = self.tmp / 'skill-source'
+        source.mkdir()
+        (source / 'SKILL.md').write_text('version one\n')
+        config = bench.load_config()
+        for arm in ('skill', 'skill-weak'):
+            config['arms'][arm]['skill'] = str(source)
+        copy = shutil.copytree
+
+        def edited_between_copies(src, dst, **options):  # the skill changes while the run is starting
+            done = copy(src, dst, **options)
+            (source / 'SKILL.md').write_text('version two\n')
+            return done
+
+        out = self.tmp / 'run'
+        with mock.patch.object(bench, 'load_config', return_value=config), \
+                mock.patch.object(bench.shutil, 'copytree', edited_between_copies):
+            bench.run(out, 'mock', ['skill', 'skill-weak'], self.TASKS[:1], [1], 1)
+        pinned = json.loads((out / 'run.json').read_text())['skills']
+        self.assertEqual(pinned['skill'], pinned['skill-weak'])
+        self.assertEqual((out / 'skills/skill-weak/SKILL.md').read_text(), 'version one\n')
+
+    def test_a_trial_made_with_another_skill_is_neither_scored_nor_kept(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        pinned = json.loads((out / 'run.json').read_text())['skills']['skill']
+        other = self.break_trial(out, 'skill', skill_sha256='0' * 64)
+        with self.assertRaises(SystemExit):
+            report.Run(out)
+        self.resume(out, ('skill', 'no-skill'))
+        self.assertEqual(json.loads(other.read_text())['skill_sha256'], pinned)
+        self.assertEqual(len(list((out / 'retired').iterdir())), 1)
+        report.Run(out).report()
+
+    def test_resume_reruns_a_budget_control_whose_target_moved(self):
+        arms = ('skill', 'no-skill', 'no-skill-budget')
+        of_task = lambda records, arm: [r for r in records if r['arm'] == arm and r['task'] == 'exec-01-allocate-cents']
+        out, records = self.run_mock(arms)
+        before = {r['budget']['target'] for r in of_task(records, 'no-skill-budget')}
+        # A skill trial is rerun after an infrastructure error and this time spends many more tokens.
+        self.break_trial(out, 'skill', infra_error=True)
+        real = bench.mock_agent
+
+        def costly(task, arm, repeat, work):
+            reply = real(task, arm, repeat, work)
+            return {**reply, 'tokens': 9000} if (task['id'], arm, repeat) == ('exec-01-allocate-cents', 'skill', 1) else reply
+
+        with mock.patch.object(bench, 'mock_agent', costly):
+            again = self.resume(out, arms)
+        moved = int(statistics.median(r['tokens'] for r in of_task(again, 'skill')))
+        self.assertNotIn(moved, before)
+        self.assertEqual({r['budget']['target'] for r in of_task(again, 'no-skill-budget')}, {moved})
+        self.assertEqual(len(again), len(records))
+        self.assertEqual(len(list((out / 'retired').iterdir())), 3)  # the skill trial and that task's two controls
+        # With no token count left on the skill side there is no target, so the old controls do not stay.
+        for repeat in (1, 2):
+            self.break_trial(out, 'skill', repeat, tokens=None)
+        self.assertEqual(of_task(self.resume(out, arms), 'no-skill-budget'), [])
+        self.assertFalse(list((out / 'trials').glob('exec-01-allocate-cents--no-skill-budget--*')))
+
     def test_solver_directory_is_not_beside_other_trials(self):
         seen = []
         real = bench.mock_agent
@@ -299,6 +459,27 @@ class MockRun(Scratch):
             out, _ = self.run_mock(('skill',))
         self.assertTrue(seen and all(not work.is_relative_to(out) for work in seen))
         self.assertTrue(all((bench.trial_dir(out, t, 'skill', 1) / 'work').is_dir() for t in self.TASKS))
+
+    def test_a_rerun_answer_makes_its_judgment_stale(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        judge.judge(out, None, False)
+        why = lambda: report.Run(out).report()['criteria']['writing_pairwise']['why']
+        self.assertEqual(why(), 'writing trials are incomplete')  # this small run has three of the twenty tasks
+        work = bench.trial_dir(out, 'write-01-thread-reply', 'skill', 1) / 'work'
+        work.mkdir(exist_ok=True)
+        (work / 'answer.md').write_text('A substantially different answer.\n')
+        self.assertIn('rerun judge.py', why())
+        judge.judge(out, None, False)
+        self.assertEqual(why(), 'writing trials are incomplete')
+
+    def test_a_run_from_another_freeze_is_not_judged(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        meta = json.loads((out / 'run.json').read_text())
+        (out / 'run.json').write_text(json.dumps({**meta, 'freeze': '0' * 64}))
+        with self.assertRaises(SystemExit):
+            judge.judge(out, None, False)
+        with self.assertRaises(SystemExit):
+            judge.human_export(out, self.tmp / 'packet')
 
     def test_judge_from_the_solver_family_is_refused(self):
         out, _ = self.run_mock(('skill', 'no-skill'))
@@ -313,7 +494,8 @@ class PassBar(Scratch):
     ARMS = ['skill', 'no-skill', 'skill-weak', 'no-skill-weak', 'no-skill-budget']
 
     def build(self, exec_passes, tokens, false_completions=None, refusals=0, judge_wins=24, independent=True,
-              forfeits=0, edit=lambda record: record, freeze=None):
+              forfeits=0, edit=lambda record: record, freeze=None, judged=lambda pairs: pairs, judged_under=None,
+              human=None, before_report=lambda run: None):
         false_completions = false_completions or {'skill': 0, 'no-skill': 3, 'skill-weak': 1, 'no-skill-weak': 4,
                                                   'no-skill-budget': 3}
         freeze = freeze or bench.freeze_digest()
@@ -337,19 +519,27 @@ class PassBar(Scratch):
                         (folder / 'trial.json').write_text(json.dumps(edit({
                             'task': t['id'], 'kind': kind, 'arm': arm, 'repeat': repeat, 'tokens': tokens[arm],
                             'tool_calls': 5, 'wall_s': 30.0, 'infra_error': False, 'timed_out': False, 'grade': grade,
-                            'freeze': freeze,
-                            'budget': {'target': 1000, 'used': 1000, 'rounds': 2} if arm == 'no-skill-budget' else None})))
+                            'freeze': freeze, 'skill_sha256': None,
+                            'budget': ({'target': tokens['skill'], 'used': tokens['skill'], 'rounds': 2}
+                                       if arm == 'no-skill-budget' else None)})))
         (run / 'run.json').write_text(json.dumps({
-            'adapter': 'codex', 'family': 'openai', 'freeze': freeze, 'arms': self.ARMS,
+            'adapter': 'codex', 'family': 'openai', 'freeze': freeze, 'arms': self.ARMS, 'skills': {},
             'tasks': [t['id'] for t in tasks], 'repeats': [1, 2], 'models': {'strong': 's', 'weak': 'w'}}))
         pairs = []
         for x, y in (('skill', 'no-skill'), ('skill-weak', 'no-skill-weak')):
-            for n in range(16):
-                pairs.append({'task': 'w', 'repeat': 1, 'arms': [x, y],
-                              'outcome': 'forfeit' if len(pairs) < forfeits else 'decided',
-                              'winner': x if len(pairs) < judge_wins else y})
-        (run / 'judgments.json').write_text(json.dumps({'judge': {'independent': independent}, 'pairs': pairs}))
+            for t in (t for t in tasks if t['kind'] == 'write'):
+                for repeat in (1, 2):  # no trial here wrote an answer, so every judgment is of two empty ones
+                    pairs.append({'task': t['id'], 'repeat': repeat, 'arms': [x, y], 'answers': {x: self.EMPTY, y: self.EMPTY},
+                                  'outcome': 'forfeit' if len(pairs) < forfeits else 'decided',
+                                  'winner': x if len(pairs) < judge_wins else y})
+        (run / 'judgments.json').write_text(json.dumps({'judge': {'independent': independent},
+                                                       'freeze': judged_under or freeze, 'pairs': judged(pairs)}))
+        if human:
+            (run / 'human.json').write_text(json.dumps(human))
+        before_report(run)
         return report.Run(run).report()
+
+    EMPTY = bench.sha(b'')
 
     GOOD = dict(exec_passes={'skill': 13, 'no-skill': 8, 'skill-weak': 10, 'no-skill-weak': 5, 'no-skill-budget': 9},
                 tokens={'skill': 2500, 'no-skill': 1000, 'skill-weak': 2500, 'no-skill-weak': 1000, 'no-skill-budget': 2500})
@@ -397,6 +587,48 @@ class PassBar(Scratch):
         self.assertEqual((pairwise['decided'], pairwise['not_judged'], pairwise['wins']), (12, 20, 4))
         self.assertEqual(pairwise['result'], 'inconclusive')  # fewer than half the pairs were decided
 
+    def pairwise(self, **changes):
+        return self.build(**self.GOOD, **changes)['criteria']['writing_pairwise']
+
+    def test_a_partial_set_of_judgments_cannot_pass(self):
+        four_wins = self.pairwise(judged=lambda pairs: pairs[:4])
+        self.assertEqual((four_wins['result'], four_wins['pairs'], four_wins['missing'], four_wins['wins']),
+                         ('inconclusive', 32, 28, 4))
+        one_short = self.pairwise(judge_wins=32, judged=lambda pairs: pairs[:-1])
+        self.assertEqual((one_short['result'], one_short['missing']), ('inconclusive', 1))
+
+    def test_the_comparisons_to_judge_come_from_the_pass_bar_not_the_run_record(self):
+        def strong_arms_only(run):  # a run record that no longer lists the weak pair
+            meta = json.loads((run / 'run.json').read_text())
+            (run / 'run.json').write_text(json.dumps({**meta, 'arms': ['skill', 'no-skill', 'no-skill-budget']}))
+        result = self.pairwise(judge_wins=16, judged=lambda pairs: pairs[:16], before_report=strong_arms_only)
+        self.assertEqual((result['result'], result['pairs'], result['missing']), ('inconclusive', 32, 16))
+
+    def test_judgments_of_other_answers_are_not_counted(self):
+        def rerun(run):  # the judged trial is replaced by one with a different answer
+            (bench.trial_dir(run, 'write-01-thread-reply', 'skill', 1) / 'work').mkdir()
+            (bench.trial_dir(run, 'write-01-thread-reply', 'skill', 1) / 'work/answer.md').write_text('A new answer.')
+        unbound = lambda pairs: [{key: value for key, value in pair.items() if key != 'answers'} for pair in pairs]
+        for stale in (dict(before_report=rerun), dict(judged_under='0' * 64), dict(judged=unbound),
+                      dict(judged=lambda pairs: pairs + pairs[:1]),
+                      dict(judged=lambda pairs: pairs + [{**pairs[0], 'task': 'no-such-task'}])):
+            result = self.pairwise(**stale)
+            self.assertEqual(result['result'], 'inconclusive', stale)
+            self.assertIn('rerun judge.py', result['why'])
+
+    def test_human_picks_count_only_for_the_answers_they_saw(self):
+        picks = lambda answer: [
+            {'pair_id': f'p{n}', 'rater': 'ana', 'task': t['id'], 'repeat': repeat, 'arms': ['no-skill', 'skill'],
+             'winner': 'skill', 'answers': {'skill': answer, 'no-skill': self.EMPTY}, 'freeze': bench.freeze_digest()}
+            for n, (t, repeat) in enumerate((t, r) for t in bench.load_tasks() if t['kind'] == 'write' for r in (1, 2))]
+        seen = self.pairwise(human=picks(self.EMPTY))
+        self.assertEqual((seen['result'], seen['human']['picks'], seen['human']['wins']), ('pass', 16, 16))
+        other = self.pairwise(human=picks(bench.sha(b'an answer that is no longer in the run')))
+        self.assertEqual(other['result'], 'inconclusive')
+        self.assertIn('human picks', other['why'])
+        self.assertEqual(self.pairwise(human=[{**pick, 'freeze': '0' * 64} for pick in picks(self.EMPTY)])['result'],
+                         'inconclusive')
+
     def test_false_completions_with_none_to_reduce(self):
         only_skill = self.build(**self.GOOD, false_completions={**dict.fromkeys(self.ARMS, 0), 'skill': 2})
         self.assertEqual(only_skill['criteria']['false_completions']['result'], 'fail')
@@ -427,6 +659,11 @@ class PassBar(Scratch):
     def test_a_control_that_did_not_spend_its_budget_is_inconclusive(self):
         idle = lambda r: {**r, 'budget': r['budget'] and {**r['budget'], 'used': 500}}
         self.assertEqual(self.build(**self.GOOD, edit=idle)['criteria']['method_not_compute']['result'], 'inconclusive')
+
+    def test_a_control_that_chased_another_target_is_inconclusive(self):
+        stale = lambda r: {**r, 'budget': r['budget'] and {**r['budget'], 'target': 1000, 'used': 1000}}
+        result = self.build(**self.GOOD, edit=stale)['criteria']['method_not_compute']
+        self.assertEqual((result['result'], result['stale_targets']), ('inconclusive', 24))
 
     def test_a_run_from_another_freeze_is_not_scored(self):
         with self.assertRaises(SystemExit):

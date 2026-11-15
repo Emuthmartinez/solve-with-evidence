@@ -20,6 +20,8 @@ def run(checks):
         path = Path(sys.argv[1]) / 'solution.py'
         spec = importlib.util.spec_from_file_location('solution', path)
         solution = importlib.util.module_from_spec(spec)
+        # As import does: code that looks its own module up while loading (dataclasses do) must find it.
+        sys.modules[spec.name] = solution
         spec.loader.exec_module(solution)
     except BaseException as exc:  # a solution that cannot load fails every check
         return {'pass': False, 'passed': 0, 'total': len(checks), 'failed': [f'load: {type(exc).__name__}: {exc}'[:200]]}
