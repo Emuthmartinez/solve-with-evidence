@@ -70,6 +70,10 @@ class ClaimCheck(unittest.TestCase):
         report = check('Thanks for reading!\n\n```\nrate = 99\n```\n', [('notes.md', NOTES)])
         self.assertEqual((report['sentences'], report['skipped'], report['flags']), (1, 1, []))
 
+    def test_a_flag_names_the_line_inside_a_wrapped_paragraph(self):
+        flag, = flags('Harbor launched on 3 March 2026.\nThe outage lasted\n90 minutes.')
+        self.assertEqual((flag['line'], flag['sentence']), (2, 'The outage lasted 90 minutes.'))
+
     def test_does_not_judge_entailment(self):
         # The stated limit: the opposite claim shares the number and the wording, so it maps.
         self.assertEqual(flags('Revenue grew 20% in February.'), [])

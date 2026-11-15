@@ -94,7 +94,7 @@ def blocks(text, skip_code=False):
             continue
         opener = re.match(r'(#+|[-*+>]|\d+[.)]|\|)\s*', stripped)
         if current and (not stripped or opener):
-            yield start, ' '.join(current), False
+            yield start, '\n'.join(current), False  # line breaks are kept so a flag can name its line
             current = []
         if not stripped:
             continue
@@ -110,15 +110,17 @@ def blocks(text, skip_code=False):
 
 
 def sentences(text):
+    """Yield (lines before the sentence, sentence on one line)."""
     start = 0
-    for m in BOUNDARY.finditer(text):
-        before = re.search(r'([A-Za-z.]+)\.$', text[start:m.start() + 1])
+    for m in list(BOUNDARY.finditer(text)) + [None]:
+        end = m.end() if m else len(text)
+        before = re.search(r'([A-Za-z.]+)\.$', text[start:m.start() + 1]) if m else None
         if before and (before[1].lower() in ABBREVIATIONS or len(before[1]) == 1):
             continue
-        yield text[start:m.end()].strip()
-        start = m.end()
-    if text[start:].strip():
-        yield text[start:].strip()
+        if text[start:end].strip():
+            lead = len(text[start:end]) - len(text[start:end].lstrip())
+            yield text[:start + lead].count('\n'), ' '.join(text[start:end].split())
+        start = end
 
 
 def names(sentence, midcaps, known):
@@ -189,6 +191,7 @@ def check(deliverable, sources, min_overlap=0.4):
     pool = []
     for name, text in sources:
         for line, passage, _ in blocks(text):
+            passage = ' '.join(passage.split())
             pool.append({'source': name, 'line': line, 'text': passage, 'terms': terms(passage),
                          'words': ' %s ' % ' '.join(tokens(passage)),
                          'numbers': {key for key, _ in numbers(IDENTIFIER.sub(' ', passage))}})
@@ -199,7 +202,7 @@ def check(deliverable, sources, min_overlap=0.4):
         known.update(tokens(text))
     report = {'outcome': 'all_mapped', 'sentences': 0, 'mapped': 0, 'skipped': 0, 'flags': [], 'map': []}
     for line, block, heading in blocks(deliverable, skip_code=True):
-        for sentence in sentences(block):
+        for offset, sentence in sentences(block):
             report['sentences'] += 1
             wanted = terms(sentence)
             found = facts(sentence, heading, midcaps, known)
@@ -220,7 +223,7 @@ def check(deliverable, sources, min_overlap=0.4):
             overlap, best = max(((len(wanted & p['terms']) / len(wanted) if wanted else 1.0, i)
                                  for i, p in enumerate(pool)), default=(0.0, None))
             nearest = None if best is None else {k: pool[best][k] for k in ('source', 'line', 'text')}
-            entry = {'line': line, 'sentence': sentence, 'overlap': round(overlap, 2), 'nearest': nearest}
+            entry = {'line': line + offset, 'sentence': sentence, 'overlap': round(overlap, 2), 'nearest': nearest}
             if missing:
                 report['flags'].append({**entry, 'kind': 'unsupported', 'items': missing})
             elif doubtful or (len(wanted) >= 3 and overlap < min_overlap):
