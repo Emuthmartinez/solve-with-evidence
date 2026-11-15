@@ -1,0 +1,1 @@
+{"id": "exec-02-batch-prices", "kind": "exec", "title": "Batch a cart's catalog calls without changing what it returns", "deliverable": "shop/cart.py"}

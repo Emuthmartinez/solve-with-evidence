@@ -6,6 +6,7 @@ import csv
 import importlib.util
 import json
 from pathlib import Path
+import re
 import shutil
 import statistics
 import subprocess
@@ -246,7 +247,8 @@ class ExecTasks(Scratch):
             (work / name).write_text(text)
         done = subprocess.run([sys.executable, '-I', '-B', str(task['dir'] / 'grader.py'), str(work)],
                               capture_output=True, text=True)
-        return json.loads(done.stdout.strip().splitlines()[-1])['failed']
+        # gradelib appends the exception type to a check that raised: 'name (ValueError)'.
+        return [re.sub(r' \(\w+\)$', '', name) for name in json.loads(done.stdout.strip().splitlines()[-1])['failed']]
 
     def check(self, task):
         names = [name for name, _ in load_source(task['dir'] / 'grader.py').CHECKS]
