@@ -14,7 +14,7 @@ Earlier benchmarks in this repository compared versions of the skill with each o
 
 Twenty tasks, frozen by [`freeze.json`](freeze.json). `python3 -B evaluations/proof/bench.py check` verifies the freeze.
 
-The freeze digest was `2c78ed622e9a` for the pilot, and `ea0970b83b51` after an independent review fixed three grader defects in the first executable tasks. It is `74b1dd44410c` now, with the eight executable tasks replaced. The writing tasks, the traps, the pass bar and every threshold are unchanged. A freeze may change only while no skill arm has run.
+The freeze digest was `2c78ed622e9a` for the pilot, and `ea0970b83b51` after an independent review fixed three grader defects in the first executable tasks. It was `74b1dd44410c` with the eight executable tasks replaced, and is `5b40a704d8fa` now, after a second independent review found one check that rejected a correct solution and two reference solutions that broke their own contract. The writing tasks, the traps, the pass bar and every threshold are unchanged. A freeze may change only while no skill arm has run.
 
 | Kind | Count | Deliverable | Graded by |
 |---|---|---|---|
@@ -35,16 +35,16 @@ The first eight executable tasks each gave one function and a complete numbered 
 
 | Task | The solver must | Checks |
 |---|---|---|
-| `exec-01-bank-import` | Make an importer follow a bank's format description, without breaking the other caller of a shared amount parser | 27 |
+| `exec-01-bank-import` | Make an importer follow a bank's format description, without breaking the other caller of a shared amount parser | 30 |
 | `exec-02-batch-prices` | Batch a cart's catalog calls within a round-trip budget, without changing what the cart returns or raises | 19 |
 | `exec-03-limiter-tests` | Write tests for a rate limiter's specification. They must pass on 4 correct implementations and fail on 12 faulty ones | 16 |
-| `exec-04-settings-migration` | Make a settings loader read files from every release, following a changelog | 27 |
+| `exec-04-settings-migration` | Make a settings loader read files from every release, following a changelog | 28 |
 | `exec-05-invoice-rounding` | Fix a one-cent invoice error so that invoices and credit notes follow the finance policy | 25 |
 | `exec-06-retry-client` | Implement retries as the accepted decision records decide, and deliver tests that catch 8 faulty clients | 38 |
 | `exec-07-feed-pagination` | Fix feed paging to follow its documented contract, and deliver a regression test that fails on the shipped code | 23 |
 | `exec-08-cache-invalidation` | Fix a stale read so that a cache meets its documented guarantees and call budget | 29 |
 
-Every hidden check follows from a sentence the solver can read. Each task's `NOTES.md` lists every check beside the sentence it follows from and where that sentence is. [`variants/`](variants) holds plausible mistakes for each task, 205 in all. `test_bench.py` requires each mistake to fail exactly the checks it lists, and every check to be failed by at least one mistake. The solver's directory holds the task's `workspace/` only: no notes, grader, exemplars or `impls/`.
+Every hidden check follows from a sentence the solver can read. Each task's `NOTES.md` lists every check beside the sentence it follows from and where that sentence is. [`variants/`](variants) holds plausible mistakes for each task, 213 in all. `test_bench.py` requires each mistake to fail exactly the checks it lists, and every check to be failed by at least one mistake. A variants file can also hold correct solutions that differ from the reference one, and each must pass every check. The solver's directory holds the task's `workspace/` only: no notes, grader, exemplars or `impls/`.
 
 No model has attempted the new tasks. Whether they land in the calibration band is for the next pilot to measure.
 
