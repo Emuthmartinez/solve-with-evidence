@@ -325,6 +325,52 @@ class MockRun(Scratch):
         with self.assertRaises(SystemExit):  # a resume may not change what is being compared
             bench.run(out, 'mock', ['skill'], self.TASKS, [1, 2], 2, resume=True)
 
+    def break_trial(self, out, arm, **changes):
+        """Rewrite one finished trial's record, as a crash or an older harness would have left it."""
+        file = bench.trial_dir(out, 'exec-01-allocate-cents', arm, 1) / 'trial.json'
+        file.write_text(json.dumps({**json.loads(file.read_text()), **changes}))
+        return file
+
+    def resume(self, out, arms):
+        return bench.run(out, 'mock', list(arms), self.TASKS, [1, 2], 2, resume=True)
+
+    def test_skill_contents_are_pinned_for_the_whole_run(self):
+        source = self.tmp / 'skill-source'
+        source.mkdir()
+        (source / 'SKILL.md').write_text('version one\n')
+        config = bench.load_config()
+        config['arms']['skill']['skill'] = str(source)
+        with mock.patch.object(bench, 'load_config', return_value=config):
+            out, records = self.run_mock(('skill', 'no-skill'))
+            pinned = json.loads((out / 'run.json').read_text())['skills']
+            self.assertTrue(pinned['skill'])
+            self.assertIsNone(pinned['no-skill'])
+            self.assertEqual({r['skill_sha256'] for r in records if r['arm'] == 'skill'}, {pinned['skill']})
+            # The skill changes on disk before a broken trial is rerun. The rerun gets the pinned package.
+            (source / 'SKILL.md').write_text('version two\n')
+            broken = self.break_trial(out, 'skill', infra_error=True)
+            again = self.resume(out, ('skill', 'no-skill'))
+            self.assertEqual({r['skill_sha256'] for r in again if r['arm'] == 'skill'}, {pinned['skill']})
+            self.assertEqual((broken.parent / 'work/solve-with-evidence/SKILL.md').read_text(), 'version one\n')
+            report.Run(out).report()
+            # A snapshot that no longer matches its recorded hash stops the resume and the report.
+            (out / 'skills/skill/SKILL.md').write_text('edited after the run started\n')
+            with self.assertRaises(SystemExit):
+                self.resume(out, ('skill', 'no-skill'))
+            with self.assertRaises(SystemExit):
+                report.Run(out)
+
+    def test_a_trial_made_with_another_skill_is_neither_scored_nor_kept(self):
+        out, _ = self.run_mock(('skill', 'no-skill'))
+        pinned = json.loads((out / 'run.json').read_text())['skills']['skill']
+        other = self.break_trial(out, 'skill', skill_sha256='0' * 64)
+        with self.assertRaises(SystemExit):
+            report.Run(out)
+        self.resume(out, ('skill', 'no-skill'))
+        self.assertEqual(json.loads(other.read_text())['skill_sha256'], pinned)
+        self.assertEqual(len(list((out / 'retired').iterdir())), 1)
+        report.Run(out).report()
+
     def test_solver_directory_is_not_beside_other_trials(self):
         seen = []
         real = bench.mock_agent
@@ -370,10 +416,10 @@ class PassBar(Scratch):
                         (folder / 'trial.json').write_text(json.dumps(edit({
                             'task': t['id'], 'kind': kind, 'arm': arm, 'repeat': repeat, 'tokens': tokens[arm],
                             'tool_calls': 5, 'wall_s': 30.0, 'infra_error': False, 'timed_out': False, 'grade': grade,
-                            'freeze': freeze,
+                            'freeze': freeze, 'skill_sha256': None,
                             'budget': {'target': 1000, 'used': 1000, 'rounds': 2} if arm == 'no-skill-budget' else None})))
         (run / 'run.json').write_text(json.dumps({
-            'adapter': 'codex', 'family': 'openai', 'freeze': freeze, 'arms': self.ARMS,
+            'adapter': 'codex', 'family': 'openai', 'freeze': freeze, 'arms': self.ARMS, 'skills': {},
             'tasks': [t['id'] for t in tasks], 'repeats': [1, 2], 'models': {'strong': 's', 'weak': 'w'}}))
         pairs = []
         for x, y in (('skill', 'no-skill'), ('skill-weak', 'no-skill-weak')):

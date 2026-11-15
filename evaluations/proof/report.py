@@ -55,6 +55,12 @@ class Run:
         digest = bench.freeze_digest()
         if self.meta['freeze'] != digest or any(t['freeze'] != digest for t in trials):
             raise SystemExit('this run was made under a different freeze than the tasks and pass bar now on disk')
+        # One arm, one skill package: the snapshot must still be the one hashed before the first trial,
+        # and every trial must have been handed it.
+        skills = self.meta.get('skills') or {}
+        if (any(t['skill_sha256'] != skills.get(t['arm']) for t in trials)
+                or any(pin and bench.skill_sha(run / 'skills' / arm) != pin for arm, pin in skills.items())):
+            raise SystemExit('a trial or a skill snapshot does not match the skill hashes pinned in run.json')
         self.errors = [f"{t['task']}--{t['arm']}--r{t['repeat']}" for t in trials if t['infra_error']]
         self.trials = [t for t in trials if not t['infra_error']]
         optional = lambda name: json.loads((run / name).read_text()) if (run / name).exists() else None
