@@ -1,0 +1,1 @@
+{"id": "exec-04-settings-migration", "kind": "exec", "title": "Read settings files from every release by following the changelog", "deliverable": "settings/store.py"}

@@ -1,0 +1,9 @@
+{
+  "appearance": {"contrast": "high", "theme": "dark"},
+  "locale": "en-GB",
+  "notifications": {"email": true, "push": false},
+  "quiet_hours": {"end": 390, "start": 1305},
+  "recent_files": ["~/Reports/q3-budget.tern", "~/Reports/hiring.tern"],
+  "schema": 3,
+  "timeout_ms": 15000
+}
