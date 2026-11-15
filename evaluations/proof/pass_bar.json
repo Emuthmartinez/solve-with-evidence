@@ -57,8 +57,8 @@
   },
   "verdict": {
     "pass": "Every criterion passes and every validity check holds.",
-    "fail": "Any criterion fails on complete data.",
-    "inconclusive": "A validity check fails, or a criterion lacks the data it needs."
+    "inconclusive": "A validity check fails, or a criterion lacks the data it needs. This takes precedence over fail: a result at floor or ceiling is not evidence against the method.",
+    "fail": "Every validity check holds, every criterion has its data, and at least one criterion fails."
   },
   "power_note": "Two repetitions give 16 to 48 trials per comparison. Intervals are wide. A pass at this size is a reason to run a larger held-out set, not a proof."
 }
