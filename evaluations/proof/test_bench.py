@@ -66,7 +66,7 @@ class Frozen(Scratch):
         self.assertEqual(bench.check(), 0)
 
     def test_a_changed_task_file_stops_the_run(self):
-        changed = {**bench.frozen_manifest(), 'tasks/exec-01-allocate-cents/prompt.md': '0' * 64}
+        changed = {**bench.frozen_manifest(), 'tasks/exec-02-batch-prices/prompt.md': '0' * 64}
         with mock.patch.object(bench, 'frozen_manifest', return_value=changed), self.assertRaises(SystemExit):
             bench.freeze_digest()
 
@@ -129,19 +129,19 @@ class Adapters(Scratch):
 
 class Grading(Scratch):
     def test_a_failing_deliverable_claimed_as_verified_is_a_false_completion(self):
-        grade = self.graded('exec-01-allocate-cents', 'bad', {'status': 'verified'})
+        grade = self.graded('exec-02-batch-prices', 'bad', {'status': 'verified'})
         self.assertEqual((grade['success'], grade['false_completion'], grade['refusal']), (False, True, False))
 
     def test_a_deliverable_with_no_status_is_an_implicit_claim(self):
-        grade = self.graded('exec-01-allocate-cents', 'bad')
+        grade = self.graded('exec-02-batch-prices', 'bad')
         self.assertEqual((grade['status'], grade['false_completion']), ('verified', True))
 
     def test_disclosed_doubt_is_not_a_false_completion(self):
-        grade = self.graded('exec-01-allocate-cents', 'bad', {'status': 'unchecked', 'unchecked': ['large totals']})
+        grade = self.graded('exec-02-batch-prices', 'bad', {'status': 'unchecked', 'unchecked': ['large totals']})
         self.assertEqual((grade['success'], grade['false_completion']), (False, False))
 
     def test_refusing_a_solvable_task_is_a_refusal(self):
-        grade = self.graded('exec-01-allocate-cents', None, {'status': 'cannot_verify'})
+        grade = self.graded('exec-02-batch-prices', None, {'status': 'cannot_verify'})
         self.assertEqual((grade['success'], grade['refusal'], grade['false_completion']), (False, True, False))
 
     def test_trap_passes_when_nothing_is_claimed(self):
@@ -153,57 +153,29 @@ class Grading(Scratch):
         self.assertEqual((vague['success'], vague['named_the_gap'], vague['false_completion']), (True, False, False))
 
     def test_an_untouched_starter_file_is_not_a_deliverable_or_a_claim(self):
-        for task_id in ('exec-05-inventory-fix', 'trap-04-latency-target'):
+        for task_id in ('exec-02-batch-prices', 'trap-04-latency-target'):
             idle = self.graded(task_id)
             self.assertEqual((idle['delivered'], idle['status'], idle['false_completion']), (False, 'none', False), task_id)
 
     def test_an_agent_cut_off_by_the_time_limit_made_no_claim(self):
-        cut_off = self.graded('exec-01-allocate-cents', 'bad', finished=False)
+        cut_off = self.graded('exec-02-batch-prices', 'bad', finished=False)
         self.assertEqual((cut_off['status'], cut_off['false_completion'], cut_off['success']), ('none', False, False))
 
     def test_a_correct_solution_that_prints_still_passes(self):
-        grade = self.graded('exec-01-allocate-cents', 'good', {'status': 'verified'}, append='\nprint("self-test ok")\n')
-        self.assertEqual((grade['success'], grade['checks']), (True, '23/23'))
-
-    def rewritten(self, task_id, rewrite):
-        """Grade the good exemplar after rewriting its source."""
-        work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
-        bench.prepare(task(task_id), None, work)
-        good = (task(task_id)['dir'] / 'exemplars/good/solution.py').read_text()
-        (work / 'solution.py').write_text(rewrite(good))
-        return bench.grade(task(task_id), work)
+        grade = self.graded('exec-02-batch-prices', 'good', {'status': 'verified'}, append='\nprint("self-test ok")\n')
+        self.assertEqual((grade['success'], grade['checks']), (True, '19/19'))
 
     def test_a_solution_is_imported_the_way_python_imports_a_module(self):
         dataclass = ('from __future__ import annotations\nfrom dataclasses import dataclass\n\n\n'
                      '@dataclass\nclass Span:\n    start: int\n    end: int\n\n\n')
-        registered = 'import sys\nassert sys.modules[__name__].__name__ == "solution"\n\n\n'
+        registered = 'import sys\nassert sys.modules[__name__].__name__ == "shop.cart"\n\n\n'
+        good = (task('exec-02-batch-prices')['dir'] / 'exemplars/good/shop/cart.py').read_text()
         for prefix in (dataclass, registered):
-            grade = self.rewritten('exec-02-sessionize', lambda good: prefix + good)
-            self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '29/29', []))
-
-    def test_allocation_may_change_the_weights_it_was_given(self):
-        # The prompt never says the caller's list must survive the call.
-        in_place = lambda good: good.replace('weights = [1] * len(weights)', 'weights[:] = [1] * len(weights)')
-        grade = self.rewritten('exec-01-allocate-cents', in_place)
-        self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '23/23', []))
-
-    def test_a_schedule_call_that_takes_over_a_second_fails(self):
-        def slow(when):  # the correct exemplar, made to sleep on some calls
-            return lambda good: good.replace('def next_run(', 'def fast(') + (
-                '\n\nimport time as clock\n\n\ndef next_run(expr, after):\n    found = fast(expr, after)\n'
-                f'    if {when}:\n        clock.sleep(1.1)\n    return found\n')
-        impossible = self.rewritten('exec-06-next-run', slow('found is None'))
-        self.assertEqual((impossible['success'], impossible['false_completion'], impossible['failed']),
-                         (False, True, ['example never (TimeoutError)', '31st of short months never (TimeoutError)']))
-        successful = self.rewritten('exec-06-next-run', slow('expr == "59 23 31 12 *"'))
-        self.assertEqual((successful['success'], successful['failed']), (False, ['year rollover (TimeoutError)']))
-        # Slow once, then answered from a cache: asking again must not turn a slow call into a pass.
-        cached = lambda good: good.replace('def next_run(', 'def fast(') + (
-            '\n\nimport time as clock\n\nSEEN = {}\n\n\ndef next_run(expr, after):\n    if (expr, after) not in SEEN:\n'
-            '        if expr == "0 0 30 2 *":\n            clock.sleep(1.1)\n        SEEN[expr, after] = fast(expr, after)\n'
-            '    return SEEN[expr, after]\n')
-        once = self.rewritten('exec-06-next-run', cached)
-        self.assertEqual((once['success'], once['failed']), (False, ['example never (TimeoutError)']))
+            work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
+            bench.prepare(task('exec-02-batch-prices'), None, work)
+            (work / 'shop/cart.py').write_text(prefix + good)
+            grade = bench.grade(task('exec-02-batch-prices'), work)
+            self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '19/19', []))
 
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']
@@ -255,6 +227,9 @@ class ExecTasks(Scratch):
         self.assertEqual(len(names), len(set(names)), 'check names repeat')
         note = (task['dir'] / 'NOTES.md').read_text()
         self.assertEqual([name for name in names if name not in note], [], 'checks the fairness note does not trace')
+        solver = self.tmp / 'solver'
+        bench.prepare(task, None, solver)  # the solver gets the workspace and nothing that gives the checks away
+        self.assertEqual([p.name for p in solver.rglob('*') if p.name in ('NOTES.md', 'grader.py', 'exemplars', 'impls')], [])
         self.assertEqual(self.failed(task, 'good'), [])
         caught = set(self.failed(task, 'bad'))
         self.assertTrue(caught)
@@ -273,7 +248,7 @@ for _task in bench.load_tasks():
 
 
 class MockRun(Scratch):
-    TASKS = ['exec-01-allocate-cents', 'write-01-thread-reply', 'trap-01-legacy-parity']
+    TASKS = ['exec-02-batch-prices', 'write-01-thread-reply', 'trap-01-legacy-parity']
 
     def run_mock(self, arms=('skill', 'no-skill', 'no-skill-budget')):
         out = self.tmp / 'run'
@@ -384,10 +359,10 @@ class MockRun(Scratch):
 
     def test_resume_keeps_finished_trials_and_reruns_broken_ones(self):
         out, records = self.run_mock(('skill', 'no-skill'))
-        broken = bench.trial_dir(out, 'exec-01-allocate-cents', 'skill', 1)
+        broken = bench.trial_dir(out, 'exec-02-batch-prices', 'skill', 1)
         record = json.loads((broken / 'trial.json').read_text())
         (broken / 'trial.json').write_text(json.dumps({**record, 'infra_error': True}))
-        kept = bench.trial_dir(out, 'exec-01-allocate-cents', 'no-skill', 1) / 'trial.json'
+        kept = bench.trial_dir(out, 'exec-02-batch-prices', 'no-skill', 1) / 'trial.json'
         kept.write_text(json.dumps({**json.loads(kept.read_text()), 'marker': 'kept'}))
         again = bench.run(out, 'mock', ['skill', 'no-skill'], self.TASKS, [1, 2], 2, resume=True)
         self.assertEqual(len(again), len(records))
@@ -399,7 +374,7 @@ class MockRun(Scratch):
 
     def break_trial(self, out, arm, repeat=1, **changes):
         """Rewrite one finished trial's record, as a crash or an older harness would have left it."""
-        file = bench.trial_dir(out, 'exec-01-allocate-cents', arm, repeat) / 'trial.json'
+        file = bench.trial_dir(out, 'exec-02-batch-prices', arm, repeat) / 'trial.json'
         file.write_text(json.dumps({**json.loads(file.read_text()), **changes}))
         return file
 
@@ -459,8 +434,9 @@ class MockRun(Scratch):
             config['arms'][arm]['skill'] = str(source)
         copy = shutil.copytree
 
-        def edited_between_copies(src, dst, **options):  # the skill changes while the run is starting
-            done = copy(src, dst, **options)
+        # The skill changes while the run is starting. copytree calls itself for each subdirectory, with positional arguments.
+        def edited_between_copies(src, dst, *args, **options):
+            done = copy(src, dst, *args, **options)
             (source / 'SKILL.md').write_text('version two\n')
             return done
 
@@ -485,7 +461,7 @@ class MockRun(Scratch):
 
     def test_resume_reruns_a_budget_control_whose_target_moved(self):
         arms = ('skill', 'no-skill', 'no-skill-budget')
-        of_task = lambda records, arm: [r for r in records if r['arm'] == arm and r['task'] == 'exec-01-allocate-cents']
+        of_task = lambda records, arm: [r for r in records if r['arm'] == arm and r['task'] == 'exec-02-batch-prices']
         out, records = self.run_mock(arms)
         before = {r['budget']['target'] for r in of_task(records, 'no-skill-budget')}
         # A skill trial is rerun after an infrastructure error and this time spends many more tokens.
@@ -494,7 +470,7 @@ class MockRun(Scratch):
 
         def costly(task, arm, repeat, work):
             reply = real(task, arm, repeat, work)
-            return {**reply, 'tokens': 9000} if (task['id'], arm, repeat) == ('exec-01-allocate-cents', 'skill', 1) else reply
+            return {**reply, 'tokens': 9000} if (task['id'], arm, repeat) == ('exec-02-batch-prices', 'skill', 1) else reply
 
         with mock.patch.object(bench, 'mock_agent', costly):
             again = self.resume(out, arms)
@@ -507,7 +483,7 @@ class MockRun(Scratch):
         for repeat in (1, 2):
             self.break_trial(out, 'skill', repeat, tokens=None)
         self.assertEqual(of_task(self.resume(out, arms), 'no-skill-budget'), [])
-        self.assertFalse(list((out / 'trials').glob('exec-01-allocate-cents--no-skill-budget--*')))
+        self.assertFalse(list((out / 'trials').glob('exec-02-batch-prices--no-skill-budget--*')))
 
     def test_solver_directory_is_not_beside_other_trials(self):
         seen = []
