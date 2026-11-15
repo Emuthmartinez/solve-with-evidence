@@ -16,6 +16,8 @@ import unittest
 from unittest import mock
 
 HERE = Path(__file__).resolve().parent
+# These tests import each task's grader. A bytecode cache written beside it would change the freeze.
+sys.dont_write_bytecode = True
 sys.path[:0] = [str(HERE), str(HERE.parent / 'hard')]
 import bench
 import compare
