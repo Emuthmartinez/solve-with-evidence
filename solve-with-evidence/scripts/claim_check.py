@@ -34,7 +34,7 @@ NUMBER = re.compile(
     r'(?:\s+(?P<scale>hundred|thousand|million|billion|trillion)\b)?(?P<percent>\s?%%|\s+percent\b)?' % ('|'.join(TENS), '|'.join(UNITS), '|'.join(WORDS)),
     re.IGNORECASE)
 QUOTE = re.compile(r'["“]([^"“”]+)["”]')
-IDENTIFIER = re.compile(r'https?://\S+|[@#]\w+|\b\w+(?:[._/-]\w+)*\.[a-z]{2,4}\b'
+IDENTIFIER = re.compile(r'https?://\S+|[@#]\w+|\b\d{1,2}:\d{2}\b|\b\d{4}-\d{2}-\d{2}\b|\b\w+(?:[._/-]\w+)*\.[a-z]{2,4}\b'
                         r'|\b[A-Za-z]+[-.]?\d[\w.-]*|\b[a-z]+[A-Z]\w*|\b\w+_\w+\b')
 WORD = re.compile(r"[A-Za-z][\w'’-]*")
 BOUNDARY = re.compile(r'[.!?]["”’)\]]*\s+(?=["“‘(\[]?[A-Z0-9@#$])')
@@ -121,11 +121,44 @@ def sentences(text):
         yield text[start:].strip()
 
 
+def names(sentence, midcaps, known):
+    """Yield (type, text) for runs of capitalised words. Punctuation and digits end a run."""
+    words = [(re.sub(r"['’]s$", '', m[0]), m.start(), m.end()) for m in WORD.finditer(sentence)]
+    runs, run = [], []
+    for index, (word, start, end) in enumerate(words):
+        gap = sentence[words[index - 1][2]:start] if index else ''
+        if run and gap.strip(' &'):
+            runs.append(run)
+            run = []
+        following = words[index + 1] if index + 1 < len(words) else ('', end, end)
+        bridge = (run and word.lower() in CONNECTORS and following[0][:1].isupper()
+                  and not sentence[end:following[1]].strip())
+        if (word[:1].isupper() and len(word) > 1) or bridge:
+            # A capital at the start of a sentence, or after a colon, may be only position.
+            run.append((word, not run and (index == 0 or ':' in gap)))
+        elif run:
+            runs.append(run)
+            run = []
+    for run in runs + [run]:
+        opens = bool(run) and run[0][1]
+        while run and run[0][0].lower() in STOP:
+            run, opens = run[1:], False
+        if opens and run[0][0] not in midcaps and not run[0][0].isupper():
+            if run[0][0].lower() not in known and len(run) == 1:
+                yield 'possible name', run[0][0]
+            if run[0][0].lower() in known or len(run) == 1:
+                run = run[1:]
+        while run and run[0][0].lower() in STOP:
+            run = run[1:]
+        if run:
+            yield 'name', ' '.join(word for word, _ in run)
+
+
 def facts(sentence, heading, midcaps, known):
     """Return [(type, display, key, context)] for the quotations, names and numbers in a sentence.
 
-    A number's context is the content word on each side of it: a source passage must hold the
-    number beside one of them, so "2 days" is not supported by "two clinics".
+    A number's context is the wording around it. A source passage must hold the number beside
+    that wording, so "2 days" is not supported by a passage about "two clinics".
     """
     found = []
 
@@ -139,28 +172,15 @@ def facts(sentence, heading, midcaps, known):
     take(QUOTE, 'quote', lambda m: len(m[1].split()) >= 3, group=1)
     take(IDENTIFIER, 'name')
     if not heading:
-        words = [(m[0], m.start()) for m in WORD.finditer(sentence)]
-        run = []
-        for index, (word, at) in enumerate(words + [('', -1)]):
-            capital = word[:1].isupper() and len(word) > 1
-            bridge = run and word.lower() in CONNECTORS and words[index + 1][0][:1].isupper()
-            if capital or bridge:
-                run.append((word, index))
-                continue
-            while run and run[0][1] == 0 and run[0][0].lower() in STOP:
-                run.pop(0)
-            name = ' '.join(w for w, _ in run)
-            lone_opener = len(run) == 1 and run[0][1] == 0 and not name.isupper()
-            if run and (not lone_opener or name in midcaps):
-                found.append(('name', name, ' '.join(tokens(name)), None))
-            elif run and name.lower() not in known:
-                # An opening word that is never used in lower case may be a name or just an adverb.
-                found.append(('possible name', name, ' '.join(tokens(name)), None))
-            run = []
+        found += [(kind, name, ' '.join(tokens(name)), None) for kind, name in names(sentence, midcaps, known)]
     for key, m in numbers(sentence):
         before, after = ordered_terms(sentence[:m.start()]), ordered_terms(sentence[m.end():])
-        unit = re.match(r'\s+[A-Za-z]+', sentence[m.end():])
-        found.append(('number', m[0].strip() + (unit[0] if unit else ''), key, set(before[-1:] + after[:1])))
+        unit = re.match(r'\s+([A-Za-z]+)', sentence[m.end():])
+        if unit and unit[1].lower() not in STOP:
+            context = set(after[:2])  # "47 additional clinics": the unit phrase must be in the passage
+        else:
+            context = set(before[-2:] + after[:2])
+        found.append(('number', m[0].strip() + (unit[0] if unit else ''), key, context))
     return found
 
 
