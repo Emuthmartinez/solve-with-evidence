@@ -1,5 +1,7 @@
 # Delivery-tool comparison
 
+This runner is the Codex app-server harness used for the delivery comparison. Claude Code, Cursor, Gemini CLI, Copilot, and other hosts do not use it. They follow [the skill](../../../solve-with-evidence/SKILL.md) and, when a JSON file must be the bytes a checker accepted, run `solve-with-evidence/scripts/json_handoff.py`. The `deliver_json` tool below exists only in this harness.
+
 Each repeat starts a new Codex app-server with the existing isolated benchmark transport. Both arms receive the same model, limits, case text, checker, Python tool and delivery tool. Each solver gets its assigned skill instructions. The provider does not expose a model sampling seed. The Python calculator has seed zero.
 
 A successful Python tool call retains its stdout bytes in the host. The `deliver_json` tool uses a call ID or the latest successful call. The host passes that exact buffer to the production delivery CLI. The trusted case consumer validates the submitted JSON. The CLI writes a content-addressed file and returns a receipt. The tool gives the model a Markdown link relative to the final response document. It stores the path in that relative form in public evidence.

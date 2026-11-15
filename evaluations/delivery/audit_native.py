@@ -156,7 +156,7 @@ def checker_command(command):
     return False
 
 
-def audit(trial, evaluation):
+def audit(trial, evaluation, candidate=None):
     req, score = (read(trial/name) for name in ('request.json','result.json'))
     need(type(req.get('unavailable')) is bool,'missing consumer scenario')
     inventory = filemap(trial)
@@ -169,7 +169,9 @@ def audit(trial, evaluation):
     need(digest(consumer.read_bytes())==req['consumer_sha256'], 'consumer digest differs')
     original=read(suite/'inputs'/f'{case}.json')['messages']
     need(len(original)==1 and req['message'].endswith(original[0]), 'input differs from frozen task')
-    pkg=evaluation.parents[1]/('solve-with-evidence' if arm=='candidate' else 'evaluations/hard/snapshots/shipped')
+    # Candidate trials recorded the frozen package, not whatever solve-with-evidence/ says now.
+    root=evaluation.parents[1]
+    pkg=(candidate or root/'evaluations/delivery/measured-package') if arm=='candidate' else root/'evaluations/hard/snapshots/shipped'
     actual_files={p.relative_to(pkg).as_posix():digest(p.read_bytes()) for p in pkg.rglob('*') if p.is_file()}
     need(actual_files==req['skill_sha256'], 'supplied package differs from selected version')
     workspace=PurePosixPath(req['workspace'])
@@ -274,6 +276,7 @@ def audit(trial, evaluation):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('trials',type=Path); ap.add_argument('--evaluation',type=Path,default=Path(__file__).resolve().parent)
+    ap.add_argument('--candidate',type=Path,help='candidate package these trials were given; default is evaluations/delivery/measured-package')
     ap.add_argument('--cases',choices=CASES, nargs='+',default=list(CASES),help='case IDs assigned to this cohort')
     ap.add_argument('--partial',action='store_true',help='audit only finished trials in an in-progress collection')
     args=ap.parse_args()
@@ -281,7 +284,7 @@ def main():
     expected={f'{c}-{a}-r{r}' for c in args.cases for a in ('baseline','candidate') for r in (1,2)}
     if not args.partial:
         need({p.name for p in folders}==expected,'expected two repeats of two cases on both arms')
-    results=[audit(p,args.evaluation.resolve()) for p in folders]
+    results=[audit(p,args.evaluation.resolve(),args.candidate) for p in folders]
     need(not args.partial or {p.name for p in folders} <= expected, 'unexpected cell in partial grid')
     need(len({r['checker_available'] for r in results})<=1, 'outage and normal trials mixed in one comparison')
     need(len(set(r['thread_id'] for r in results))==len(results),'solver context reused')
