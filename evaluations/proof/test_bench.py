@@ -3,10 +3,12 @@
     python3 -B evaluations/proof/test_bench.py
 """
 import csv
+import importlib.util
 import json
 from pathlib import Path
 import shutil
 import statistics
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -213,6 +215,59 @@ class Grading(Scratch):
     def test_writing_is_scored_against_the_source_pack(self):
         self.assertEqual(self.graded('write-03-investor-update', 'good')['unsupported'], 0)
         self.assertGreater(self.graded('write-03-investor-update', 'bad')['unsupported'], 3)
+
+
+def load_source(path):
+    spec = importlib.util.spec_from_file_location(path.stem.replace('-', '_'), path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ExecTasks(Scratch):
+    """One generated test per executable task. A hidden check is fair only if a stated rule implies
+    it, and useful only if a plausible mistake fails it. `variants/<task>.py` holds the mistakes:
+
+        VARIANTS = [(mistake, {file: [(old, new), ...] or the whole new text}, [checks it must fail])]
+
+    Each is the good exemplar with those edits, and must fail exactly the checks it lists."""
+
+    def failed(self, task, exemplar, edits=None):
+        work = self.tmp / f'work-{len(list(self.tmp.iterdir()))}'
+        bench.prepare(task, None, work)
+        shutil.copytree(task['dir'] / 'exemplars' / exemplar, work, dirs_exist_ok=True)
+        for name, change in (edits or {}).items():
+            text = change
+            if not isinstance(change, str):
+                text = (work / name).read_text()
+                for old, new in change:
+                    self.assertIn(old, text, f'{name} has no {old!r} to replace')
+                    text = text.replace(old, new)
+            (work / name).write_text(text)
+        done = subprocess.run([sys.executable, '-I', '-B', str(task['dir'] / 'grader.py'), str(work)],
+                              capture_output=True, text=True)
+        return json.loads(done.stdout.strip().splitlines()[-1])['failed']
+
+    def check(self, task):
+        names = [name for name, _ in load_source(task['dir'] / 'grader.py').CHECKS]
+        self.assertEqual(len(names), len(set(names)), 'check names repeat')
+        note = (task['dir'] / 'NOTES.md').read_text()
+        self.assertEqual([name for name in names if name not in note], [], 'checks the fairness note does not trace')
+        self.assertEqual(self.failed(task, 'good'), [])
+        caught = set(self.failed(task, 'bad'))
+        self.assertTrue(caught)
+        variants = load_source(HERE / 'variants' / f"{task['id']}.py").VARIANTS
+        for mistake, edits, expected in variants:
+            with self.subTest(mistake=mistake):
+                self.assertTrue(expected)
+                self.assertEqual(sorted(self.failed(task, 'good', edits)), sorted(expected))
+                caught.update(expected)
+        self.assertEqual([name for name in names if name not in caught], [], 'checks no wrong solution fails')
+
+
+for _task in bench.load_tasks():
+    if _task['kind'] == 'exec':
+        setattr(ExecTasks, 'test_' + _task['id'].replace('-', '_'), lambda self, task=_task: self.check(task))
 
 
 class MockRun(Scratch):
