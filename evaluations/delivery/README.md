@@ -1,6 +1,6 @@
 # Did the recipient get the bytes the checker accepted?
 
-The updated skill delivered the exact checked file in all 12 normal trials across two hosts. The previous release did so in nine. Each host ran three cases twice per version under Codex CLI 0.166.0 with gpt-6.1-sol and medium effort. The historical baseline is the publicly installed six-file package at commit c764b94. The candidate is the [distribution in this release](distribution-manifest.json).
+The updated skill delivered the exact checked file in all 12 normal trials across two hosts. The previous release did so in nine. Each host ran three cases twice per version under Codex CLI 0.166.0 with gpt-6.1-sol and medium effort. The historical baseline is the publicly installed six-file package at commit c764b94. The candidate those trials ran is frozen in [measured-package](measured-package), with digests in [distribution-manifest.json](distribution-manifest.json). The installable skill at `solve-with-evidence/` keeps that delivery rule and states it for any host with Python 3. Codex desktop links and this harness's `deliver_json` tool are named there as host-specific. The model trials were not repeated after that wording change.
 
 | Receiving path | Previous release, raw correct | Updated skill, raw correct | Previous release, checked bytes received | Updated skill, checked bytes received |
 |---|---:|---:|---:|---:|
@@ -38,10 +38,10 @@ uv run --no-project --with markdown-it-py==4.0.0 python -B evaluations/delivery/
 python3 -B evaluations/delivery/runner/test_audit.py
 python3 -B evaluations/delivery/test_artifact.py
 python3 -B evaluations/delivery/replay_printer.py
-python3 -B evaluations/verify_evidence.py --manifest evaluations/delivery/distribution-manifest.json
+python3 -B evaluations/verify_evidence.py --manifest evaluations/delivery/distribution-manifest.json --package evaluations/delivery/measured-package
 ```
 
-For new trials, provide fresh output directories. Both arms have the same available operations within a host.
+For new trials, provide fresh output directories. Both arms have the same available operations within a host. Saved-trial audits compare the candidate arm with `evaluations/delivery/measured-package`. A new capture taken from the live skill must be audited with `--candidate solve-with-evidence`.
 
 ```sh
 uv run --no-project --with markdown-it-py==4.0.0 python -B evaluations/delivery/native_matrix.py --out /tmp/swe-native-new

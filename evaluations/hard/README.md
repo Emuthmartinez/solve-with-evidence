@@ -55,7 +55,7 @@ python3 -B tracecheck/test_audit.py --root .
 python3 -B closure/check_gate.py
 ```
 
-For a fresh model run, the recorded environment used Codex CLI 0.166.0 on macOS, a file-backed ChatGPT sign-in, and the supported local app-server protocol. Run this from `evaluations/hard` using an empty output directory. Results can differ with model or tool updates.
+For a fresh model run, the recorded environment used Codex CLI 0.166.0 on macOS, a file-backed ChatGPT sign-in, and the supported local app-server protocol. That runner is specific to Codex. The skill instructions are not. Run this from `evaluations/hard` using an empty output directory. Results can differ with model or tool updates. Offline regrading of saved answers does not call a model.
 
 ```sh
 python3 -B compare.py --out /tmp/swe-new-run --arms baseline shipped \

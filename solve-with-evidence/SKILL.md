@@ -1,21 +1,25 @@
 ---
 name: solve-with-evidence
-description: Take a multi-step problem from clarification and expert selection through current research, coordinated execution, integration, and evidence-based verification. Use when work crosses disciplines, requires tool or method selection, or needs a defensible outcome. Scale down for simple requests.
+description: Take a multi-step problem from clarification and expert selection through current research, coordinated execution, integration, and evidence-based verification. Use when work crosses disciplines, requires tool or method selection, or needs a defensible outcome. Scale down for simple requests. Any coding agent that can read this folder can follow it.
 ---
 
 # Solve with evidence
 
-Deliver the user's requested outcome, with evidence that supports the scope of every completion claim. Use the following loop at the depth the problem needs. These instructions grant no new authority, access, credentials, budget, or professional qualification.
+Deliver the user's requested outcome, with evidence that supports the scope of every completion claim. Use the following loop at the depth the problem needs. These instructions grant no new authority, access, credentials, budget, or professional qualification. Any coding agent that can read this folder can follow them. They do not require Codex. Host-specific tools are named where they appear.
 
 **Deliver the bytes you check.** For machine-consumed JSON, including JSON containing code, create one UTF-8 artifact. Use the recipient's trusted checker on its nested field names, types, expected results and behavior. For executable work, run the delivered entry point on representative inputs in this turn. For a counterexample, exercise both the specified correct and faulty rules on the same input. Test changed behavior after an amendment.
 
-When a file or link meets the request, make the file the deliverable. In Codex with shell access, write the producer's serialized bytes to a staging file once. Run the bundled script from this skill’s directory:
+When a file or link meets the request, make the file the deliverable. On a host with a shell and Python 3, write the producer's serialized bytes to a staging file once. Run the bundled script from this skill's directory:
 
 ```sh
 python3 scripts/json_handoff.py candidate.json --deliver-to "$OUTPUT_DIRECTORY" -- python3 recipient_check.py
 ```
 
-Use a persistent user-visible output directory and the actual trusted consumer command. Its stdin is the JSON and its exit code is 0 for acceptance, 1 for a rejected submission, or 2 for a checker error. If the host provides `deliver_json`, send the reference to the successful producer output to that tool instead. In either path, use the returned artifact link or receipt path directly in the final answer. In Codex desktop, link the absolute path with Markdown. Leave the payload in the file. Return just the link when the user requests an artifact alone. On rejection use the diagnostic to fix the producer, then submit the newly serialized bytes through the same checker. A file link is eligible for delivery only after the trusted checker accepts those exact bytes. If the checker is unavailable, retry through an authorized working checker. When verification remains unresolved, report the blocker and withhold the file link and payload. Never copy an unchecked staging file into the deliverables directory as a fallback.
+Use a persistent user-visible output directory and the actual trusted consumer command. Its stdin is the JSON and its exit code is 0 for acceptance, 1 for a rejected submission, or 2 for a checker error. On acceptance with `--deliver-to`, the script prints a JSON receipt with `path`, `sha256`, and `bytes`. The file at `path` is those same bytes. Use that path in the final answer. Where the host renders Markdown links to local files, including Codex desktop, link the absolute path. On other hosts, give the path in the form the user can open. Leave the payload in the file. Return just the link when the user requests an artifact alone.
+
+If the host provides `deliver_json`, send the reference to the successful producer output to that tool instead of pasting the JSON into a new message. The Codex app-server harness in this repository is the host that provides that tool. It passes the producer bytes to the same script. A model composing another chat message cannot guarantee byte identity.
+
+On rejection use the diagnostic to fix the producer, then submit the newly serialized bytes through the same checker. A file link is eligible for delivery only after the trusted checker accepts those exact bytes. If the checker is unavailable, retry through an authorized working checker. When verification remains unresolved, report the blocker and withhold the file link and payload. Never copy an unchecked staging file into the deliverables directory as a fallback.
 
 For a required inline-only machine response, the host must forward the checker's accepted stdout directly to the recipient. A model composing another message cannot guarantee byte identity. Respect a required output format and disclose a transport limitation if the host cannot fulfill it. For ordinary prose or code outside a JSON contract, verify the actual requested deliverable with appropriate tools. A downstream test cannot substitute for a claimed pre-delivery check.
 
