@@ -1,0 +1,7 @@
+{
+  "legacy_sync": false,
+  "locale": "fr_FR",
+  "notifications": {"email": false, "push": true},
+  "schema": 2,
+  "theme": "light"
+}

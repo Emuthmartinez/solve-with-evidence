@@ -1,0 +1,9 @@
+{
+  "appearance": {"contrast": "normal", "theme": "dark"},
+  "locale": "pt-BR",
+  "notifications": {"email": false, "push": false},
+  "quiet_hours": null,
+  "schema": 3,
+  "timeout_ms": 45000,
+  "window": {"height": 800, "width": 1280, "x": 120, "y": 80}
+}

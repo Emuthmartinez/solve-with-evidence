@@ -1,0 +1,8 @@
+{
+  "lang": "pt_BR",
+  "legacy_sync": true,
+  "notify": false,
+  "theme": "dark",
+  "timeout": 45,
+  "window": {"height": 800, "width": 1280, "x": 120, "y": 80}
+}
