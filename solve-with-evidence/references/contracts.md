@@ -1,270 +1,150 @@
-# Contracts, state, and completion
+# Contracts, evidence and completion
 
-These are implementation contracts, not a running orchestration service. A host can encode them as JSON Schema, typed records, or database tables. Small runs may use a compact Markdown equivalent while preserving the same semantics.
+These are record shapes for an agent to keep, not a service to run. A small run can hold them as a short Markdown note with the same meaning. Use the full forms when several workers are involved or the run must be resumable.
 
 ## Run record
 
-| Field | Required content |
+| Field | Content |
 |---|---|
-| Identity | `run_id`, `schema_version`, `revision`, creation time, coordinator ID |
-| Request | Original request, current scope, scope revision history and authority for changes |
-| Goals | Unique ID, desired outcome, required/optional flag, outcome criterion IDs |
-| Constraints | Hard limits and preferences, source, applicability; never infer authority from a preference |
-| Knowledge | Statement, status (`user_reported`, `observed`, `source_supported`, `assumption`, `unknown`), evidence refs, affected decisions, resolution plan |
-| Context | Target environment, data/source references, relevant versions, stakeholders |
-| Problem model | Representation, variables or states, constraints, hypotheses or rubric as applicable, links to original requirements, adequacy checks |
-| Authority | Existing allowed actions/resources, applicable restrictions, approval references, expiry/revocation conditions |
-| Limits | Currency/token/tool/compute caps as applicable, deadline, concurrency, retry/revision bounds, verification reserve |
-| Plan | Roles, method cards, criteria, task graph, output ownership, dependency versions |
-| Results | Immutable artifact references, claims, evidence, assessments, review findings, action ledger |
-| Progress | Execution status, outcome status, task states, waiting conditions and resume triggers |
+| Request | The original request, the current scope, and who authorized each change |
+| Parts | Each part of the request, its problem type, and the reason for that type |
+| Goals | ID, desired outcome, required or optional, and its check IDs |
+| Constraints | Hard limits and preferences, with their source. A preference never grants authority |
+| Knowledge | Each statement with a status: `user_reported`, `observed`, `source_supported`, `assumption`, `unknown` |
+| Authority | What may be done, what may not, and when that expires |
+| Limits | Budget, deadline, retries and revisions allowed, and a reserve for verification |
+| Results | Artifacts, claims, evidence, assessments, review findings, receipts |
+| Outcome | One of the three outcomes below, with the unchecked list |
 
-Keep credentials and unnecessary personal data out of this record. Store concise observable decisions and rationales, not private chain-of-thought. References must resolve for the authorized verifier. Set retention and access rules appropriate to the data and host.
+Keep credentials and unneeded personal data out of the record. Store decisions and reasons, not private reasoning.
 
-## Role and method contracts
+## Assignment and return
 
-A role record contains `role_id`, `discipline`, `relevance`, `owns`, `required_capabilities`, `candidate_agent_id`, `capability_evidence`, `tools`, `access_observed_at`, `limits`, `human_contribution`, and `reviewer_id` when required. Capability evidence can be a prior representative evaluation, a bounded probe, or a documented human qualification. State its scope and freshness.
+Send a worker these fields. Point to large artifacts instead of copying the conversation.
 
-A method card contains:
+| Field | Content |
+|---|---|
+| `objective` | One sentence, linked to the goals it serves |
+| `problem_type` | The type from the routing table, so the worker uses the right check |
+| `inputs` | Exact artifacts and versions |
+| `owns` | The output this worker alone writes |
+| `allowed` | Tools and actions. This cannot widen the coordinator's authority |
+| `checks` | The check IDs the output must meet, and which are gating |
+| `limits` | Attempts, revisions, deadline |
+| `stop_when` | Sources conflict in a way that changes the answer. An action exceeds authority. The budget is spent |
 
-```yaml
-method_id: M1
-question: Which candidate satisfies the workshop's hard constraints?
-role_id: R1
-technique: constraint screening followed by preference comparison
-maturity: established_practice
-sources: [S1]
-fit_reason: Candidate attributes can be checked against explicit requirements.
-prerequisites: [current_offers, capacity_definition, required_access_features]
-tools:
-  - tool_id: local_table_calculator
-    access: verified
-    version_ref: environment_record
-    cost_basis: existing_host_compute
-    limits: Cannot establish venue facts beyond the supplied offers.
-alternative: manual comparison for a very small candidate set
-selection_reason: Makes eliminations and total cost reproducible.
-criterion_ids: [C1, C2, C3]
-failure_response: Correct source data or reopen candidate search; do not relax hard limits.
-```
-
-Illustrative IDs above must refer to real records in an instantiated run. A method card is incomplete while a decision-critical source, access requirement, price, or prerequisite is unresolved. It may still support a conditional recommendation explicitly labeled as such.
-
-For consequential exploratory work, include the hypothesis and the action to take after each plausible probe result in the existing method card. Record the baseline, limiting constraint, and transferred method assumptions when they affect selection. Use existing goal records with `required: false` for optional stretch targets, existing task limits for their budgets, and the criteria's failure response for stopping or replanning. A changed required goal follows the recorded scope-change authority. Routine tasks can omit these exploratory details.
-
-## Assignment envelope
-
-Send this information with every delegated task. Use exact references to large artifacts instead of copying unrelated conversation history.
-
-```yaml
-run_id: run-123
-plan_revision: 2
-task_id: T3
-attempt: 1
-assigned_agent_id: worker-2
-role_id: R1
-objective: Compare all supplied venue offers against the agreed constraints.
-goal_ids: [G1]
-context:
-  request_ref: request-v1
-  constraints_ref: constraints-v2
-  fact_refs: [F1, F2]
-  assumption_refs: []
-inputs:
-  - artifact_id: offers
-    version: 3
-    digest: sha256-recorded-by-host
-dependencies:
-  - task_id: T1
-    required_state: verified
-    accepted_output_version: 3
-method_ids: [M1]
-ownership:
-  outputs: [venue-comparison]
-  exclusive_resources: []
-  interface_consumer: coordinator
-authority_ref: research-and-local-artifacts-only
-allowed_tools: [read_offers, local_table_calculator]
-deliverable:
-  format: comparison_table_and_recommendation
-  required_fields: [candidate, eligibility, total_cost, source_refs, limitations]
-criterion_ids: [C1, C2, C3]
-limits:
-  max_attempts: 2
-  max_revision_cycles: 2
-  deadline_ref: run-deadline
-  cost_reservation_ref: reservation-3
-stop_when:
-  - source facts conflict in a way that changes eligibility
-  - needed action exceeds the authority reference
-  - task budget is exhausted
-return_contract: worker-result-v1
-```
-
-The digest string above denotes a host-generated value, not a valid example hash. The host validates IDs, schemas, relevant version compatibility, assigned ownership, and actual tool capabilities before dispatch. Assignment text cannot widen the authority reference. Workers do not edit shared authoritative state directly; they submit events and versioned outputs.
-
-## Worker return contract
-
-Return `run_id`, `task_id`, `attempt`, `plan_revision`, `agent_id`, and consumed input versions, followed by:
+A worker returns:
 
 | Field | Meaning |
 |---|---|
-| `status` | `submitted`, `blocked`, `failed`, or `cancelled`; workers cannot set global completion |
-| `artifacts` | IDs, formats, locations, versions/digests, intended consumer |
-| `claims` | Claim text, goal/criterion links, evidence IDs, scope and uncertainty |
-| `actions` | Tool/action IDs, receipt IDs, state readback IDs, unresolved side effects |
-| `self_checks` | Criteria attempted, observed results, evidence, limitations; not independent approval |
-| `assumptions` | New or changed assumptions and their consequences |
-| `findings` | Problems, severity by effect on goals, corrective proposal |
-| `blockers` | Missing item, affected tasks, owner/type, exact condition needed to resume |
-| `usage` | Actual cost/calls/time and any estimates clearly identified |
-| `recommended_next_action` | A bounded proposal, including a replan if needed |
+| `status` | `submitted`, `blocked` or `failed`. A worker cannot declare the run complete |
+| `artifacts` | What was produced, where, and which version |
+| `claims` | Each claim with its evidence IDs, scope and uncertainty |
+| `actions` | Tool and action receipts, state readbacks, unresolved side effects |
+| `self_checks` | Checks attempted and results. These are not independent approval |
+| `unchecked` | What the worker could not check, why, and what would check it |
+| `blockers` | What is missing and the exact condition that would unblock it |
+| `usage` | Tokens, calls and time spent |
 
-Missing evidence is `inconclusive`, not a pass. The coordinator rejects malformed or stale returns and routes them for correction. A late result may be retained as historical evidence but cannot replace a newer accepted version without review.
+Missing evidence is `inconclusive`, never a pass. The coordinator rejects a malformed or stale return.
 
-## Acceptance criteria and assessments
+## Checks and assessments
 
-A criterion is a definition; an assessment is an attempt to evaluate it. Keep them separate so criteria cannot be quietly changed to match outputs.
+A check is a definition. An assessment is one attempt to evaluate it. Keep them apart so a check cannot be quietly changed to match the output.
 
 ```yaml
-criterion:
+check:
   id: C3
-  version: 1
   goal_id: G1
-  level: outcome
-  gate_phase: final_outcome
-  required: true
-  description: Recommended venue fits all hard constraints at the supplied offer terms.
+  problem_type: decision_under_constraints
+  gate: gating            # gating | best_effort
+  description: The recommended venue meets every hard constraint at the supplied terms.
   target: venue-comparison
-  environment: supplied-fixture
-  verifier_kind: deterministic_plus_review
-  evaluator_id: reviewer-1
-  independence_required: true
-  rule:
-    all_hard_constraints_satisfied: true
-    total_cost_lte: 600
-    currency: USD
-    arithmetic_tolerance: 0.01
-  observation_window: supplied offers only
+  rule: {all_hard_constraints_satisfied: true, total_cost_lte: 600, currency: USD}
+  evaluator: reviewer-1
+  independent: true
+  exemplars: {good: [E7], bad: [E8]}   # the check must pass E7 and reject E8
   evidence_required: [constraint_matrix, reproduced_total, source_offer_refs]
-  applicability: Recommendation only; no live availability or booking claim.
+  scope: Recommendation only. No claim about live availability or booking.
   on_failure: reopen_selection
 assessment:
   id: A3
-  criterion_id: C3
-  criterion_version: 1
-  evaluator_id: reviewer-1
-  status: pending
-  evidence_ids: []
+  check_id: C3
+  evaluator: reviewer-1
+  status: pending         # pending | passed | failed | inconclusive | not_run | stale
   artifact_version: 1
-  input_versions: [offers-v3, constraints-v2]
-  observed_at: null
+  evidence_ids: []
   limitations: []
 ```
 
-Allowed assessment states are `pending`, `passed`, `failed`, `inconclusive`, and `stale`. A required criterion must be `passed` to qualify completion. An inapplicable criterion should be removed or replaced through a justified plan revision before relying on the result, not marked passed. Preserve old definitions and decisions. Changing the user's goal or hard constraint requires their authority; refining a technical test without changing either can remain an ordinary reviewed revision.
+Rules:
 
-`gate_phase` is `pre_execution`, `post_execution`, or `final_outcome`, independent of the assessment's subject in `level`. Each pre-execution criterion names the action/task it gates. Required prerequisites and suitability checks must pass before that action is dispatchable. A bounded research or pilot task may establish the evidence for a later gate; it has its own explicitly limited prerequisites.
+- A gating check must be `passed` for anything to be delivered as done.
+- A best-effort check may end as `not_run`. It then appears in the unchecked list with the reason and what would run it.
+- `failed` is never downgraded to `not_run`. A check that ran and failed is a failure.
+- A check with exemplars is valid only if it passes every good exemplar and rejects every bad one. Record that trial as an assessment before using the check.
+- Changing the user's goal or a hard constraint needs the user's authority. Tightening a technical test does not.
+- When an input, artifact or source changes, mark dependent assessments `stale` and rerun them. Approval of an old version does not carry over.
 
-## Evidence record
+## Evidence
 
-Each record contains `evidence_id`, `kind`, `producer_id`, `observed_at`, `recorded_at`, artifact or source locator, exact section/record, input and output versions, environment, tool/method and version, parameters needed for reproduction, result, scope limitations, derivation IDs, applicability conditions, and invalidation triggers.
+Each evidence record has an ID, a kind, who produced it, when it was observed, a locator down to the passage or record, the versions involved, the result, and what it does not cover.
 
-Kinds include `source`, `observation`, `test`, `calculation`, `review`, and `action_receipt`. A citation establishes what a source says; a test establishes what happened under its recorded conditions. Neither automatically establishes general real-world success.
+| Kind | Establishes |
+|---|---|
+| `source` | What a source says, at a located passage |
+| `observation` | What was seen in a named environment at a named time |
+| `test` | What happened when the artifact ran under recorded conditions |
+| `calculation` | A reproducible result from stated inputs |
+| `review` | An independent reviewer's verdict, the reviewer's model family, and whether the verdict was formed before reading the author's rationale |
+| `action_receipt` | That a tool reported an action. Not that the outcome exists |
+| `exemplar_good` | An example that meets the standard, with who judged it so and why |
+| `exemplar_bad` | A plausible example that fails the standard, with the reason it fails |
 
-The verifier evaluates provenance, relevance, and sufficiency. An evidence ID or digest proves neither authenticity nor correctness by itself. For controlled systems, obtain observations through trusted adapters and read back authoritative state. For documentary evidence, examine the referenced content and its applicability. Preserve unresolved provenance problems explicitly.
+Exemplars are evidence about the standard, not about the deliverable. Use them to validate a rubric or a test, and keep some out of the instructions so they remain a fair check. A citation, a digest or an ID proves neither authenticity nor correctness alone. Read the referenced content and judge whether it applies.
 
-## States and transitions
+## Outcomes
 
-Track execution independently from outcome:
+Track execution separately from outcome.
 
 ```text
-execution_status = active | waiting | finished | stopped
-outcome_status   = pending | verified | failed | inconclusive
-stop_reason      = none | budget | cancellation | access | authorization | technical_failure
+execution = active | waiting | finished | stopped
+outcome   = pending | verified | delivered_unchecked | withheld
 ```
 
-`finished` means no planned execution remains and no in-flight or queued job retains the ability to change accepted artifacts, relevant external state, or final evidence. Optional work must finish, be cancelled and reconciled, or be explicitly transferred/deferred outside this run with its write authority removed. Only `finished + verified` maps to user-visible `complete_verified`. Work can finish with a failed outcome. `waiting + pending` represents a future observation, authorization, input, or external event. `stopped + inconclusive` can represent a budget limit. Do not call every halt a success or every missing observation a failure.
+| Outcome | Condition | What the user receives |
+|---|---|---|
+| `verified` | Every gating check passed, and every best-effort check ran and passed | The deliverable and the goal-to-evidence map |
+| `delivered_unchecked` | No check failed. Every gating check passed. One or more best-effort checks are `not_run` or `inconclusive` | The deliverable, and a list of each unchecked item with why and what would check it |
+| `withheld` | A check failed, or a gating check is `not_run` or `inconclusive` | The blocker and what would clear it. No deliverable presented as done |
 
-Task states:
+`delivered_unchecked` exists because strict fail-closed delivery blocks most writing and strategy work, where some judgment cannot be checked mechanically. It is not a softer pass. It may not be used to ship past a failed check, to cover a gating check, or without the list.
 
-```text
-planned -> ready -> running -> submitted -> verified
-                               submitted -> needs_revision -> ready
-planned/ready/running/submitted/needs_revision -> blocked | failed | cancelled
-blocked -> ready                  only after the missing condition is satisfied
-verified -> stale -> ready         when relevant evidence or inputs change
-```
+`waiting` with `pending` covers an observation window that has not elapsed. Installation can be verified while the outcome it should cause is still pending.
 
-`ready` means logically eligible: current dependencies, passing required pre-execution gates, complete assignment, and applicable authority. `ready -> running` additionally requires an atomic resource reservation and exclusive lease where needed. Recheck authority and relevant versions immediately before the action. `verified` requires the task's required criteria to pass. A locally verified task does not imply globally verified outcomes. Blockers affect dependent tasks; independent authorized work continues.
+## Completion rule
 
-Persist task attempt IDs, worker leases, and accepted output revisions. Use compare-and-swap on run/task revisions when accepting updates. On recovery, inspect persisted running actions and reconcile ambiguous effects before resubmission. Never assume the absence of a local receipt proves an external action did not occur.
+Report `verified` or `delivered_unchecked` only when all of these hold. Otherwise the outcome is `withheld` or still `pending`.
 
-Separate storage concurrency from result validity. The run revision protects atomic updates. Result validity depends on the assigned task and attempt, relevant goal, constraint, criterion, input and artifact versions, authority, lease, and external-state freshness. A global revision change alone does not invalidate an independent result. After a compare-and-swap conflict, reread current state, recheck those dependencies, and retry acceptance if they remain compatible. Record the compatibility decision. Revalidate or recompute affected work when a relevant dependency changed. Preserve newer accepted results and receipts for real effects in either case.
+1. **Coverage.** Derive the required outcomes from the original request and its authorized amendments, independently of your own task list. Each maps to a required goal, a deliverable or effect, and at least one adequate check. A list that lost a requirement, or marked it optional, fails coverage.
+2. **Checks.** Every gating check is `passed` on current evidence for the delivered version. No check is `failed`.
+3. **Deliverables.** Each required deliverable exists, matches the version that was checked, and works through its intended entry point.
+4. **Constraints.** Hard constraints hold. No must-fix finding, critical assumption or unknown external effect undermines the claim. Nothing still running can change the result.
+5. **Independence.** Any required independent review is done by a non-author on the final version. An author cannot create independence by changing a label.
+6. **Scope at the last moment.** Recheck authority, scope and any stop instruction immediately before reporting. A binding stop suppresses a new completion notice even when every check is green. Keep the evidence of work already done.
+7. **Claim size.** The report claims no more than the evidence covers in scope, population, time and environment.
 
-Settle actual usage and release unused reservations after a confirmed terminal attempt. Lease expiry alone does not prove a worker stopped or a remote charge failed. Fence stale workers at the tool gateway, reconcile in-flight effects and uncertain charges, then release reservations or dispatch a replacement. All producers, including reviewers and scheduled retries, obey these rules.
+These conditions need judgment as well as bookkeeping. Linkage and status can be checked mechanically. Whether evidence is true cannot.
 
-## Scheduling pseudocode
+## Final report
 
-```python
-def advance(run_id, event):
-    # All named operations are contracts for the host implementation.
-    with transaction(run_id) as state:
-        deduplicate_event(state, event)
-        # Reject stale/unauthorized claims of acceptance, but preserve receipts
-        # of real external effects even when their producing job became stale.
-        record_receipts_and_validate_submission_versions(state, event)
-        invalidate_changed_dependencies(state)
-        accept_current_verifier_results_or_request_revision(state, event)
-        validate_graph_and_coverage(state)
+Lead with the outcome and its scope. Then give:
 
-        # Enqueue descriptions only: no model/tool calls in this transaction.
-        enqueue_needed_verification_reconciliation_and_integration(state)
-        if cancelled_or_out_of_budget(state):
-            stop_new_ordinary_dispatch_and_fence_cancelled_jobs(state)
-            ready = permitted_recovery_jobs_within_reserved_limits(state)
-        else:
-            ready = choose_ready_jobs(state, preserve_verification_reserve=True)
+- The problem type chosen for each part.
+- Each required goal, the observed result, the evidence, and the status.
+- Deliverable links, with environment and version where they matter.
+- The unchecked list: item, why it was not checked, what would check it.
+- Limits, contrary evidence and unresolved assumptions.
+- Each blocker, its effect, the next action, and who can unblock it.
 
-        # Worker, verifier, integrator and recovery jobs all reserve capacity.
-        for job in atomically_reserve_and_lease(state, ready):
-            mark_running_and_write_dispatch_outbox(state, job)
-
-        if no_inflight_or_ready_work(state):
-            record_specific_wait_replan_or_stop_reason(state)
-        if authorized_to_finish_current_scope(state) and completion_predicate(state) and all_producers_quiescent(state):
-            set_finished_verified(state)
-        persist(state)
-
-    dispatch_outbox_idempotently(run_id)  # Outside transaction, by stable job ID.
-```
-
-Process job completions, new information, resource availability, and approvals as events. Verifier jobs return assessments. Acceptance rechecks relevant dependency versions and uses the current run revision for the atomic write, following the compatibility rule above. Budget and cancellation are checked before every dispatch, including verification. An outbox dispatcher rechecks cancellation, lease validity, and authority before starting work. Deduplicate events and integration jobs. Validate new task graphs for cycles and unresolved references. Never hold a database transaction open across a model/tool call. If recovery needs unavailable budget or access, preserve the unknown effect and report the blocker; a reserve never authorizes exceeding a hard limit.
-
-## Completion predicate
-
-For the current scope revision, expose `complete_verified` only when all conditions hold:
-
-1. Derive the current required outcomes from the original request and authorized amendments independently of the task registry. Each must map to a required goal, the intended deliverable or effect, and at least one adequate required outcome criterion. An import that loses a requirement or marks it optional fails coverage. Require at least one affirmative outcome in the authoritative scope to claim verified delivery. If the request is empty or ambiguous, resolve its intent. If all obligations were withdrawn, record that disposition. An explicitly requested answer, acknowledgment, or plan may itself be the outcome.
-2. Every required suitability, execution, integration, outcome, and review criterion is passed, with relevant, sufficient, current evidence for its exact criterion version and target environment.
-3. Required deliverables exist, match reviewed versions, and are usable through their intended entry points.
-4. Hard constraints are satisfied. No unresolved must-fix finding, critical assumption, required dependency, or unknown external effect undermines a success claim. All producers capable of changing the result are quiescent: finished, cancelled and reconciled, or fenced and explicitly transferred/deferred. Queued optional jobs and retries cannot modify a completed run's accepted output.
-5. Any required reviewer independence or human qualification is established and current. An author cannot manufacture independent approval by changing a label.
-6. The final transition atomically rechecks current authority, scope and cancellation for this run. A binding stop before publication suppresses a new completion notice even if prior checks are green. Preserve evidence of work already carried out. Stops for a different run or action apply only within their scope. When notification is asynchronous, recheck before sending it.
-7. The final report's claims do not exceed the evidence's scope, population, time window, or environment.
-
-These conditions require semantic judgment as well as schema validation. Software can enforce linkage, status, identity, and version rules; it cannot infer evidence truth from fields alone. The verifier or appropriately qualified reviewer supplies that assessment.
-
-For delayed outcomes, record the installed intervention and completed implementation separately from pending outcome validation. Store the observation owner, window, data required, and resume trigger. If the user requested a recommendation or design, evaluate that deliverable as the outcome; do not invent a requirement to deploy it.
-
-## Final report contract
-
-Lead with the scoped outcome and status. Then give:
-
-- Required goal → observed result → evidence link → status.
-- Deliverable links and exact environment/version where relevant.
-- Material limitations, contradictory evidence, and unresolved assumptions.
-- Each blocker's effect, the next action, and who or what can unblock it.
-- Actual usage when material, plus any cleanup or continued observation responsibility.
-
-Optional improvements remain separate from unmet requirements. Never rename unmet requirements as optional work to obtain completion.
+Optional improvements stay separate from unmet requirements.
