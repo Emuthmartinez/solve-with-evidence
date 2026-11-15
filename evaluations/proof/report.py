@@ -133,7 +133,9 @@ class Run:
         # one side delivered nothing was never judged. It is counted here and scored under refusals.
         decided = [p for p in rows if p['outcome'] == 'decided']
         wins = sum(p['winner'] == p['arms'][0] for p in decided)
-        out = {'pairs': len(expected), 'missing': len(expected) - len(judged), 'decided': len(decided), 'wins': wins,
+        # The pass bar says how many comparisons there are. The run record does not get to.
+        designed = len(pairs) * self.bar['design']['tasks']['write'] * self.reps
+        out = {'pairs': designed, 'missing': designed - len(judged), 'decided': len(decided), 'wins': wins,
                'not_judged': sum(p['outcome'] in ('forfeit', 'void') for p in rows),
                'split_or_tie': sum(p['outcome'] in ('split', 'tie') for p in rows),
                'win_rate': wins / len(decided) if decided else None, 'ci95': wilson(wins, len(decided))}
@@ -148,7 +150,7 @@ class Run:
             return {**out, 'result': 'inconclusive', 'why': 'some designed comparisons have no judgment: rerun judge.py'}
         if not self.judgments['judge']['independent']:
             return {**out, 'result': 'inconclusive', 'why': "the judge is from the solver's model family"}
-        if not expected or len(decided) / len(expected) < rule['min_decided_fraction']:
+        if len(decided) / designed < rule['min_decided_fraction']:
             return {**out, 'result': 'inconclusive', 'why': 'too few pairs were decided in both orders'}
         passed = out['win_rate'] >= rule['min_win_rate'] and out['ci95'][0] > rule['min_ci_lower_exclusive']
         if passed and 'human' in out and out['human']['win_rate'] < 0.5:

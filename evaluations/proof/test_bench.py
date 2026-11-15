@@ -575,6 +575,13 @@ class PassBar(Scratch):
         one_short = self.pairwise(judge_wins=32, judged=lambda pairs: pairs[:-1])
         self.assertEqual((one_short['result'], one_short['missing']), ('inconclusive', 1))
 
+    def test_the_comparisons_to_judge_come_from_the_pass_bar_not_the_run_record(self):
+        def strong_arms_only(run):  # a run record that no longer lists the weak pair
+            meta = json.loads((run / 'run.json').read_text())
+            (run / 'run.json').write_text(json.dumps({**meta, 'arms': ['skill', 'no-skill', 'no-skill-budget']}))
+        result = self.pairwise(judge_wins=16, judged=lambda pairs: pairs[:16], before_report=strong_arms_only)
+        self.assertEqual((result['result'], result['pairs'], result['missing']), ('inconclusive', 32, 16))
+
     def test_judgments_of_other_answers_are_not_counted(self):
         def rerun(run):  # the judged trial is replaced by one with a different answer
             (bench.trial_dir(run, 'write-01-thread-reply', 'skill', 1) / 'work').mkdir()
