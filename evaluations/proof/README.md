@@ -1,8 +1,8 @@
 # Proof benchmark: the skill against no skill
 
-**Status: built and frozen. A calibration pilot ran and was stopped: the tasks are too easy. No skill arm has run. There are no results about the skill.**
+**Status: built and frozen. A calibration pilot ran on the first set of executable tasks and was stopped: they were too easy. Eight harder tasks have replaced them and have not been piloted. No skill arm has run. There are no results about the skill.**
 
-The pilot is recorded in [`results/`](results/README.md). The unaided strong model passed 16 of 16 executable trials, above the 25% to 75% band, so the full run did not start. The executable tasks need to be hardened or replaced before it can.
+The pilot is recorded in [`results/`](results/README.md). The unaided strong model passed 16 of 16 executable trials, above the 25% to 75% band, so the full run did not start. The eight executable tasks were replaced before any skill arm ran. The next step is a new pilot on the new tasks, step 2 under [Run it](#run-it).
 
 Earlier benchmarks in this repository compared versions of the skill with each other. This one asks the questions they could not:
 
@@ -14,15 +14,39 @@ Earlier benchmarks in this repository compared versions of the skill with each o
 
 Twenty tasks, frozen by [`freeze.json`](freeze.json). `python3 -B evaluations/proof/bench.py check` verifies the freeze.
 
-The freeze digest was `2c78ed622e9a` for the pilot. It is `ea0970b83b51` now, after an independent review found three grader defects, fixed here: a valid solution could fail to load, the allocation grader enforced a rule its prompt does not state, and the scheduling grader did not enforce a time limit its prompt does state. No prompt and no threshold changed. A freeze may change only while no skill arm has run.
+The freeze digest was `2c78ed622e9a` for the pilot, and `ea0970b83b51` after an independent review fixed three grader defects in the first executable tasks. It is `74b1dd44410c` now, with the eight executable tasks replaced. The writing tasks, the traps, the pass bar and every threshold are unchanged. A freeze may change only while no skill arm has run.
 
 | Kind | Count | Deliverable | Graded by |
 |---|---|---|---|
-| Executable | 8 | `solution.py` | Hidden checks, 23 to 40 per task. They are deterministic, except that the scheduling task also fails a call that takes one second or longer |
+| Executable | 8 | One file of an existing package. Three tasks also ask for a test file | Hidden checks, 16 to 38 per task, all deterministic |
 | Writing | 8 | `answer.md`, written from the [source-note pack](sources/README.md) | Blind pairwise judging, and the claim checker against the pack |
 | Trap | 4 | A file plus a status | The status alone: the task cannot be verified in the workspace |
 
 Every task directory under [`tasks/`](tasks) has a `prompt.md`, an optional `workspace/`, and a good and a bad exemplar. The self-check requires each grader to pass the good exemplar and reject the bad one. For writing tasks that means no unsupported fact in the good exemplar and at least one in the bad one.
+
+### Executable tasks
+
+The first eight executable tasks each gave one function and a complete numbered specification. The pilot model implemented every rule and checked each one with tests it generated, in about a minute. The replacements are harder in ways a careful solver can still meet:
+
+- The solver works in a small existing package. The rules sit in several places: a ticket or bug report, a policy or format document, docstrings, decision records.
+- The report names one symptom. The code breaks its documented contract in several independent ways.
+- A careless change breaks another caller in the package, or a rule that the visible tests do not exercise. The visible tests pass for every mistake the hidden checks catch.
+- Three tasks ask for proof: a test file that the grader runs against other correct implementations and against faulty ones.
+
+| Task | The solver must | Checks |
+|---|---|---|
+| `exec-01-bank-import` | Make an importer follow a bank's format description, without breaking the other caller of a shared amount parser | 27 |
+| `exec-02-batch-prices` | Batch a cart's catalog calls within a round-trip budget, without changing what the cart returns or raises | 19 |
+| `exec-03-limiter-tests` | Write tests for a rate limiter's specification. They must pass on 4 correct implementations and fail on 12 faulty ones | 16 |
+| `exec-04-settings-migration` | Make a settings loader read files from every release, following a changelog | 27 |
+| `exec-05-invoice-rounding` | Fix a one-cent invoice error so that invoices and credit notes follow the finance policy | 25 |
+| `exec-06-retry-client` | Implement retries as the accepted decision records decide, and deliver tests that catch 8 faulty clients | 38 |
+| `exec-07-feed-pagination` | Fix feed paging to follow its documented contract, and deliver a regression test that fails on the shipped code | 23 |
+| `exec-08-cache-invalidation` | Fix a stale read so that a cache meets its documented guarantees and call budget | 29 |
+
+Every hidden check follows from a sentence the solver can read. Each task's `NOTES.md` lists every check beside the sentence it follows from and where that sentence is. [`variants/`](variants) holds plausible mistakes for each task, 205 in all. `test_bench.py` requires each mistake to fail exactly the checks it lists, and every check to be failed by at least one mistake. The solver's directory holds the task's `workspace/` only: no notes, grader, exemplars or `impls/`.
+
+No model has attempted the new tasks. Whether they land in the calibration band is for the next pilot to measure.
 
 Every arm gets the same task text and the same reporting instruction: write `status.json` with `verified`, `unchecked` (delivered, with a list of what was not checked) or `cannot_verify`. The skill arm gets one more line telling it to read the skill folder copied into its working directory. The skill is supplied as files, so no arm depends on an agent's skill discovery.
 
@@ -76,7 +100,7 @@ A run passes only if every criterion passes and both validity checks hold. A val
 
 ## Run it
 
-Step 1 is offline. Steps 2 to 6 call paid models through your own CLI login. Step 2 has been run once, with `codex`. Steps 3 to 6 have not been run with a real agent.
+Step 1 is offline. Steps 2 to 6 call paid models through your own CLI login. Step 2 has been run once, with `codex`, on the first set of executable tasks. It has not been run on the current ones. Steps 3 to 6 have not been run with a real agent.
 
 ```sh
 cd evaluations/hard
@@ -88,8 +112,8 @@ python3 -B ../proof/test_bench.py
 # 2. Calibration pilot: the unaided strong model on the executable tasks only.
 python3 -B compare.py --suite proof --adapter codex --out /tmp/proof-pilot \
   --arms no-skill --repeats 1 2 --jobs 2 \
-  --cases exec-01-allocate-cents exec-02-sessionize exec-03-pipe-records exec-04-version-ranges \
-          exec-05-inventory-fix exec-06-next-run exec-07-humanize-duration exec-08-layered-config
+  --cases exec-01-bank-import exec-02-batch-prices exec-03-limiter-tests exec-04-settings-migration \
+          exec-05-invoice-rounding exec-06-retry-client exec-07-feed-pagination exec-08-cache-invalidation
 python3 -B ../proof/report.py --run /tmp/proof-pilot   # read the calibration row
 
 # 3. Full run: 20 tasks x 5 arms x 2 repeats = 200 trials.
@@ -133,12 +157,12 @@ The review that proposed this benchmark estimated about 8 million tokens for the
 
 Model names for each tier are in `arms.json`. Changing them changes the freeze digest, which is intended: a run names exactly what it compared.
 
-Each real adapter was exercised on a trivial non-benchmark prompt (codex-cli 0.166.0 and Claude Code 2.1.322): once to capture its output format, and once through the harness's own command line, which also checked the judge's reply parser. The parsers are tested against the captured shapes. The calibration pilot sent the eight executable tasks to `codex` with no skill. No benchmark task has been sent to `claude`, and no arm has been given the skill.
+Each real adapter was exercised on a trivial non-benchmark prompt (codex-cli 0.166.0 and Claude Code 2.1.322): once to capture its output format, and once through the harness's own command line, which also checked the judge's reply parser. The parsers are tested against the captured shapes. The calibration pilot sent the first eight executable tasks to `codex` with no skill. No current executable task has been sent to any model. No benchmark task has been sent to `claude`, and no arm has been given the skill.
 
 ## Limits
 
-- **The executable tasks are too easy.** The target is an unaided strong model passing about half the executable trials. The pilot measured 16 of 16. Until harder tasks pass a new pilot under a new freeze, any full run is inconclusive on calibration.
-- **One executable check depends on the clock.** The scheduling task fails a call that takes one second or longer, measured by wall time. A slow call is not tried again, because a solution that caches its results would answer the second try at once. The reference solution runs all 40 checks in about 0.03 seconds, so the margin is wide, but a machine stalled for a full second during one call would fail a correct solution.
+- **The executable tasks are not calibrated.** The target is an unaided strong model passing about half the executable trials. The first set measured 16 of 16. The replacements were built to be harder and no model has attempted them. Their builders guessed pass rates between 25% and 55% per task, and those are guesses. Until a pilot lands in the band under the current freeze, any full run is inconclusive on calibration.
+- **Delivered test files have a time limit.** In three tasks the solver delivers a test file, and the grader runs it against several implementations. Each run is stopped after 30 seconds, and the whole grader after 60. The three prompts state the limit. The reference test files take under a second per run. A solver's file that needs more than a few seconds fails checks for its speed. No check measures how long solution code takes.
 - **Low power.** Two repetitions give 16 to 48 trials per comparison. Repetitions of one task are not independent, and the Wilson interval treats them as if they were. A pass is a reason to run a larger held-out set.
 - **The tasks are public.** They are disclosed regression material from the day they are pushed. Hold out fresh tasks for any later claim, and rotate them.
 - **One metric is also the skill's tool.** The skill tells the agent to run `claim_check.py`, and unsupported claims per output is counted with the same script. The pairwise judging and human picks do not share that bias. Read the two together.
