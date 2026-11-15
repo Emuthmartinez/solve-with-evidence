@@ -1,0 +1,1 @@
+{"id": "exec-08-cache-invalidation", "kind": "exec", "title": "Make a product cache keep its documented guarantees without dropping it on every write", "deliverable": "products/service.py"}
