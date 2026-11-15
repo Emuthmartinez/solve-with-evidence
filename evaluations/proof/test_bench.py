@@ -6,6 +6,7 @@ import csv
 import json
 from pathlib import Path
 import shutil
+import statistics
 import sys
 import tempfile
 import unittest
@@ -325,9 +326,9 @@ class MockRun(Scratch):
         with self.assertRaises(SystemExit):  # a resume may not change what is being compared
             bench.run(out, 'mock', ['skill'], self.TASKS, [1, 2], 2, resume=True)
 
-    def break_trial(self, out, arm, **changes):
+    def break_trial(self, out, arm, repeat=1, **changes):
         """Rewrite one finished trial's record, as a crash or an older harness would have left it."""
-        file = bench.trial_dir(out, 'exec-01-allocate-cents', arm, 1) / 'trial.json'
+        file = bench.trial_dir(out, 'exec-01-allocate-cents', arm, repeat) / 'trial.json'
         file.write_text(json.dumps({**json.loads(file.read_text()), **changes}))
         return file
 
@@ -370,6 +371,32 @@ class MockRun(Scratch):
         self.assertEqual(json.loads(other.read_text())['skill_sha256'], pinned)
         self.assertEqual(len(list((out / 'retired').iterdir())), 1)
         report.Run(out).report()
+
+    def test_resume_reruns_a_budget_control_whose_target_moved(self):
+        arms = ('skill', 'no-skill', 'no-skill-budget')
+        of_task = lambda records, arm: [r for r in records if r['arm'] == arm and r['task'] == 'exec-01-allocate-cents']
+        out, records = self.run_mock(arms)
+        before = {r['budget']['target'] for r in of_task(records, 'no-skill-budget')}
+        # A skill trial is rerun after an infrastructure error and this time spends many more tokens.
+        self.break_trial(out, 'skill', infra_error=True)
+        real = bench.mock_agent
+
+        def costly(task, arm, repeat, work):
+            reply = real(task, arm, repeat, work)
+            return {**reply, 'tokens': 9000} if (task['id'], arm, repeat) == ('exec-01-allocate-cents', 'skill', 1) else reply
+
+        with mock.patch.object(bench, 'mock_agent', costly):
+            again = self.resume(out, arms)
+        moved = int(statistics.median(r['tokens'] for r in of_task(again, 'skill')))
+        self.assertNotIn(moved, before)
+        self.assertEqual({r['budget']['target'] for r in of_task(again, 'no-skill-budget')}, {moved})
+        self.assertEqual(len(again), len(records))
+        self.assertEqual(len(list((out / 'retired').iterdir())), 3)  # the skill trial and that task's two controls
+        # With no token count left on the skill side there is no target, so the old controls do not stay.
+        for repeat in (1, 2):
+            self.break_trial(out, 'skill', repeat, tokens=None)
+        self.assertEqual(of_task(self.resume(out, arms), 'no-skill-budget'), [])
+        self.assertFalse(list((out / 'trials').glob('exec-01-allocate-cents--no-skill-budget--*')))
 
     def test_solver_directory_is_not_beside_other_trials(self):
         seen = []
@@ -417,7 +444,8 @@ class PassBar(Scratch):
                             'task': t['id'], 'kind': kind, 'arm': arm, 'repeat': repeat, 'tokens': tokens[arm],
                             'tool_calls': 5, 'wall_s': 30.0, 'infra_error': False, 'timed_out': False, 'grade': grade,
                             'freeze': freeze, 'skill_sha256': None,
-                            'budget': {'target': 1000, 'used': 1000, 'rounds': 2} if arm == 'no-skill-budget' else None})))
+                            'budget': ({'target': tokens['skill'], 'used': tokens['skill'], 'rounds': 2}
+                                       if arm == 'no-skill-budget' else None)})))
         (run / 'run.json').write_text(json.dumps({
             'adapter': 'codex', 'family': 'openai', 'freeze': freeze, 'arms': self.ARMS, 'skills': {},
             'tasks': [t['id'] for t in tasks], 'repeats': [1, 2], 'models': {'strong': 's', 'weak': 'w'}}))
@@ -506,6 +534,11 @@ class PassBar(Scratch):
     def test_a_control_that_did_not_spend_its_budget_is_inconclusive(self):
         idle = lambda r: {**r, 'budget': r['budget'] and {**r['budget'], 'used': 500}}
         self.assertEqual(self.build(**self.GOOD, edit=idle)['criteria']['method_not_compute']['result'], 'inconclusive')
+
+    def test_a_control_that_chased_another_target_is_inconclusive(self):
+        stale = lambda r: {**r, 'budget': r['budget'] and {**r['budget'], 'target': 1000, 'used': 1000}}
+        result = self.build(**self.GOOD, edit=stale)['criteria']['method_not_compute']
+        self.assertEqual((result['result'], result['stale_targets']), ('inconclusive', 24))
 
     def test_a_run_from_another_freeze_is_not_scored(self):
         with self.assertRaises(SystemExit):

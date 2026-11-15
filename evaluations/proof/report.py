@@ -171,7 +171,14 @@ class Run:
         skill, control = self.bar['design']['budget_control']
         if not self.complete([skill, control], ('exec', 'trap')):
             return {'result': 'inconclusive', 'why': 'budget-control trials are incomplete'}
-        use = statistics.median(r['budget']['used'] / r['budget']['target'] for r in self.rows([control], ('exec', 'trap')))
+        controls = self.rows([control], ('exec', 'trap'))
+        # A control proves nothing unless it chased the budget the skill arm's trials imply now.
+        targets = bench.budget_targets(self.trials, skill)
+        stale = sum(r['budget']['target'] != targets.get(r['task']) for r in controls)
+        if stale:
+            return {'result': 'inconclusive', 'stale_targets': stale,
+                    'why': "control targets differ from the skill arm's median tokens: rerun compare.py with --resume"}
+        use = statistics.median(r['budget']['used'] / r['budget']['target'] for r in controls)
         a, b = (share(self.rows([arm], ('exec', 'trap')), 'success') for arm in (skill, control))
         out = {'budget_use_median': use, skill: a, control: b, 'points': points(a, b)}
         if use < rule['min_budget_use']:

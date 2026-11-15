@@ -334,16 +334,27 @@ def run_trial(job, out, adapter, config, digest, target=None):
     return record
 
 
-def reusable(out, job, skill_sha256):
+def budget_targets(records, arm):
+    """Token target per task for a control that copies this arm: the median of the arm's counted trials."""
+    spent = {}
+    for record in records:
+        if record['arm'] == arm and record['tokens'] is not None and not record['infra_error']:
+            spent.setdefault(record['task'], []).append(record['tokens'])
+    return {task: int(statistics.median(tokens)) for task, tokens in spent.items()}
+
+
+def reusable(out, job, skill_sha256, target):
     """On resume, keep a finished trial. Set aside one that crashed, hit an infrastructure error,
-    or was made with a skill package other than the one pinned for its arm."""
+    was made with a skill package other than the one pinned for its arm, or is a budget control
+    that chased a target the arm it copies no longer implies."""
     task, arm, repeat = job
     folder = trial_dir(out, task['id'], arm, repeat)
     if not folder.exists():
         return None
     try:
         record = json.loads((folder / 'trial.json').read_text())
-        if not record['infra_error'] and record['skill_sha256'] == skill_sha256:
+        if (not record['infra_error'] and record['skill_sha256'] == skill_sha256
+                and (record['budget'] or {}).get('target') == target):
             return record
     except (OSError, ValueError, KeyError):
         pass
@@ -391,25 +402,21 @@ def run(out, adapter, arms, task_ids, repeats, jobs, resume=False):
             {**meta, 'started': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}, indent=2) + '\n')
 
     def trial(job, target=None):
-        return (resume and reusable(out, job, skills[job[1]])) or run_trial(job, out, adapter, config, digest, target)
+        task, arm, _ = job
+        kept = resume and reusable(out, job, skills[arm], target)
+        if not kept and arm in budgeted and target is None:
+            # Without a token count there is no budget to copy. The report sees the gap.
+            print('skip', task['id'], arm, 'no token usage recorded for the arm it copies', flush=True)
+            return None
+        return kept or run_trial(job, out, adapter, config, digest, target)
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         records = list(pool.map(trial, [(t, arm, r) for r in repeats for t in tasks for arm in plain]))
-        spent = {}
-        for record in records:
-            if record['tokens'] is not None and not record['infra_error']:
-                spent.setdefault((record['task'], record['arm']), []).append(record['tokens'])
-
-        def controlled(job):
-            task, arm, _ = job
-            matched = spent.get((task['id'], config['arms'][arm]['budget_of']))
-            if not matched:
-                # Without a token count there is no budget to copy. The report sees the gap.
-                print('skip', task['id'], arm, 'no token usage recorded for the arm it copies', flush=True)
-                return None
-            return trial(job, int(statistics.median(matched)))
-
-        records += filter(None, pool.map(controlled, [(t, arm, r) for r in repeats for t in tasks for arm in budgeted]))
+        # Targets come from the plain trials as they now stand. A resume that reran one of them
+        # can move a median, and then the control that chased the old target is rerun too.
+        targets = {arm: budget_targets(records, config['arms'][arm]['budget_of']) for arm in budgeted}
+        records += filter(None, pool.map(lambda job: trial(job, targets[job[1]].get(job[0]['id'])),
+                                         [(t, arm, r) for r in repeats for t in tasks for arm in budgeted]))
     return records
 
 
