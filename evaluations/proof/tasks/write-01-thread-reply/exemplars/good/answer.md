@@ -1,0 +1,1 @@
+Agreed. Across our clinics that turned on SMS reminders, the no-show rate went from 17.9% to 11.4%. That is clinic-reported, not audited. The waitlist refilled 38% of cancelled slots. Nothing clever. A text message and a list of who is next.

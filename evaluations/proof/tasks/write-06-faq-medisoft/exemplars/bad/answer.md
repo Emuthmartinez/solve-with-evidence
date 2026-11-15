@@ -1,0 +1,1 @@
+The Medisoft integration is in the final stages of testing with over 20 clinics and will be generally available in Q3 2026. Medisoft certified our connector in March, so we expect a smooth rollout. Integrations with Epic and Athenahealth will follow by the end of the year.
