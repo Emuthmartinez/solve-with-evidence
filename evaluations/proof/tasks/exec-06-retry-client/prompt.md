@@ -10,6 +10,6 @@ Also deliver `test_retries.py` in this directory: tests that prove the retry rul
 
 - It must pass on your client and on any other client that follows the accepted records. So it may use only the public interface those records define, with a fake transport, a fake `sleep` and a fake `clock`.
 - It must fail on a client that breaks any one retry rule of the accepted records.
-- No real waiting and no network.
+- No real waiting and no network. It must be deterministic and finish in a few seconds. A run is stopped after 30 seconds.
 
 Use the Python standard library only. Deliver `client/http.py` and `test_retries.py`.

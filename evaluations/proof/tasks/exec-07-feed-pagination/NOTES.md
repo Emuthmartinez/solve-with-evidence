@@ -45,3 +45,5 @@ It is the first fix a quick solver writes: the cursor becomes the last item's `c
 The grader's store is the workspace's `Store`, copied line for line, plus a read counter that turns an endless walk into a failed check. Every walk the grader makes starts from `cursor=None` and uses only cursors the delivered pager returned. The grader calls `page` with `cursor=` and `size=` keywords, so only `export_all` depends on parameter order, which the prompt fixes.
 
 `variants/exec-07-feed-pagination.py` holds one plausible mistake per rule. `test_bench.py` checks that each fails exactly the checks it lists.
+
+The prompt states the limit that applies to each run of the delivered test: "It must be deterministic and finish in a few seconds. A run is stopped after 30 seconds."

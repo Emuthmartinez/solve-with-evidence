@@ -78,3 +78,5 @@ Every number in the grader's scripts is a multiple of 0.25, so each sum of a clo
 The 8 second cap on the computed delay (0003, decision 3) cannot be reached in 3 attempts. No check depends on it.
 
 `variants/exec-06-retry-client.py` holds one plausible mistake per rule, in the client or in the test file. `test_bench.py` checks that each fails exactly the checks it lists.
+
+The grader runs the delivered tests against the delivered client, the reference and the eight faulty clients side by side. The prompt states the limit that applies to each run: "It must be deterministic and finish in a few seconds. A run is stopped after 30 seconds."

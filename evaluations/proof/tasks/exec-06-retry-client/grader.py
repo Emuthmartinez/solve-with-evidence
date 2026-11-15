@@ -1,4 +1,5 @@
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -204,9 +205,14 @@ RUNS = {}
 
 
 def tests_pass_on(name):
-    """Whether the delivered tests pass with this client from impls/ in place of the delivered one."""
-    if name not in RUNS:
-        RUNS[name] = tests_pass(TESTS, replace={CLIENT: (IMPLS / f'{name}.py').read_text()})
+    """Whether the delivered tests pass with this client from impls/ in place of the delivered one,
+    or on the delivered client when name is None. The first call runs them all side by side: one
+    after another, a test file that takes a few seconds would outlast the harness's limit on the grader."""
+    if not RUNS:
+        names = [None] + sorted(file.stem for file in IMPLS.glob('*.py'))
+        replace = lambda name: {CLIENT: (IMPLS / f'{name}.py').read_text()} if name else None
+        with ThreadPoolExecutor(8) as pool:
+            RUNS.update(zip(names, pool.map(lambda name: tests_pass(TESTS, replace(name)), names)))
     return RUNS[name]
 
 
@@ -244,7 +250,7 @@ CHECKS = [
     ('a retry that ends exactly at the deadline is made', deadline_exact),
     ('the time attempts take counts toward the deadline', deadline_counts_attempts),
     ('the deadline is checked against the Retry-After delay', deadline_retry_after),
-    ('tests pass on the delivered client', lambda s: tests_pass(TESTS)),
+    ('tests pass on the delivered client', lambda s: tests_pass_on(None)),
     ('tests pass on a reference client', lambda s: tests_pass_on('reference')),
     ('tests catch a fourth attempt', catches('four_attempts')),
     ('tests catch a POST retried without a key', catches('post_retried')),
