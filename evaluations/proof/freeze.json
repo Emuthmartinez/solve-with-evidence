@@ -1,5 +1,5 @@
 {
-  "digest": "98c276f1d31af4ba2ecc5e2a3415fa9f53986f564a6763db3c829a6bee55d024",
+  "digest": "2c78ed622e9a477b2bbb23a3a72ab36b1ae81c84c4672bee1a3fe50fd6378cd9",
   "files": {
     "tasks/exec-01-allocate-cents/exemplars/bad/solution.py": "38004a6e9b2e76571c5f44fe295f26bce697bd043c052a6a8480a45b9bbcfa88",
     "tasks/exec-01-allocate-cents/exemplars/good/solution.py": "5820cc3a23ee267e80360aea02c61a98177879dbee37fffbbcf1695d79508991",
@@ -117,7 +117,8 @@
     "sources/07-voice.md": "bf3ed2880c639d3213fb89318357089c2af1773f48779008da3dd02d29659ec8",
     "sources/08-thread.md": "0d3d74f597d396b1bbd24dbf155954e087fba9d8afe2707bd1f4434c58e81aed",
     "sources/README.md": "c103b7f574b58e0d8ac2e94706b3bc56376652eacc456a3ec7881217623ec427",
-    "pass_bar.json": "1daa8ea199eb6ebd62649f8abc86816656906391e9b68342b4916304aab9c9d6",
+    "pass_bar.json": "8a0ec77a6b07922813d063b1eb523bee3f7c405a78385bec3ceb78c2370c190f",
+    "gradelib.py": "edeaa1e1916b7bb69df5b1c9538f46a0f98f990aec78f8823480ae8541c74d71",
     "arms.json": "979926154ca203006d54fc07ef49cf4cc37d01b363b308762923a7cbb3a8f6b5"
   }
 }

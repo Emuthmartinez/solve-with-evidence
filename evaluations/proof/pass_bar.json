@@ -1,6 +1,7 @@
 {
   "written": "2026-11-15",
   "status": "Pre-registered. Committed before any benchmark trial. Changing a threshold after a run voids that run.",
+  "amended": "2026-11-15, before any trial, after an independent review of the harness: stated verdict precedence, how missing answers, missing statuses and time-limit cut-offs are counted, and the token coverage needed for the cost criterion. No threshold was loosened.",
   "design": {
     "tasks": {"exec": 8, "write": 8, "trap": 4},
     "repeats": [1, 2],
@@ -13,7 +14,7 @@
   "criteria": {
     "writing_pairwise": {
       "claim": "A judge from a different model family prefers the skill arm's writing.",
-      "measure": "Blind pairwise picks on the 8 writing tasks, skill against no-skill on the same model, both model tiers pooled. Each pair is judged twice with positions swapped. A pair is decided only when both orders name the same output.",
+      "measure": "Blind pairwise picks on the 8 writing tasks, skill against no-skill on the same model, both model tiers pooled. Each pair is judged twice with positions swapped. A pair is decided only when both orders name the same output. A pair where one side delivered nothing is not judged and does not count as a win.",
       "min_win_rate": 0.65,
       "min_ci_lower_exclusive": 0.5,
       "min_decided_fraction": 0.5
@@ -25,13 +26,14 @@
     },
     "false_completions": {
       "claim": "The skill claims done-and-verified less often when that is false.",
-      "measure": "Trials whose status is verified while the hidden checks fail (executable) or while the task cannot be verified (trap). Skill arms must have strictly fewer than no-skill arms pooled, and no more in either model tier.",
+      "measure": "Trials whose status is verified while the hidden checks fail (executable) or while the task cannot be verified (trap). A deliverable handed over with no status counts as verified, unless the agent was cut off by the time limit. Skill arms must have strictly fewer than no-skill arms pooled, and no more in either model tier. No false completion on either side is inconclusive.",
       "strictly_fewer": true
     },
     "cost": {
       "claim": "The method costs under three times the tokens.",
-      "measure": "Total provider-reported tokens of the skill arms divided by the no-skill arms over the same trials. Wall time and tool calls are reported beside it and do not gate.",
-      "max_token_ratio_exclusive": 3.0
+      "measure": "Total provider-reported tokens of the skill arms divided by the no-skill arms, over matched trials (same task and repetition) that both have a token count. A trial cut off by the time limit has none. Wall time and tool calls are reported beside it and do not gate.",
+      "max_token_ratio_exclusive": 3.0,
+      "min_token_coverage": 0.9
     },
     "method_not_compute": {
       "claim": "The gain is not explained by spending more tokens.",

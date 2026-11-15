@@ -2,7 +2,7 @@
 
     judge.py --run RUN                         model judge from a different family than the solver
     judge.py --run RUN --human-export DIR      write a blinded packet for people to fill in
-    judge.py --run RUN --human-import CSV      record their picks
+    judge.py --run RUN --human-import CSV...   record their picks, one filled-in copy per rater
 """
 import argparse
 import csv
@@ -87,6 +87,8 @@ def judge(run, adapter, allow_same_family):
     meta = json.loads((run / 'run.json').read_text())
     adapter = adapter or config['adapters'][meta['adapter']]['judge']
     settings = config['adapters'][adapter]
+    if adapter == 'mock' and meta['adapter'] != 'mock':
+        raise SystemExit('the mock judge picks by hash and may not judge a real run')
     family = 'mock-judge' if adapter == 'mock' else settings['family']
     independent = family != meta['family']
     if not independent and not allow_same_family:
@@ -130,6 +132,9 @@ def judge(run, adapter, allow_same_family):
 
 def human_export(run, packet):
     """Write the answers under random labels 1 and 2. The key stays in the run directory, away from raters."""
+    if (run / 'human-key.json').exists():
+        raise SystemExit('a packet was already exported for this run. Give every rater a copy of that packet: '
+                         'a second export would relabel the pairs')
     packet.mkdir(parents=True, exist_ok=True)
     pairs = [p for p in writing_pairs(run) if p[4] and p[5]]
     order = sorted(range(len(pairs)), key=lambda _: secrets.randbits(64))
@@ -150,19 +155,23 @@ def human_export(run, packet):
     print(f'{len(key)} pairs written to {packet}. Raters also need the notes in {bench.HERE / "sources"}.')
 
 
-def human_import(run, picks):
+def human_import(run, files):
+    """Record every rater's picks. Pass all the filled-in copies together: an import replaces the last one."""
     key = json.loads((run / 'human-key.json').read_text())
     rows = []
-    with picks.open(newline='') as stream:
-        for line in csv.DictReader(stream):
-            pick, pair = line['pick'].strip().lower(), key.get(line['pair_id'].strip())
-            if not pick:
-                continue
-            if pair is None or pick not in ('1', '2', 'tie') or not line['rater'].strip():
-                raise SystemExit(f'bad row: {line}')
-            rows.append({'pair_id': line['pair_id'].strip(), 'rater': line['rater'].strip(), 'task': pair['task'],
-                         'repeat': pair['repeat'], 'arms': sorted([pair['1'], pair['2']]),
-                         'winner': pair.get(pick)})
+    for picks in files:
+        with picks.open(newline='') as stream:
+            for line in csv.DictReader(stream):
+                pick, pair = line['pick'].strip().lower(), key.get(line['pair_id'].strip())
+                if not pick:
+                    continue
+                if pair is None or pick not in ('1', '2', 'tie') or not line['rater'].strip():
+                    raise SystemExit(f'bad row in {picks}: {line}')
+                rows.append({'pair_id': line['pair_id'].strip(), 'rater': line['rater'].strip(), 'task': pair['task'],
+                             'repeat': pair['repeat'], 'arms': sorted([pair['1'], pair['2']]),
+                             'winner': pair.get(pick)})
+    if len({(row['pair_id'], row['rater']) for row in rows}) != len(rows):
+        raise SystemExit('a rater picked the same pair twice')
     (run / 'human.json').write_text(json.dumps(rows, indent=2) + '\n')
     print(f'{len(rows)} human picks recorded from {len({r["rater"] for r in rows})} raters')
 
@@ -173,7 +182,7 @@ def main():
     parser.add_argument('--adapter', help='judge CLI; default is the other family named in arms.json')
     parser.add_argument('--allow-same-family', action='store_true')
     parser.add_argument('--human-export', type=Path, metavar='DIR')
-    parser.add_argument('--human-import', type=Path, metavar='CSV')
+    parser.add_argument('--human-import', type=Path, metavar='CSV', nargs='+')
     args = parser.parse_args()
     run = args.run.resolve()
     if args.human_export:

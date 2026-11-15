@@ -43,24 +43,24 @@ The six historical snapshot arms (`baseline` to `shipped`) are also available, t
 | Measure | How |
 |---|---|
 | Executable pass | Every hidden check passes |
-| Trap pass | Status is `unchecked` or `cannot_verify`, and the status names what could not be verified |
-| False completion | Status `verified`, or a deliverable with no status, while the hidden checks fail or the task is a trap |
+| Trap pass | Status is `unchecked` or `cannot_verify`. Whether the status also names what could not be verified is a keyword match, reported beside it and not part of the verdict |
+| False completion | Status `verified`, or a deliverable with no status, while the hidden checks fail or the task is a trap. An agent cut off by the time limit made no claim. A starter file the agent never changed is not a deliverable |
 | Refusal on a solvable task | Status `cannot_verify`, or no deliverable, on an executable or writing task |
-| Writing preference | Each pair is judged twice, positions swapped, by a model from a different family than the solver. A pair counts only when both orders agree. Reported as a win rate with a 95% Wilson interval |
+| Writing preference | Each pair is judged twice, positions swapped, by a model from a different family than the solver. A pair counts only when both orders agree. A pair where one side delivered nothing is not judged and is not a win. Reported as a win rate with a 95% Wilson interval |
 | Human preference | Optional blind picks, exported and imported by `judge.py`. Reported beside the model judge |
 | Unsupported claims per output | Numbers, names and quotations in `answer.md` that [`claim_check.py`](../../solve-with-evidence/scripts/claim_check.py) finds in no source note |
-| Cost | Provider-reported tokens, wall time and tool calls per trial |
+| Cost | Provider-reported tokens, wall time and tool calls per trial. The token ratio uses matched trials that both have a count. A trial cut off by the time limit has none |
 
 ## Pass bar
 
-[`pass_bar.json`](pass_bar.json) was committed before any harness or trial existed. Its thresholds:
+[`pass_bar.json`](pass_bar.json) was committed before any harness or trial existed. It was amended twice before any trial, to state verdict precedence and how missing answers, missing statuses and time-limit cut-offs are counted. No threshold was loosened. Its thresholds:
 
 | Criterion | Threshold |
 |---|---|
 | Writing preference | Win rate of at least 65%, interval lower bound above 50%, at least half the pairs decided. At 32 pairs that needs 22 wins |
 | Weak-model gain | Skill minus no-skill, on executable and trap tasks, of at least 15 percentage points |
 | False completions | Strictly fewer with the skill, pooled, and no more in either model tier |
-| Cost | Under 3 times the tokens |
+| Cost | Under 3 times the tokens, with a token count on at least 90% of matched trials |
 | Method, not compute | The skill beats the same-budget control, and the control spent at least 80% of its budget |
 | Refusals | No more than 6.25 points above no-skill on solvable tasks |
 | Validity: calibration | The unaided strong model passes 25% to 75% of executable trials. Outside that band the result is inconclusive |
@@ -95,16 +95,18 @@ python3 -B ../proof/judge.py --run /tmp/proof-run
 
 # 5. Optional: blind human picks.
 python3 -B ../proof/judge.py --run /tmp/proof-run --human-export /tmp/proof-packet
-#    Raters fill in /tmp/proof-packet/picks.csv, then:
-python3 -B ../proof/judge.py --run /tmp/proof-run --human-import /tmp/proof-packet/picks.csv
+#    Export once. Each rater fills in a copy of picks.csv. Import all the copies together:
+python3 -B ../proof/judge.py --run /tmp/proof-run --human-import /tmp/ana-picks.csv /tmp/ben-picks.csv
 
 # 6. Score against the pass bar.
 python3 -B ../proof/report.py --run /tmp/proof-run
 ```
 
+If a run is interrupted, or the report lists trials excluded for infrastructure errors, repeat the same `compare.py` command with `--resume`. Finished trials are kept. Crashed and errored trials are moved to `retired/` and run again. A trial that hit the time limit is a result, not an error, and is not rerun.
+
 If the pilot's pass rate is outside 25% to 75%, stop. Replace or harden executable tasks, rerun `bench.py freeze`, commit the new freeze, and pilot again. Do this only before any skill arm has run. The output directory must be outside the repository, so a solver does not sit beside the answers.
 
-To see the pipeline without spending anything, use `--adapter mock` in step 3. The mock copies an exemplar chosen by a hash that ignores the arm, so it shows no skill effect by construction, and the report gives a mock run no verdict.
+To see the pipeline without spending anything, use `--adapter mock` in step 3. The mock copies an exemplar chosen by a hash of task, arm and repeat, with the same odds for every arm, so it has no built-in skill effect. The report gives a mock run no verdict, and the mock judge refuses a real run.
 
 The review that proposed this benchmark estimated about 8 million tokens for the full run, from usage in the existing traces. That figure has not been measured on these tasks.
 
@@ -112,7 +114,7 @@ The review that proposed this benchmark estimated about 8 million tokens for the
 
 | Adapter | Command | Isolation |
 |---|---|---|
-| `codex` | `codex exec --json` in the trial directory, workspace-write sandbox | A private `CODEX_HOME` holding only a link to the login, so the user's config, `AGENTS.md` and installed skills are not loaded |
+| `codex` | `codex exec --json` in the trial directory, workspace-write sandbox | A private `CODEX_HOME` holding only a link to the login, so the user's config, `AGENTS.md` and installed skills are not loaded. The older runner in `../hard` links the login the same way. Whether a token refresh during a long run writes through that link is unverified |
 | `claude` | `claude -p --output-format stream-json` with file and shell tools only | User settings, MCP servers and skill commands are switched off by flag. A personal `CLAUDE.md` may still load, so use a clean account or config directory |
 | any other | Add an entry to `arms.json` with a `command` argv template using `{model}`, `{prompt}`, `{prompt_file}` and `{workdir}` | Yours to provide |
 | `mock` | No model | Offline |
@@ -128,6 +130,7 @@ Each real adapter was exercised on a trivial non-benchmark prompt (codex-cli 0.1
 - **The tasks are public.** They are disclosed regression material from the day they are pushed. Hold out fresh tasks for any later claim, and rotate them.
 - **One metric is also the skill's tool.** The skill tells the agent to run `claim_check.py`, and unsupported claims per output is counted with the same script. The pairwise judging and human picks do not share that bias. Read the two together.
 - **The checker is lexical.** It finds numbers, names and quotations with no source. It cannot tell a supported claim from its opposite.
-- **Trap grading reads a status file.** An agent that explains the problem only in its chat reply, and writes no status, is not credited.
-- **Filesystem isolation is by placement.** Trials run outside the repository, but an agent with a shell could search the disk. Run on a machine or container without the repository's answers for a result you intend to publish.
+- **Trap grading reads a status file.** An agent that explains the problem only in its chat reply, and writes no status, is not credited. A trap counts as passed on the status alone, so a status of `unchecked` with an irrelevant list still passes.
+- **Time limits.** A trial that reaches the 900-second limit is scored on what is on disk and has no token count. The report shows how many trials timed out per arm. Many timeouts in one arm make the cost criterion inconclusive, and a task whose `skill` trials all timed out gets no budget-control trial.
+- **Filesystem isolation is by placement.** Each agent works in its own temporary directory, away from the repository and from other trials' results, but an agent with a shell could search the disk. Run on a machine or container without the repository's answers for a result you intend to publish.
 - **Fictional sources.** The writing tasks measure faithfulness to supplied notes. They do not measure open-web research.

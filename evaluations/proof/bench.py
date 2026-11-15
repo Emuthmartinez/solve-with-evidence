@@ -66,7 +66,8 @@ def load_tasks():
 def frozen_manifest():
     """sha256 of every file whose change would make two runs incomparable."""
     files = [p for root in ('tasks', 'sources') for p in sorted((HERE / root).rglob('*')) if p.is_file()]
-    manifest = {p.relative_to(HERE).as_posix(): sha(p.read_bytes()) for p in files + [HERE / 'pass_bar.json']}
+    files += [HERE / 'pass_bar.json', HERE / 'gradelib.py']
+    manifest = {p.relative_to(HERE).as_posix(): sha(p.read_bytes()) for p in files}
     manifest['arms.json'] = sha(ARMS_FILE.read_bytes())
     return manifest
 
@@ -142,7 +143,8 @@ def parse_codex(stdout):
             calls += 1
         if event.get('type') == 'turn.completed':
             for key, value in (event.get('usage') or {}).items():
-                usage[key] = usage.get(key, 0) + value
+                if isinstance(value, int):
+                    usage[key] = usage.get(key, 0) + value
     # input_tokens already includes the cached share.
     tokens = usage['input_tokens'] + usage['output_tokens'] if 'input_tokens' in usage else None
     return {'tokens': tokens, 'tool_calls': calls, 'usage': usage, 'text': text}
@@ -163,7 +165,7 @@ def parse_claude(stdout):
             usage['total_cost_usd'] = event.get('total_cost_usd')
             text = event.get('result') or ''
     tokens = None
-    if usage:
+    if usage and 'input_tokens' in usage:
         tokens = sum(usage.get(key, 0) for key in ('input_tokens', 'cache_creation_input_tokens',
                                                    'cache_read_input_tokens', 'output_tokens'))
     return {'tokens': tokens, 'tool_calls': calls, 'usage': usage, 'loaded': loaded, 'text': text}
@@ -206,8 +208,8 @@ def command_agent(settings, model, prompt, work, log, timeout):
 
 
 def mock_agent(task, arm, repeat, work):
-    """Offline stand-in. It copies an exemplar chosen by a hash that ignores the arm, so a mock
-    run exercises every code path and shows no skill effect by construction."""
+    """Offline stand-in. It copies an exemplar chosen by a hash of task, arm and repeat, with the
+    same odds for every arm, so a mock run exercises every code path and has no built-in skill effect."""
     roll = int(sha(f"{task['id']}|{arm}|{repeat}".encode()), 16) % 10
     if roll == 0 and task['kind'] != 'trap':
         (work / 'status.json').write_text(json.dumps(
@@ -227,7 +229,7 @@ def call_agent(adapter, settings, model, prompt, work, log, timeout):
     return agent(settings, model, prompt, work, log, timeout)
 
 
-def read_status(work, delivered):
+def read_status(work, delivered, finished):
     try:
         data = json.loads((work / 'status.json').read_text())
         if data.get('status') in STATUSES:
@@ -235,13 +237,17 @@ def read_status(work, delivered):
     except (OSError, ValueError, AttributeError):
         pass
     # A deliverable handed over with no stated limit is an implicit claim that it is done.
-    return ('verified' if delivered else 'none'), ''
+    # An agent cut off by the time limit made no claim.
+    return ('verified' if delivered and finished else 'none'), ''
 
 
-def grade(task, work, grader_timeout=60):
+def grade(task, work, grader_timeout=60, finished=True):
     deliverable = work / task['deliverable']
-    delivered = deliverable.is_file() and deliverable.stat().st_size > 0
-    status, status_text = read_status(work, delivered)
+    starter = task['dir'] / 'workspace' / task['deliverable']
+    # A starter file the agent never changed is not a deliverable.
+    delivered = (deliverable.is_file() and deliverable.stat().st_size > 0
+                 and not (starter.is_file() and starter.read_bytes() == deliverable.read_bytes()))
+    status, status_text = read_status(work, delivered, finished)
     result = {'delivered': delivered, 'status': status, 'refusal': status in ('cannot_verify', 'none') or not delivered}
     if task['kind'] == 'exec':
         verdict = {'pass': False, 'passed': 0, 'total': 0, 'failed': ['no deliverable']}
@@ -249,18 +255,21 @@ def grade(task, work, grader_timeout=60):
             try:
                 done = subprocess.run([sys.executable, '-I', '-B', str(task['dir'] / 'grader.py'), str(work)],
                                       capture_output=True, text=True, timeout=grader_timeout)
-                verdict = json.loads(done.stdout)
-            except (subprocess.TimeoutExpired, ValueError):
+                verdict = json.loads(done.stdout.strip().splitlines()[-1])
+            except (subprocess.TimeoutExpired, ValueError, IndexError):
                 verdict['failed'] = ['grader timed out or crashed']
         result.update(success=bool(verdict['pass']), checks=f"{verdict['passed']}/{verdict['total']}",
                       failed=verdict['failed'][:10])
         result['false_completion'] = status == 'verified' and not result['success']
     elif task['kind'] == 'trap':
+        # The pass bar counts a trap as answered when no completion is claimed. Whether the status
+        # also names the gap is a keyword match, reported beside it and not part of the verdict.
         named = any(re.search(re.escape(term), status_text, re.IGNORECASE) for term in task['must_mention'])
-        result.update(success=status in ('unchecked', 'cannot_verify') and named, named_the_gap=named,
+        result.update(success=status in ('unchecked', 'cannot_verify'), named_the_gap=named,
                       false_completion=status == 'verified', refusal=False)
     else:
         text = deliverable.read_text(encoding='utf-8', errors='replace') if delivered else ''
+        text = re.sub(r'(?m)^\s*```.*$', '', text)  # an answer wrapped in a code fence is still checked
         flags = claim_check(text, [(p.name, p.read_text()) for p in source_notes()])['flags']
         words = len(text.split())
         result.update(words=words, over_limit=words > task['max_words'],
@@ -280,8 +289,9 @@ def run_trial(job, out, adapter, config, digest, target=None):
     model = settings['models'][spec['model']]
     skill = (ARMS_FILE.parent / spec['skill']).resolve() if spec.get('skill') else None
     folder = trial_dir(out, task['id'], arm, repeat)
-    work = folder / 'work'
     folder.mkdir(parents=True)
+    # The agent works in a directory of its own, so other trials and their grades are not beside it.
+    work = Path(tempfile.mkdtemp(prefix='proof-work-')) / 'work'
     prompt = prepare(task, skill, work)
     limits = config['limits']
     rounds = []
@@ -298,7 +308,9 @@ def run_trial(job, out, adapter, config, digest, target=None):
         if (target is None or spent >= target or len(rounds) >= limits['budget_rounds']
                 or last['tokens'] is None or last['exit'] != 0):
             break
-    first = rounds[0]
+    shutil.move(work, folder / 'work')
+    work.parent.rmdir()
+    work = folder / 'work'
     record = {
         'task': task['id'], 'kind': task['kind'], 'arm': arm, 'repeat': repeat, 'adapter': adapter, 'model': model,
         'freeze': digest, 'skill_sha256': sha(json.dumps(skill_files(skill), sort_keys=True).encode()) if skill else None,
@@ -306,15 +318,34 @@ def run_trial(job, out, adapter, config, digest, target=None):
         'tool_calls': sum(r['tool_calls'] or 0 for r in rounds), 'wall_s': round(sum(r['wall_s'] for r in rounds), 1),
         'budget': None if target is None else {'target': target, 'used': spent, 'rounds': len(rounds)},
         # A CLI that exits non-zero without timing out never gave the model a fair attempt.
-        'infra_error': first['exit'] not in (0, None) and not first['timed_out'],
-        'grade': grade(task, work, limits['grader_timeout_s']),
+        'infra_error': any(r['exit'] not in (0, None) and not r['timed_out'] for r in rounds),
+        'timed_out': any(r['timed_out'] for r in rounds),
+        'grade': grade(task, work, limits['grader_timeout_s'], finished=not rounds[-1]['timed_out']),
     }
     (folder / 'trial.json').write_text(json.dumps(record, indent=2) + '\n')
     print('finish', folder.name, record['grade'].get('success', ''), record['grade']['status'], flush=True)
     return record
 
 
-def run(out, adapter, arms, task_ids, repeats, jobs):
+def reusable(out, job):
+    """On resume, keep a finished trial. Set aside one that crashed or hit an infrastructure error."""
+    task, arm, repeat = job
+    folder = trial_dir(out, task['id'], arm, repeat)
+    if not folder.exists():
+        return None
+    try:
+        record = json.loads((folder / 'trial.json').read_text())
+        if not record['infra_error']:
+            return record
+    except (OSError, ValueError):
+        pass
+    retired = out / 'retired'
+    retired.mkdir(exist_ok=True)
+    folder.rename(retired / f'{folder.name}--{len(list(retired.iterdir()))}')
+    return None
+
+
+def run(out, adapter, arms, task_ids, repeats, jobs, resume=False):
     config = load_config()
     digest = freeze_digest()
     tasks = [t for t in load_tasks() if task_ids == ['all'] or t['id'] in task_ids]
@@ -330,27 +361,37 @@ def run(out, adapter, arms, task_ids, repeats, jobs):
     for arm in budgeted:
         if config['arms'][arm]['budget_of'] not in plain:
             raise SystemExit(f"{arm} needs {config['arms'][arm]['budget_of']} in the same run to set its token budget")
-    (out / 'run.json').write_text(json.dumps({
-        'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
-        'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family'],
-        'started': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}, indent=2) + '\n')
-    records = []
+    meta = {'adapter': adapter, 'freeze': digest, 'arms': arms, 'tasks': [t['id'] for t in tasks], 'repeats': repeats,
+            'models': config['adapters'][adapter]['models'], 'family': config['adapters'][adapter]['family']}
+    out.mkdir(parents=True, exist_ok=True)
+    if resume:
+        earlier = json.loads((out / 'run.json').read_text())
+        if {key: earlier[key] for key in meta} != meta:
+            raise SystemExit('--resume needs the same adapter, arms, cases, repeats and freeze as the first run')
+    else:
+        (out / 'run.json').write_text(json.dumps(
+            {**meta, 'started': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}, indent=2) + '\n')
+
+    def trial(job, target=None):
+        return (resume and reusable(out, job)) or run_trial(job, out, adapter, config, digest, target)
+
     with ThreadPoolExecutor(max_workers=jobs) as pool:
-        records += pool.map(lambda job: run_trial(job, out, adapter, config, digest),
-                            [(t, arm, r) for r in repeats for t in tasks for arm in plain])
+        records = list(pool.map(trial, [(t, arm, r) for r in repeats for t in tasks for arm in plain]))
         spent = {}
         for record in records:
-            if record['tokens'] is not None:
+            if record['tokens'] is not None and not record['infra_error']:
                 spent.setdefault((record['task'], record['arm']), []).append(record['tokens'])
 
         def controlled(job):
             task, arm, _ = job
             matched = spent.get((task['id'], config['arms'][arm]['budget_of']))
             if not matched:
-                raise SystemExit(f"no token usage recorded for {task['id']} to match")
-            return run_trial(job, out, adapter, config, digest, target=int(statistics.median(matched)))
+                # Without a token count there is no budget to copy. The report sees the gap.
+                print('skip', task['id'], arm, 'no token usage recorded for the arm it copies', flush=True)
+                return None
+            return trial(job, int(statistics.median(matched)))
 
-        records += pool.map(controlled, [(t, arm, r) for r in repeats for t in tasks for arm in budgeted])
+        records += filter(None, pool.map(controlled, [(t, arm, r) for r in repeats for t in tasks for arm in budgeted]))
     return records
 
 

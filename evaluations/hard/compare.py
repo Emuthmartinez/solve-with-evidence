@@ -62,10 +62,12 @@ def main():
     parser.add_argument('--cases', nargs='+', required=True, help='case or task ids; "all" selects every proof task')
     parser.add_argument('--repeats', nargs='+', type=int, required=True)
     parser.add_argument('--jobs', type=int, default=2)
+    parser.add_argument('--resume', action='store_true',
+                        help='proof suite: continue an interrupted run in --out, rerunning crashed trials')
     args = parser.parse_args()
     destination = args.out.resolve()
     destination.mkdir(parents=True, exist_ok=True)
-    if any(destination.iterdir()):
+    if any(destination.iterdir()) and not (args.resume and args.suite == 'proof'):
         parser.error('choose an empty output directory to preserve existing trial records')
     if args.jobs < 1 or min(args.repeats) < 1:
         parser.error('jobs and repetition identifiers must be positive')
@@ -75,7 +77,7 @@ def main():
     if args.suite == 'proof':
         sys.path.insert(0, str(HERE.parent / 'proof'))
         import bench
-        bench.run(destination, args.adapter, args.arms, args.cases, args.repeats, args.jobs)
+        bench.run(destination, args.adapter, args.arms, args.cases, args.repeats, args.jobs, args.resume)
         print(f'next: python3 -B {HERE.parent}/proof/judge.py --run {destination}  then  report.py --run {destination}')
         return
     budgeted = [arm for arm in args.arms if ARMS['arms'][arm].get('budget_of')]
