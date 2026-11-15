@@ -183,6 +183,17 @@ class Grading(Scratch):
         grade = self.rewritten('exec-01-allocate-cents', in_place)
         self.assertEqual((grade['success'], grade['checks'], grade['failed']), (True, '23/23', []))
 
+    def test_a_schedule_call_that_takes_over_a_second_fails(self):
+        def slow(when):  # the correct exemplar, made to sleep on some calls
+            return lambda good: good.replace('def next_run(', 'def fast(') + (
+                '\n\nimport time as clock\n\n\ndef next_run(expr, after):\n    found = fast(expr, after)\n'
+                f'    if {when}:\n        clock.sleep(1.1)\n    return found\n')
+        impossible = self.rewritten('exec-06-next-run', slow('found is None'))
+        self.assertEqual((impossible['success'], impossible['false_completion'], impossible['failed']),
+                         (False, True, ['example never (TimeoutError)', '31st of short months never (TimeoutError)']))
+        successful = self.rewritten('exec-06-next-run', slow('expr == "59 23 31 12 *"'))
+        self.assertEqual((successful['success'], successful['failed']), (False, ['year rollover (TimeoutError)']))
+
     def test_an_answer_inside_a_code_fence_is_still_checked(self):
         plain = self.graded('write-03-investor-update', 'bad')['unsupported']
         work = self.tmp / 'fenced'
