@@ -115,7 +115,7 @@ The review that proposed this benchmark estimated about 8 million tokens for the
 | Adapter | Command | Isolation |
 |---|---|---|
 | `codex` | `codex exec --json` in the trial directory, workspace-write sandbox | A private `CODEX_HOME` holding only a link to the login, so the user's config, `AGENTS.md` and installed skills are not loaded. The older runner in `../hard` links the login the same way. Whether a token refresh during a long run writes through that link is unverified |
-| `claude` | `claude -p --output-format stream-json` with file and shell tools only | User settings, MCP servers and skill commands are switched off by flag. A personal `CLAUDE.md` may still load, so use a clean account or config directory |
+| `claude` | `claude -p --output-format stream-json` with file and shell tools only | User settings, including `~/.claude/CLAUDE.md`, MCP servers, skill commands and auto-memory are switched off. Checked on Claude Code 2.1.322: with these flags the user `CLAUDE.md` is absent from the session, and present without them |
 | any other | Add an entry to `arms.json` with a `command` argv template using `{model}`, `{prompt}`, `{prompt_file}` and `{workdir}` | Yours to provide |
 | `mock` | No model | Offline |
 

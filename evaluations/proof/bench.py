@@ -191,7 +191,10 @@ def claude_agent(settings, model, prompt, work, log, timeout):
                '--tools', 'Bash,Read,Write,Edit,Glob,Grep', '--allowedTools', 'Bash,Read,Write,Edit,Glob,Grep',
                '--permission-mode', 'acceptEdits', '--setting-sources', 'project,local', '--strict-mcp-config',
                '--disable-slash-commands', '--no-session-persistence']
-    out, result = run_cli(command, work, None, timeout, log)
+    # The user setting source also carries ~/.claude/CLAUDE.md, so leaving it out keeps personal
+    # instructions out. Auto-memory is separate and per directory, so it is switched off here.
+    env = {**os.environ, 'CLAUDE_CODE_DISABLE_AUTO_MEMORY': '1'}
+    out, result = run_cli(command, work, env, timeout, log)
     return {**result, **parse_claude(out)}
 
 
